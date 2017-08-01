@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
         final DBSI db = new DBSI(getApplicationContext(), "TwentyQuestions.db", null, 1);
         db.getResult();
-//        db.insert();
+        db.insert();
 
         Intent intent = new Intent(getApplicationContext(), SubActivity.class);
         startActivity(intent);

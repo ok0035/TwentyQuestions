@@ -49,6 +49,14 @@ public class DBSI extends SQLiteOpenHelper{
                         "CreatedDate timestamp NOT NULL, " +
                         "UpdatedDate timestamp NOT NULL);");
 
+        db.execSQL("CREATE TABLE IF NOT EXISTS Letter (" +
+                "PKey integer(8) NOT NULL, Sender integer(8) NOT NULL, " +
+                "Receiver integer(8) NOT NULL, TableName varchar(50), " +
+                "TablePKey integer(8), IsLock boolean DEFAULT '0' NOT NULL, " +
+                "IsRead boolean DEFAULT '0', Type integer(1) DEFAULT 0 NOT NULL, " +
+                "Title varchar(100) NOT NULL, Content text, CreatedDate timestamp NOT NULL, " +
+                "UpdatedDate timestamp NOT NULL);");
+
 //        db.execSQL("CREATE TABLE IF NOT EXISTS UserTest (ID TEXT PRIMARY KEY, Password TEXT);");
 
 //        db.execSQL("CREATE TABLE IF NOT EXISTS MONEYBOOK (_id INTEGER PRIMARY KEY AUTOINCREMENT, RoomName TEXT, GameType TEXT, create_at TEXT);");
@@ -66,8 +74,11 @@ public class DBSI extends SQLiteOpenHelper{
         // 읽고 쓰기가 가능하게 DB 열기
         SQLiteDatabase db = getWritableDatabase();
         // DB에 입력한 값으로 행 추가
-        db.execSQL("INSERT INTO User(PKey, ID, Password, NickName, LoginType, Gender, Birthday, CreatedDate, UpdatedDate) " +
-                        "VALUES('2', 'ok0035', '1111', 'asdf', '0', '0', '19930116', '10:10', '10:10');");
+//        db.execSQL("INSERT INTO User(ID, Password, NickName, LoginType, Gender, Birthday, CreatedDate, UpdatedDate) " +
+//                        "VALUES('ok0035', '1111', 'asdf', '0', '0', '19930116', '10:10', '10:10');");
+
+        db.execSQL("INSERT INTO Letter(Sender, Receiver, TableName, TablePKey, IsLock, IsRead, Type, Title, Content, CreatedDate, UpdatedDate) " +
+                "VALUES('2', '2', '2', '2', '1', '1', '1', '1', '1', '10:10', '10:10');");
         db.close();
     }
 
@@ -85,11 +96,13 @@ public class DBSI extends SQLiteOpenHelper{
         String result = "";
 
         // DB에 있는 데이터를 쉽게 처리하기 위해 Cursor를 사용하여 테이블에 있는 모든 데이터 출력
-        Cursor cursor = db.rawQuery("SELECT ID, Password FROM User", null);
+        Cursor cursor = db.rawQuery("SELECT PKey, ID, Password FROM User", null);
         while (cursor.moveToNext()) {
             result += cursor.getString(0)
                     + "\n"
                     + cursor.getString(1)
+                    + "\n"
+                    + cursor.getString(2)
                     + "\n";
         }
 

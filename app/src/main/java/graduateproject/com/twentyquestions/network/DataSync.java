@@ -58,7 +58,7 @@ public class DataSync extends Thread {
 
     public void doSync() {
 
-        if(needSyncing == false) {
+        if(isSyncing && needSyncing == false) {
 
             needSyncing = true;
 
@@ -99,6 +99,8 @@ public class DataSync extends Thread {
             NetworkSI.getInstance().request(Command.REQUEST_FULL_DATA);
             isSyncing = false;
 
+            if(needSyncing) needSyncing = false;
+
         }
     }
 
@@ -109,6 +111,12 @@ public class DataSync extends Thread {
 
             while(true) {
 
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 System.out.println("Time Division Threading...");
 
                 Log.d("Sync", "need sync");
@@ -116,11 +124,8 @@ public class DataSync extends Thread {
                 NetworkSI.getInstance().request(Command.REQUEST_FULL_DATA);
                 isSyncing = false;
 
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                if(needSyncing) doSync();
+
             }
         }
     }
