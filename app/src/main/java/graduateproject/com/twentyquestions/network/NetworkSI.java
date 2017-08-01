@@ -5,4 +5,21 @@ package graduateproject.com.twentyquestions.network;
  */
 
 public class NetworkSI {
+
+    public String serverAddress;
+    public String[][] packet;
+    private static NetworkSI networkSI;
+
+    public static NetworkSI getInstance() {
+        if(networkSI == null) {
+            networkSI = new NetworkSI();
+        }
+
+        return networkSI;
+    }
+
+    public void request(DataSync.Command data) {
+
+    }
+
 }

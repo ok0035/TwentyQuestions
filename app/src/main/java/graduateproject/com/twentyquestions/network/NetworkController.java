@@ -5,4 +5,12 @@ package graduateproject.com.twentyquestions.network;
  */
 
 public class NetworkController {
+
+    private void NetworkController() {
+
+    }
+
+    public void checkResult() {
+
+    }
 }
