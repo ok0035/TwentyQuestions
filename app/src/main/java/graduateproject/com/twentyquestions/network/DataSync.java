@@ -1,8 +1,9 @@
 package graduateproject.com.twentyquestions.network;
 
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by mapl0 on 2017-08-01.
@@ -14,16 +15,43 @@ public class DataSync extends Thread {
     private boolean isSyncing;
     private boolean needSyncing;
     private static DataSync sync;
+    private static boolean timerFlag = false;
 
     public static enum DeviceType { IPHONE, ANDROID, WEB, PC, ECT }
-    public static enum Command { REQUEST_FULL_DATA, REGIST, LOGIN }
-    public static enum ResultName { LOGIN_FAILED, LOGIN_SUCCESS, REQUEST_CHAT_DATA}
+
+    public static enum Command {
+
+        TRYRESIST,
+        TRYLOGIN,
+        GETFULLDATA,
+        GETLETTERLIST,
+        GETLETTERITEM,
+        GETUSERSELFDATA,
+        GETINIT,
+        GETRANDOMNAME,
+        SETCHATROOM,
+        SETGAME,
+        SENDQA,
+        SETMEMBER,
+        FINDFRIEND,
+        SETFRIEND,
+        SETCOIN,
+        SETPOPULARITY,
+        SENDREPORT,
+        LOGINFAILED,
+        LOGINSUCCESS,
+
+    }
 
     public DataSync(Runnable run) {
         super(run);
     }
 
     public DataSync() {
+
+        needSyncing = false;
+        isSyncing = false;
+        timerFlag = false;
 
     }
 
@@ -38,95 +66,133 @@ public class DataSync extends Thread {
 
     public void Timer() {
 
-        if(needSyncing == false) {
+//        new DataSync(new TimerRunnable()).start();
 
-            needSyncing = true;
+        if(timerFlag == false) {
+
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+
+                public void run() {
+                    doSync();    // 타이머가 울리면 이 곳으로 들어온다.
+                }
+            };
+            timer.schedule(timerTask, 0, 10000); // 첫번째 인자인 tmrTask 로 1초 뒤에 알림을 준다.
+
+            timerFlag = true;
 
         }
 
-        if (!isSyncing) {
-
-            new DataSync(new TimerRunnable()).start();
-
-        } else {
-
-            Log.d("Sync", "is syncing...");
-
-        }
 
     }
 
     public void doSync() {
 
-        if(isSyncing && needSyncing == false) {
-
-            needSyncing = true;
-
-        }
-
-        if (!isSyncing) {
-
-            new DataSync(new DoSyncRunnable()).start();
-
-        } else {
-
-            Log.d("Sync", "is syncing...");
-
-        }
+        new DataSync(new DoSyncRunnable()).start();
 
     }
 
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            System.out.println("HANDLER");
-//            TestData testData = new TestData();
-//            testData.setPKey(msg.getData().getString("pkey"));
-//            testData.setNameKR(msg.getData().getString("name"));
-
-        }
-    };
+//    Handler handler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            System.out.println("HANDLER");
+//
+//            needSyncing = false;
+//
+//        }
+//    };
 
     private class DoSyncRunnable implements Runnable {
 
         @Override
         public void run() {
 
-            System.out.println("THREADING...");
+            NetworkSI networkSI = new NetworkSI();
 
-            Log.d("Sync", "need sync");
-            isSyncing = true;
-            NetworkSI.getInstance().request(Command.REQUEST_FULL_DATA);
-            isSyncing = false;
+            if(isSyncing && needSyncing == false) {
 
-            if(needSyncing) needSyncing = false;
+                Log.d("Sync", "isSyncing & !needSyncing");
+                needSyncing = true;
 
-        }
-    }
+            } else if (!isSyncing) {
+                Log.d("Sync", "!isSyncing");
 
-    private class TimerRunnable implements Runnable {
-
-        @Override
-        public void run() {
-
-            while(true) {
-
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                System.out.println("Time Division Threading...");
-
-                Log.d("Sync", "need sync");
+                Log.d("Sync", "DoSync");
                 isSyncing = true;
-                NetworkSI.getInstance().request(Command.REQUEST_FULL_DATA);
+                networkSI.request(Command.GETFULLDATA);
                 isSyncing = false;
 
-                if(needSyncing) doSync();
+                if(needSyncing) {
+                    Log.d("Sync", "needSyncing");
+
+                    isSyncing = true;
+                    networkSI.request(Command.GETFULLDATA);
+                    isSyncing = false;
+
+                    needSyncing = false;
+
+//                        Bundle bundle = new Bundle();
+//                        bundle.putBoolean("needSyncing", needSyncing);
+//
+//                        Message message = new Message();
+//                        message.setData(bundle);
+//
+//                        handler.sendMessage(message);
+                }
+
+            } else {
+
+                Log.d("Sync", "sync error");
 
             }
         }
     }
+
+//    private class TimerRunnable implements Runnable {
+//
+//        @Override
+//        public void run() {
+//
+//            while(true) {
+//
+//                if (!isSyncing) {
+//
+//                    try {
+//                        Thread.sleep(3000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    System.out.println("Time Division Threading...");
+//
+//                    isSyncing = true;
+//                    NetworkSI.getInstance().request(Command.GETFULLDATA);
+//                    isSyncing = false;
+//
+//                    if(needSyncing) {
+//                        Log.d("Sync", "needSyncing");
+//
+//                        isSyncing = true;
+//                        NetworkSI.getInstance().request(Command.GETFULLDATA);
+//                        isSyncing = false;
+//
+//                        needSyncing = false;
+//
+////                        Bundle bundle = new Bundle();
+////                        bundle.putBoolean("needSyncing", needSyncing);
+////
+////                        Message message = new Message();
+////                        message.setData(bundle);
+////
+////                        handler.sendMessage(message);
+//                    }
+//
+//                } else {
+//
+//                    Log.d("Sync", "is syncing...");
+//
+//                }
+//            }
+//        }
+//    }
 }

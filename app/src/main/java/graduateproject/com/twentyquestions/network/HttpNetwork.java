@@ -19,8 +19,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 
-import graduateproject.com.twentyquestions.activity.BaseActivity;
-
 /**
  * Created by Heronation on 2017-07-26.
  */
@@ -46,13 +44,15 @@ public class HttpNetwork extends AsyncTask<String, Void, String> {
 
     }
 
+
+
     @Override
     protected void onPreExecute() {
 
-        mProgressDialog = new ProgressDialog(BaseActivity.mContext);
-        mProgressDialog.setMessage("Please wait...");
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.show();
+//        mProgressDialog = new ProgressDialog(BaseActivity.mContext);
+//        mProgressDialog.setMessage("Please wait...");
+//        mProgressDialog.setCancelable(false);
+//        mProgressDialog.show();
 
         super.onPreExecute();
     }
@@ -76,8 +76,8 @@ public class HttpNetwork extends AsyncTask<String, Void, String> {
         delegate.onSuccess(result);
         Log.d("onPostExecuete", result);
 
-        if (mProgressDialog != null)
-            mProgressDialog.hide();
+//        if (mProgressDialog != null)
+//            mProgressDialog.hide();
 
     }
 
