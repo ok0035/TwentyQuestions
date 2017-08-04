@@ -21,7 +21,7 @@ public class DataSync extends Thread {
 
     public static enum Command {
 
-        TRYRESIST,
+        TRYREGIST,
         TRYLOGIN,
         GETFULLDATA,
         GETLETTERLIST,

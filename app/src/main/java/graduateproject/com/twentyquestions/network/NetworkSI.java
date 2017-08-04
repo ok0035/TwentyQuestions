@@ -22,6 +22,17 @@ public class NetworkSI {
 
     private final String serverAddress = "http://heronation.net/";
     String[] userInfo;
+    private String sendingData;
+
+    public String getSendingData() {
+        return sendingData;
+    }
+
+    public void setSendingData(String sendingData) {
+        this.sendingData = sendingData;
+    }
+
+
 
     public void request(DataSync.Command command) {
 
@@ -54,7 +65,7 @@ public class NetworkSI {
             packet.put("ID", userInfo[1]);
             packet.put("Password", userInfo[2]);
             packet.put("UDID", Build.ID);
-            packet.put("DeviceType", Build.BRAND);
+            packet.put("DeviceType", "1");
             packet.put("DeviceName", Build.MODEL);
             packet.put("OS", Build.VERSION.RELEASE);
             packet.put("Phone", "");
@@ -68,6 +79,7 @@ public class NetworkSI {
         ArrayList<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("packet", packet.toString()));
         params.add(new BasicNameValuePair("command", command.toString()));
+        params.add(new BasicNameValuePair("data", sendingData.toString()));
 
         JSONArray jsonarr = new JSONArray(params);
 
