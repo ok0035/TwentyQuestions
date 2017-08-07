@@ -1,8 +1,10 @@
 package graduateproject.com.twentyquestions.activity;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +18,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import graduateproject.com.twentyquestions.R;
+import graduateproject.com.twentyquestions.controller.LoginController;
 import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.NetworkSI;
 
@@ -30,7 +34,6 @@ import static graduateproject.com.twentyquestions.util.CalculatePixel.calculateP
 /**
  * Created by yrs00 on 2017-08-03.
  */
-
 public class RegisterView extends BaseActivity {
 
     RelativeLayout parentLayout;
@@ -75,13 +78,23 @@ public class RegisterView extends BaseActivity {
                     User.put("NickName",nickName[0]);
                     User.put("Gender",gender[0]);
                     User.put("Birthday",age[0]);
+                    User.put("DeviceID", Build.ID);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 NetworkSI networkSI = new NetworkSI();
-                networkSI.request(DataSync.Command.TRYREGIST, "data");
+                String response = networkSI.request(DataSync.Command.TRYREGIST, User.toString());
 
+                LoginController loginController = new LoginController();
+                loginController.parseLoginData(response);
+                if(loginController.parseLoginData(response)) {
+                    // DBSI호출 후, query 실행//
+                    for (BasicNameValuePair basicNameValuePair : loginController.getParseList()) {
+                        Log.d("Key : ", basicNameValuePair.getName());
+                        Log.d("value : ", basicNameValuePair.getValue());
+                    }
+                }
 
             }
         };

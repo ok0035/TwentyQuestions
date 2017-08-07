@@ -1,9 +1,12 @@
 package graduateproject.com.twentyquestions.util;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Brant on 2017-04-10.
@@ -21,8 +24,6 @@ public class ParseData {
     public ParseData() {
 
     }
-
-//    [[a,b,c,[d,g,t]] 형식을 a,b,c,[d,g,t] 2차배열 형식으로 파싱하여 반환함
 //    인자 : 2차 배열 JSON Array (String)
     public String[][] getDoubleArrayData(String toParsingData) {
 
@@ -96,5 +97,62 @@ public class ParseData {
 
         return mParsedMergeDataList;
     }
+
+    private String KEY = "KEY";
+    private JSONObject jsonResponse;
+
+    private BasicNameValuePair parseObjectPair;
+    private ArrayList<BasicNameValuePair> parseList;
+
+    private String convertJSonObject = null;
+    private JSONArray tableArray = null;
+
+    public ParseData(String response, String Key){
+        this.KEY = Key;
+        try {
+            this.jsonResponse = new JSONObject(response);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public  BasicNameValuePair parseDataObject(){
+
+        try {
+            convertJSonObject = jsonResponse.getString(KEY);
+            parseObjectPair= new BasicNameValuePair(KEY,convertJSonObject);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return parseObjectPair;
+
+    }
+
+    public  ArrayList parseDataArray(){
+        try {
+            parseList = new ArrayList<>();
+            tableArray = jsonResponse.getJSONArray(KEY);
+            Iterator iterator = tableArray.getJSONObject(0).keys();
+            ArrayList<String> keyList = new ArrayList<>();
+            while (iterator.hasNext()) {
+                String key = iterator.next().toString();
+                keyList.add(key);
+            }
+            for (int i = 0; i < tableArray.length(); i++) {
+                for (int j = 0; j < keyList.size(); j++) {
+                    String value = tableArray.getJSONObject(i).getString(keyList.get(j));
+                    parseList.add(new BasicNameValuePair(keyList.get(j), value));
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return parseList;
+    }
+
 
 }

@@ -40,9 +40,10 @@ public class LoginView extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setUpEvents();
         setView();
         setContentView(parentLayout);
-        setUpEvents();
+
 
     }
 
@@ -57,15 +58,14 @@ public class LoginView extends BaseActivity {
             }
         };
 
-        LoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
+        login = new View.OnClickListener(){
+      @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, MainView.class);
                 startActivity(intent);
             }
-        });
+        };
     }
-
     @Override
     public void setView() {
         super.setView();
@@ -89,6 +89,7 @@ public class LoginView extends BaseActivity {
         LoginBtn.setY(calculatePixelY(80));
         LoginBtn.setBackgroundColor(Color.GRAY);
         LoginBtn.setGravity(Gravity.CENTER);
+        LoginBtn.setOnClickListener(login);
 
         LoginByGoogleBtn = new TextView(this);
         LoginByGoogleBtn.setText("Google+");
