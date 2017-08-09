@@ -2,12 +2,9 @@ package graduateproject.com.twentyquestions.network;
 
 import android.util.Log;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 import graduateproject.com.twentyquestions.activity.BaseActivity;
 import graduateproject.com.twentyquestions.util.ParseData;
@@ -25,88 +22,44 @@ public class DataSyncController {
     private int serverChatPkey = 0;
     private int serverChatRoomPkey = 0;
     private int serverChatMemberPkey = 0;
-    private ArrayList<BasicNameValuePair> parsedDataList;
+
+    private JSONArray chatRoomArray;
+    private JSONObject chatRoomData;
+    private String parsedResult = "";
 
     public void updateData(String response) {
 
         ParseData parse = new ParseData();
-        parsedDataList = new ArrayList();
         DBSI db = new DBSI();
 
-//        response = "{\"Result\":\"GETFULLDATA\",\"ChatRoom\":[],\"Chat\":[],\"ChatMember\":[]}";
-
-        BasicNameValuePair result = parse.parseDataToPair(response, "Result");
-        BasicNameValuePair chat = parse.parseDataToPair(response, "Chat");
-        BasicNameValuePair chatRoom = parse.parseDataToPair(response, "ChatRoom");
-        BasicNameValuePair chatMember = parse.parseDataToPair(response, "ChatMember");
-//        Log.d("ParsingTest", parse.parseJsonObject(response, "ChatRoom"));
-
-        String parsedResult = "";
-
-        parsedResult = parse.parseJsonObject(response, "Result").toString();
-        Log.d("parsedResult", parsedResult);
-        String parsedChatRoom1 = parse.parseJsonObject(response, "ChatRoom");
-        JSONArray parsedChatRoom2 = parse.parseJsonArray(parsedChatRoom1);
-        String parsedChatRoom3;
-        String parsedChatRoom4;
-
-        for(int i =0; i< parsedChatRoom2.length(); i++) {
-
-            try {
-                Log.d("JsonArray", parsedChatRoom2.get(i).toString());
-                parsedChatRoom3 = parse.parseJsonObject(parsedChatRoom2.get(i).toString(), "chatroom");
-                Log.d("Test chatroom", parsedChatRoom3);
-                parsedChatRoom4 = parse.parseJsonObject(parsedChatRoom3.toString(), "PKey");
-                Log.d("Test PKey", parsedChatRoom4);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-//        for(int i=0; i<par)
-
-//        Log.d("parseChatRoom Test", parsedChatRoom);
-
-
-        chatRoom.getValue();
-
         try {
-            JSONArray jsonArray = new JSONArray(chatRoom.getValue());
 
-            for(int i=0; i<jsonArray.length(); i++) {
+            parsedResult = parse.parseJsonObject(response, "Result");
+            Log.d("parsedResult", parsedResult);
 
-                JSONObject chatRoonJson = new JSONObject(jsonArray.get(i).toString());
-                parsedDataList = parse.parseDataToList(chatRoonJson.toString(), "chatroom");
+            chatRoomArray = parse.jsonArrayInObject(response, "ChatRoom");
 
-            }
+            for (int i = 0; i < chatRoomArray.length(); i++) {
 
+                Log.d("JsonArray", chatRoomArray.get(i).toString());
+                chatRoomData = parse.doubleJsonObject(chatRoomArray.get(i).toString(), "chatroom");
 
-            Log.d("NameValuePair Result", result.getValue());
-            Log.d("NameValuePair Chat", chat.getValue());
-            Log.d("NameValuePair ChatRoom", chatRoom.getValue());
-//            Log.d("Parsed ChatRoom", );
-            Log.d("NameValuePair ChatMem", chatMember.getValue());
-
-            for(int i = 0; i< parsedDataList.size(); i++) {
-
-                Log.d("ArrayList", parsedDataList.get(i).getValue());
-//                ArrayList<BasicNameValuePair> pair = (ArrayList<BasicNameValuePair>) parsedDataList;
-//                Log.d("test", pair.get(i).getValue());
-
+                Log.d("chatRoomPkey", chatRoomData.getString("PKey"));
+                Log.d("chatRoomName", chatRoomData.getString("Name"));
+                Log.d("chatRoomLongitude", chatRoomData.getString("Longitude"));
+                Log.d("chatRoomLatitude", chatRoomData.getString("Latitude"));
+                Log.d("chatRoomCreatedDate", chatRoomData.getString("CreatedDate"));
+                Log.d("chatRoomUpdatedDate", chatRoomData.getString("UpdatedDate"));
 
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-
-        if(result != null)
-
-
         BaseActivity.ShowDoubleArray(db.selectQuery("select * from Chat;"));
 
-        if(serverChatPkey <= localChatPkey) {
+        if (serverChatPkey <= localChatPkey) {
             //update
 //            db.query("update Chat set ");
 
@@ -116,7 +69,7 @@ public class DataSyncController {
 
         }
 
-        if(serverChatRoomPkey <= localChatRoomPkey) {
+        if (serverChatRoomPkey <= localChatRoomPkey) {
             //update
 
 
@@ -125,7 +78,7 @@ public class DataSyncController {
 
         }
 
-        if(serverChatMemberPkey <= localChatMemberPkey) {
+        if (serverChatMemberPkey <= localChatMemberPkey) {
             //update
 
 
@@ -133,7 +86,6 @@ public class DataSyncController {
             //insert
 //            db.query("insert into ");
         }
-
 
 
     }

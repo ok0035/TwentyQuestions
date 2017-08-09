@@ -24,7 +24,8 @@ public class ParseData {
     public ParseData() {
 
     }
-//    인자 : 2차 배열 JSON Array (String)
+
+    //    인자 : 2차 배열 JSON Array (String)
     public String[][] getDoubleArrayData(String toParsingData) {
 
         mToParsingData = toParsingData;
@@ -109,12 +110,12 @@ public class ParseData {
 
 
     //Result : GETFULLDATA등 Result의 값을 뽑아내는 메소드
-    public  BasicNameValuePair parseDataToPair(String response, String Key){
+    public BasicNameValuePair parseDataToPair(String response, String Key) {
         try {
             this.KEY = Key;
             this.jsonResponse = new JSONObject(response);
             convertJSonObject = jsonResponse.getString(KEY);
-            parseObjectPair= new BasicNameValuePair(KEY,convertJSonObject);
+            parseObjectPair = new BasicNameValuePair(KEY, convertJSonObject);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -122,24 +123,25 @@ public class ParseData {
         return parseObjectPair;
 
     }
+
     // table의 값들을 뽑아내서 List<BasicNameValue>형태로 저장하는 메소드
-    public  ArrayList parseDataToList(String response, String Key){
+    public ArrayList parseDataToList(String response, String Key) {
         try {
             this.KEY = Key;
             parsePairList = new ArrayList<>();
             response = response.replace("[", "");
             response = response.replace("]", "");
             JSONObject json = new JSONObject(response);
-            tableObject= json.getJSONObject(KEY);
+            tableObject = json.getJSONObject(KEY);
             Iterator iterator = tableObject.keys();
             ArrayList<String> keyList = new ArrayList<>();
             while (iterator.hasNext()) {
                 String key = iterator.next().toString();
                 keyList.add(key);
             }
-                for (int j = 0; j < keyList.size(); j++) {
-                    String value = tableObject.getString(keyList.get(j));
-                    parsePairList.add(new BasicNameValuePair(keyList.get(j), value));
+            for (int j = 0; j < keyList.size(); j++) {
+                String value = tableObject.getString(keyList.get(j));
+                parsePairList.add(new BasicNameValuePair(keyList.get(j), value));
             }
 
         } catch (JSONException e) {
@@ -149,7 +151,8 @@ public class ParseData {
         return parsePairList;
     }
 
-    public String parseJsonObject(String response, String Key) {
+    // JSonObject 안에 원하는 값이 있을 경우 키값을 이용해 원하는 값만 꺼내올 수 있다.
+    public String parseJsonObject(String response, String Key) throws JSONException {
         String result = null;
         try {
             JSONObject json = new JSONObject(response);
@@ -161,16 +164,82 @@ public class ParseData {
         return result;
     }
 
-    public JSONArray parseJsonArray(String response) {
-        String result = "";
-        JSONArray json = null;
+    // JsonArray 형식으로 반환
+    public JSONArray parseJsonArray(String response) throws JSONException {
+
+        JSONArray jsonArr = null;
         try {
-            json = new JSONArray(response);
+            jsonArr = new JSONArray(response);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return json;
+        return jsonArr;
+    }
+
+    //JsonObject 안에 JsonArray가 있는경우
+    /*
+    table : "ChatRoom"
+    {
+            "chatroom"
+            {
+                    PKey : PKey
+                    Name : Name
+                    Longitude : Longitude
+
+            }
+
+            "chatroom"
+            {
+                    PKey : PKey
+                    Name : Name
+                    Longitude : Longitude
+
+            }
+    }
+
+    예 / jsonArrayInObject(data, "ChatRoom");
+        과 같이 사용하면 JsonArray를 얻을 수 있다.
+
+    활용 / doubleJsonObject(jsonArrayInObject(data, "ChatRoom").get(i).toString(), "chatroom").getString("PKey");
+        i번째 chatroom의 PKey를 알 수 있다.
+
+     */
+    public JSONArray jsonArrayInObject(String data, String Key) throws JSONException {
+
+        JSONArray result = null;
+        try {
+            JSONObject json = new JSONObject(data);
+            result = json.getJSONArray(Key);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    /*
+    JSonObject 안에 JSonObject가 있는 경우 오브젝트 안에 있는 오브젝트를 반환한다.
+
+    Key : data {
+        {Key2 : data2, Key3 : data3, Key4 : data4...}
+    } 이런경우 doubleJsonObject(data, key1).getString(key2);와 같이 사용하면 data2을 얻을 수 있다.
+
+     */
+    public JSONObject doubleJsonObject(String data, String Key) throws JSONException {
+
+        JSONObject json = null;
+        JSONObject result = null;
+        try {
+            json = new JSONObject(data);
+            result = new JSONObject(json.getString(Key));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+
     }
 
 }
