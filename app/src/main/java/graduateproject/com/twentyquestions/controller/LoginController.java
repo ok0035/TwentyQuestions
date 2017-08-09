@@ -6,25 +6,22 @@ package graduateproject.com.twentyquestions.controller;
 
 
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
-import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import graduateproject.com.twentyquestions.util.ParseData;
 
 public class LoginController {
 
-    private ArrayList<BasicNameValuePair> parseList;
+    private ArrayList<ArrayList<BasicNameValuePair>> parseList;
 
 
-    public ArrayList<BasicNameValuePair> getParseList() {
+    public ArrayList<ArrayList<BasicNameValuePair>> getParseList() {
         return parseList;
     }
 
@@ -79,24 +76,30 @@ public class LoginController {
 //            e.printStackTrace();
 //        }
 //
-        ParseData Result = new ParseData(responseData, "Result");
-        ParseData State = new ParseData(responseData, "State");
+        ParseData Result = new ParseData();
 
 
-        String stringResult = Result.parseDataObject().getValue();
-        String stringState = State.parseDataObject().getValue();
+        parseList = new ArrayList<>();
 
-        if (stringResult.equals("TRYREGIST") || Result.equals("TRYLOGIN")) { // TryRegist의 result 값인지 확인
-            if (stringState.equals("REGIST_SUCCESS") || State.equals("REGIST_SUCCESS")) {
+        String stringResult = Result.parseDataToPair(responseData, "Result").getValue();
+        String stringState = Result.parseDataToPair(responseData, "State").getValue();
+
+        if (stringResult.equals("TRYREGIST") || stringResult.equals("TRYLOGIN")) { // TryRegist의 result 값인지 확인
+            if (stringState.equals("REGIST_SUCCESS") || stringState.equals("REGIST_SUCCESS")) {
                 Log.d("stringResult", stringResult);
                 Log.d("stringState", stringState);
 
-                ParseData User = new ParseData(responseData, "User");
-                parseList = User.parseDataArray();
-//                for (BasicNameValuePair basicNameValuePair : arrayUser) {
-//                    Log.d("Key : ", basicNameValuePair.getName());
-//                    Log.d("value : ", basicNameValuePair.getValue());
-//                }
+                try {
+                    JSONObject jsonObject = new JSONObject(responseData);
+                    JSONArray jsonArray= jsonObject.getJSONArray("User"); // 테이블 명 데이터 가져오기
+                    for(int i = 0 ; i < jsonArray.length() ; i++){
+                        ArrayList<BasicNameValuePair> pair = Result.parseDataToList(jsonArray.getJSONObject(i),"user"); //레코드 명 데이터 가져오기
+                        parseList.add(pair);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             } else {
                 return false;

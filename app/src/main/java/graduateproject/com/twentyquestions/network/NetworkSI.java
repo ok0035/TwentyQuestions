@@ -84,7 +84,6 @@ public class NetworkSI {
                 public void onSuccess(String response) {
 
 
-
                     Log.d("response", response);
                 }
 

@@ -18,14 +18,16 @@ public class DBSI extends SQLiteOpenHelper{
 //    private static DBSI db;
 
     SQLiteDatabase db;
+    private String[][] result;
 
     public DBSI(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
 
     }
 
-    public DBSI(Context context) {
-        super(context, "twentyQuestions.db" , null, 1);
+    public DBSI() {
+        super(BaseActivity.mContext, "twentyQuestions.db" , null, 1);
+        result = null;
     }
 
 //    public static DBSI getInstance() {
@@ -53,15 +55,40 @@ public class DBSI extends SQLiteOpenHelper{
 
     }
 
-    public void openWriting() {
+    public void query(String query) {
 
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.execSQL(query);
+
+        db.close();
+
+    }
+
+    public String[][] selectQuery(String query) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if(cursor.getCount() != 0) {
+
+            this.result = new String[cursor.getCount()][cursor.getColumnCount()];
+
+            cursor.moveToFirst();
+
+            for(int i = 0; i<cursor.getCount(); i++) {
+                for(int j =0; j<cursor.getColumnCount(); j++) {
+                    this.result[i][j] = cursor.getString(j);
+                }
+            }
+        }
+        return result;
 
     }
 
     public void insertUserInfo() throws SQLiteException {
         // 읽고 쓰기가 가능하게 DB 열기
 
-        DBSI dbh = new DBSI(BaseActivity.mContext);
         SQLiteDatabase db = getWritableDatabase();
 //         DB에 입력한 값으로 행 추가
 
@@ -90,12 +117,21 @@ public class DBSI extends SQLiteOpenHelper{
         // DB에 있는 데이터를 쉽게 처리하기 위해 Cursor를 사용하여 테이블에 있는 모든 데이터 출력
         Cursor cursor = db.rawQuery("SELECT PKey, ID, Password FROM User", null);
         while (cursor.moveToNext()) {
+
             result += cursor.getString(0)
                     + "/"
                     + cursor.getString(1)
                     + "/"
                     + cursor.getString(2);
         }
+
+//        cursor.moveToFirst();
+//        this.result = new String[cursor.getCount()][cursor.getColumnCount()];
+//        for(int i = 0; i<cursor.getCount(); i++) {
+//            for(int j =0; j<cursor.getColumnCount(); j++) {
+//                this.result[i][j] = cursor.getString(j);
+//            }
+//        }
 
         db.close();
 

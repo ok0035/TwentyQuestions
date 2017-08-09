@@ -102,23 +102,17 @@ public class ParseData {
     private JSONObject jsonResponse;
 
     private BasicNameValuePair parseObjectPair;
-    private ArrayList<BasicNameValuePair> parseList;
+    private ArrayList<BasicNameValuePair> parsePairList;
 
     private String convertJSonObject = null;
-    private JSONArray tableArray = null;
+    private JSONObject tableObject = null;
 
-    public ParseData(String response, String Key){
-        this.KEY = Key;
+
+    //Result : GETFULLDATA등 Result의 값을 뽑아내는 메소드
+    public  BasicNameValuePair parseDataToPair(String response, String Key){
         try {
+            this.KEY = Key;
             this.jsonResponse = new JSONObject(response);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public  BasicNameValuePair parseDataObject(){
-
-        try {
             convertJSonObject = jsonResponse.getString(KEY);
             parseObjectPair= new BasicNameValuePair(KEY,convertJSonObject);
 
@@ -128,22 +122,21 @@ public class ParseData {
         return parseObjectPair;
 
     }
-
-    public  ArrayList parseDataArray(){
+    // table의 값들을 뽑아내서 List<BasicNameValue>형태로 저장하는 메소드
+    public  ArrayList parseDataToList(JSONObject response, String Key){
         try {
-            parseList = new ArrayList<>();
-            tableArray = jsonResponse.getJSONArray(KEY);
-            Iterator iterator = tableArray.getJSONObject(0).keys();
+            this.KEY = Key;
+            parsePairList = new ArrayList<>();
+            tableObject= response.getJSONObject(KEY);
+            Iterator iterator = tableObject.keys();
             ArrayList<String> keyList = new ArrayList<>();
             while (iterator.hasNext()) {
                 String key = iterator.next().toString();
                 keyList.add(key);
             }
-            for (int i = 0; i < tableArray.length(); i++) {
                 for (int j = 0; j < keyList.size(); j++) {
-                    String value = tableArray.getJSONObject(i).getString(keyList.get(j));
-                    parseList.add(new BasicNameValuePair(keyList.get(j), value));
-                }
+                    String value = tableObject.getString(keyList.get(j));
+                    parsePairList.add(new BasicNameValuePair(keyList.get(j), value));
             }
 
         } catch (JSONException e) {
@@ -151,7 +144,7 @@ public class ParseData {
         }
 
 
-        return parseList;
+        return parsePairList;
     }
 
 

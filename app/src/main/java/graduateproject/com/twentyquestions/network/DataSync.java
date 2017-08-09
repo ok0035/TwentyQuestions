@@ -107,6 +107,9 @@ public class DataSync extends Thread {
         @Override
         public void run() {
 
+            String response;
+
+            DataSyncController datasyncController = new DataSyncController();
             NetworkSI networkSI = new NetworkSI();
 
             if(isSyncing && needSyncing == false) {
@@ -119,7 +122,9 @@ public class DataSync extends Thread {
 
                 Log.d("Sync", "DoSync");
                 isSyncing = true;
-                String response = networkSI.request(Command.GETFULLDATA, "data");
+                response = networkSI.request(Command.GETFULLDATA, "data");
+                datasyncController.updateData(response);
+
                 Log.d("RequestResponse : " , "Data " + response);
 
                 isSyncing = false;
@@ -128,7 +133,8 @@ public class DataSync extends Thread {
                     Log.d("Sync", "needSyncing");
 
                     isSyncing = true;
-                    networkSI.request(Command.GETFULLDATA, "data");
+                    response = networkSI.request(Command.GETFULLDATA, "data");
+                    datasyncController.updateData(response);
                     isSyncing = false;
 
                     needSyncing = false;

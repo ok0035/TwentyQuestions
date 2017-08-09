@@ -52,10 +52,22 @@ public class MainView extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout);
 
+
+
         DataSync.getInstance().Timer();
         getLocation();
 
         final DBSI db = new DBSI(mContext, "TwentyQuestions.db", null, 1);
+
+        db.query("insert into Chat(Pkey, ChatRoomPkey, UserPkey, ChatText, CreatedDate) Values(1, 1, 3, 'asdf', datetime('now','localtime'))");
+
+        String[][] test1 = db.selectQuery("select * from Chat");
+
+        for(int i = 0; i> test1.length; i++) {
+            for(int j = 0; j< test1[i].length; j++) {
+                System.out.println("i : " + i + ", j : " + test1[i][j]);
+            }
+        }
 
         db.insertUserInfo();
 
@@ -157,9 +169,7 @@ public class MainView extends BaseActivity {
                 public void run() {
 
                     for (String name : m_lstProviders) {
-                        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-                        }
+
                         locationManager.requestLocationUpdates(name, 1, 0, locationListener);
                     }
                     Log.d("test", "location");

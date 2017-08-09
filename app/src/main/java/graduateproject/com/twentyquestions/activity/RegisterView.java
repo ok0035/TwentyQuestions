@@ -22,6 +22,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import graduateproject.com.twentyquestions.R;
 import graduateproject.com.twentyquestions.controller.LoginController;
 import graduateproject.com.twentyquestions.network.DataSync;
@@ -87,12 +89,20 @@ public class RegisterView extends BaseActivity {
                 String response = networkSI.request(DataSync.Command.TRYREGIST, User.toString());
 
                 LoginController loginController = new LoginController();
-                loginController.parseLoginData(response);
+//                loginController.parseLoginData(response);
                 if(loginController.parseLoginData(response)) {
-                    // DBSI호출 후, query 실행//
-                    for (BasicNameValuePair basicNameValuePair : loginController.getParseList()) {
-                        Log.d("Key : ", basicNameValuePair.getName());
-                        Log.d("value : ", basicNameValuePair.getValue());
+                    for(int i = 0 ; i < loginController.getParseList().size() ; i++){
+                        // getParseList는 이중 리스트 구조
+                        // 즉, List<BasicNameValuePair>를 가지고 있는 List
+                        Log.d(i+"번째 list","....");
+                        ArrayList<ArrayList<BasicNameValuePair>> doubleList = loginController.getParseList();
+                        for(int j = 0 ; j < doubleList .get(i).size() ; j++){
+                            ArrayList<BasicNameValuePair> pairList = doubleList.get(i);
+                            Log.d("KEY",pairList.get(j).getName());
+                            Log.d("Value",pairList.get(j).getValue());
+                        }
+                        // DBSI호출 후, query 실행//
+
                     }
                 }
 

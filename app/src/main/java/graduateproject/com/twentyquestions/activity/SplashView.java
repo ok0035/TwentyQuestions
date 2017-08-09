@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import graduateproject.com.twentyquestions.R;
+import graduateproject.com.twentyquestions.network.DBSI;
 
 import static graduateproject.com.twentyquestions.util.CalculatePixel.calculatePixelX;
 import static graduateproject.com.twentyquestions.util.CalculatePixel.calculatePixelY;
@@ -31,6 +32,10 @@ public class SplashView extends BaseActivity {
     @Override
     public void setUpEvents() {
         super.setUpEvents();
+
+        DBSI db = new DBSI();
+
+        db.query("");
 
     }
 
