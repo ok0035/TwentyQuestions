@@ -2,12 +2,15 @@ package graduateproject.com.twentyquestions.network;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
  * Created by mapl0 on 2017-08-01.
- *
+ * <p>
  * 전역으로 접근하는 DataSync 와 NetworkSI 는 DataSync.getInstance.doSync, NetworkSI.getInstance.request(data)와 같이 접근한다.
  */
 
@@ -17,7 +20,7 @@ public class DataSync extends Thread {
     private static DataSync sync;
     private static boolean timerFlag = false;
 
-    public static enum DeviceType { IPHONE, ANDROID, WEB, PC, ECT }
+    public static enum DeviceType {IPHONE, ANDROID, WEB, PC, ECT}
 
     public static enum Command {
 
@@ -57,7 +60,7 @@ public class DataSync extends Thread {
 
     public static DataSync getInstance() {
 
-        if(sync == null)
+        if (sync == null)
             sync = new DataSync();
 
         return sync;
@@ -68,7 +71,7 @@ public class DataSync extends Thread {
 
 //        new DataSync(new TimerRunnable()).start();
 
-        if(timerFlag == false) {
+        if (timerFlag == false) {
 
             Timer timer = new Timer();
             TimerTask timerTask = new TimerTask() {
@@ -112,7 +115,7 @@ public class DataSync extends Thread {
             DataSyncController datasyncController = new DataSyncController();
             NetworkSI networkSI = new NetworkSI();
 
-            if(isSyncing && needSyncing == false) {
+            if (isSyncing && needSyncing == false) {
 
                 Log.d("Sync", "isSyncing & !needSyncing");
                 needSyncing = true;
@@ -122,18 +125,18 @@ public class DataSync extends Thread {
 
                 Log.d("Sync", "DoSync");
                 isSyncing = true;
-                response = networkSI.request(Command.GETFULLDATA, "data");
+                response = networkSI.request(Command.GETFULLDATA, getFullData());
                 datasyncController.updateData(response);
 
-                Log.d("RequestResponse : " , "Data " + response);
+                Log.d("RequestResponse : ", "Data " + response);
 
                 isSyncing = false;
 
-                if(needSyncing) {
+                if (needSyncing) {
                     Log.d("Sync", "needSyncing");
 
                     isSyncing = true;
-                    response = networkSI.request(Command.GETFULLDATA, "data");
+                    response = networkSI.request(Command.GETFULLDATA, getFullData());
                     datasyncController.updateData(response);
                     isSyncing = false;
 
@@ -154,6 +157,37 @@ public class DataSync extends Thread {
 
             }
         }
+    }
+
+    public String getFullData() {
+
+
+        JSONObject data = new JSONObject();
+        JSONObject chat = new JSONObject();
+        JSONObject chatMember = new JSONObject();
+        JSONObject chatRoom = new JSONObject();
+
+        try {
+
+            chatRoom.put("PKey", "1");
+            chatRoom.put("UpdatedDate", "2017-08-03 13:05:31");
+
+            chat.put("PKey", "1");
+            chat.put("CreatedDate", "2017-08-03 14:28:47");
+
+            chatMember.put("PKey", "1");
+            chatMember.put("UpdatedDate", "2017-08-03 00:30:00");
+
+            data.put("ChatRoom", chatRoom);
+            data.put("Chat", chat);
+            data.put("ChatMember", chatMember);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return data.toString();
     }
 
 //    private class TimerRunnable implements Runnable {

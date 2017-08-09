@@ -82,6 +82,8 @@ public class DBSI extends SQLiteOpenHelper{
                 }
             }
         }
+
+        db.close();
         return result;
 
     }

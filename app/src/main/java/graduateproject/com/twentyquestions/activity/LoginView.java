@@ -125,8 +125,4 @@ public class LoginView extends BaseActivity {
 
     }
 
-
-
-
-
 }

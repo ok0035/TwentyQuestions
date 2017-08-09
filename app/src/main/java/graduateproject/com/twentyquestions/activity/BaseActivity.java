@@ -117,6 +117,27 @@ public class BaseActivity extends AppCompatActivity{
 
     }
 
+    public static void ShowDoubleArray(String[][] data) {
+
+        if(data != null) {
+
+            for(int i = 0; i< data.length; i++) {
+                for(int j =0; j<data[i].length; j++) {
+
+                    Log.d("DoubleArrayResult[" + i + "][" + j + "]", data[i][j]);
+
+                }
+            }
+        } else {
+
+            Log.d("data", "data is null");
+
+        }
+
+
+
+    }
+
 
 
 }

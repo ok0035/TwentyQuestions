@@ -123,11 +123,14 @@ public class ParseData {
 
     }
     // table의 값들을 뽑아내서 List<BasicNameValue>형태로 저장하는 메소드
-    public  ArrayList parseDataToList(JSONObject response, String Key){
+    public  ArrayList parseDataToList(String response, String Key){
         try {
             this.KEY = Key;
             parsePairList = new ArrayList<>();
-            tableObject= response.getJSONObject(KEY);
+            response = response.replace("[", "");
+            response = response.replace("]", "");
+            JSONObject json = new JSONObject(response);
+            tableObject= json.getJSONObject(KEY);
             Iterator iterator = tableObject.keys();
             ArrayList<String> keyList = new ArrayList<>();
             while (iterator.hasNext()) {
@@ -143,9 +146,31 @@ public class ParseData {
             e.printStackTrace();
         }
 
-
         return parsePairList;
     }
 
+    public String parseJsonObject(String response, String Key) {
+        String result = null;
+        try {
+            JSONObject json = new JSONObject(response);
+            result = json.getString(Key);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public JSONArray parseJsonArray(String response) {
+        String result = "";
+        JSONArray json = null;
+        try {
+            json = new JSONArray(response);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
 
 }

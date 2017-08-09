@@ -93,7 +93,7 @@ public class LoginController {
                     JSONObject jsonObject = new JSONObject(responseData);
                     JSONArray jsonArray= jsonObject.getJSONArray("User"); // 테이블 명 데이터 가져오기
                     for(int i = 0 ; i < jsonArray.length() ; i++){
-                        ArrayList<BasicNameValuePair> pair = Result.parseDataToList(jsonArray.getJSONObject(i),"user"); //레코드 명 데이터 가져오기
+                        ArrayList<BasicNameValuePair> pair = Result.parseDataToList(jsonArray.getJSONObject(i).toString(),"user"); //레코드 명 데이터 가져오기
                         parseList.add(pair);
                     }
 

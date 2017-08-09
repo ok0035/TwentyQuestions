@@ -36,9 +36,9 @@ public class NetworkSI {
         userInfo = db.getUserInfo().split("/");
 
         Log.d("command", DataSync.Command.GETFULLDATA.toString() + ".............................................................................");
-        Log.d("version_baseOS", Build.VERSION.BASE_OS + "");
-//        Log.d("version_codename", Build. + "");
-        Log.d("version_release", Build.VERSION.RELEASE + "");
+//        Log.d("version_baseOS", Build.VERSION.BASE_OS + "");
+////        Log.d("version_codename", Build. + "");
+//        Log.d("version_release", Build.VERSION.RELEASE + "");
 
         JSONObject packet = new JSONObject();
 
@@ -72,7 +72,7 @@ public class NetworkSI {
         ArrayList<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("packet", packet.toString()));
         params.add(new BasicNameValuePair("command", command.toString()));
-        params.add(new BasicNameValuePair("data", data));
+        params.add(new BasicNameValuePair("data", data.toString()));
 
         JSONArray jsonarr = new JSONArray(params);
 
