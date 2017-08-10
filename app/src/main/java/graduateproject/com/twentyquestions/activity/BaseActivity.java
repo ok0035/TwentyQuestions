@@ -124,7 +124,7 @@ public class BaseActivity extends AppCompatActivity{
             for(int i = 0; i< data.length; i++) {
                 for(int j =0; j<data[i].length; j++) {
 
-                    Log.d("DoubleArrayResult[" + i + "][" + j + "]", data[i][j]);
+                    System.out.println("DoubleArrayResult[" + i + "][" + j + "] : " + data[i][j]);
 
                 }
             }
