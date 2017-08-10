@@ -32,7 +32,6 @@ public class NetworkSI {
         //패킷 정보
 
         final DBSI db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
-        db.insertUserInfo();
         userInfo = db.getUserInfo().split("/");
 
         Log.d("command", DataSync.Command.GETFULLDATA.toString() + ".............................................................................");
@@ -72,7 +71,7 @@ public class NetworkSI {
         ArrayList<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("packet", packet.toString()));
         params.add(new BasicNameValuePair("command", command.toString()));
-        params.add(new BasicNameValuePair("data", data.toString()));
+        params.add(new BasicNameValuePair("data", data));
 
         JSONArray jsonarr = new JSONArray(params);
 

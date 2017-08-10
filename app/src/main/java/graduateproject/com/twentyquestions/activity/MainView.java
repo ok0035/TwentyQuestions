@@ -1,10 +1,7 @@
 package graduateproject.com.twentyquestions.activity;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,7 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -52,12 +48,15 @@ public class MainView extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout);
 
-
+        final DBSI db = new DBSI(mContext, "TwentyQuestions.db", null, 1);
+        db.insertUserInfo();
 
         DataSync.getInstance().Timer();
+        DataSync.getInstance().doSync();
         getLocation();
 
-        final DBSI db = new DBSI(mContext, "TwentyQuestions.db", null, 1);
+
+
 
         db.query("insert into Chat(Pkey, ChatRoomPkey, UserPkey, ChatText, CreatedDate) Values(1, 1, 3, 'asdf', datetime('now','localtime'))");
 
@@ -69,7 +68,7 @@ public class MainView extends BaseActivity {
             }
         }
 
-        db.insertUserInfo();
+
 
         this.textview1 = (TextView) findViewById(R.id.textview1);
         this.test = (Button) findViewById(R.id.test);

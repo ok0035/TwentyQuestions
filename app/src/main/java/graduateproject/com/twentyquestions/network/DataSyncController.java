@@ -15,7 +15,7 @@ import graduateproject.com.twentyquestions.util.ParseData;
 
 public class DataSyncController {
 
-    private int localChatPkey = 0;
+    private int localChatPKey = 0;
     private int localChatRoomPkey = 0;
     private int localChatMemberPkey = 0;
 
@@ -25,7 +25,14 @@ public class DataSyncController {
 
     private JSONArray chatRoomArray;
     private JSONObject chatRoomData;
-    private String parsedResult = "";
+
+    private JSONArray chatArray;
+    private JSONObject chatData;
+
+    private JSONArray chatMemberArray;
+    private JSONObject chatMemberData;
+
+    private String reesult = "";
 
     public void updateData(String response) {
 
@@ -34,10 +41,25 @@ public class DataSyncController {
 
         try {
 
-            parsedResult = parse.parseJsonObject(response, "Result");
-            Log.d("parsedResult", parsedResult);
+            reesult = parse.parseJsonObject(response, "Result");
+            Log.d("reesult", reesult);
 
             chatRoomArray = parse.jsonArrayInObject(response, "ChatRoom");
+            chatArray = parse.jsonArrayInObject(response, "Chat");
+            chatMemberArray = parse.jsonArrayInObject(response, "ChatMember");
+
+            String[] userInfo = db.getUserInfo().split("/");
+//            System.out.println(Integer.parseInt(userInfo[0]));
+
+            String[][] localChatRoomArray = db.selectQuery("select * from ChatRoom");
+            String[][] localChatArray = db.selectQuery("select * from Chat");
+            String[][] localChatMemberArray = db.selectQuery("select * from ChatMember");
+
+            BaseActivity.ShowDoubleArray(localChatRoomArray);
+            BaseActivity.ShowDoubleArray(localChatArray);
+            BaseActivity.ShowDoubleArray(localChatMemberArray);
+
+            System.out.println("========================================================================================================================================");
 
             for (int i = 0; i < chatRoomArray.length(); i++) {
 
@@ -51,42 +73,73 @@ public class DataSyncController {
                 Log.d("chatRoomCreatedDate", chatRoomData.getString("CreatedDate"));
                 Log.d("chatRoomUpdatedDate", chatRoomData.getString("UpdatedDate"));
 
+//                if(chatRoomData.getInt("PKey") <= localChatRoomPKey) {
+//                    db.query("");
+//
+//                } else {
+//                    db.query("");
+//
+//                }
+
+                System.out.println("========================================================================================================================================");
+
             }
+
+            System.out.println("========================================================================================================================================");
+
+            for(int i=0; i<chatArray.length(); i++) {
+                chatData = parse.doubleJsonObject(chatArray.get(i).toString(), "chat");
+
+                Log.d("chatPkey", chatData.getString("PKey"));
+                Log.d("chatRoomPKey", chatData.getString("ChatRoomPKey"));
+                Log.d("chatUserPKey", chatData.getString("UserPKey"));
+                Log.d("chatLatitude", chatData.getString("ChatText"));
+                Log.d("chatCount", chatData.getString("Count"));
+                Log.d("chatType", chatData.getString("Type"));
+                Log.d("chatCreatedDate", chatData.getString("CreatedDate"));
+
+//                if(chatData.getInt("PKey") <= localChatPKey) {
+//                    db.query("");
+//
+//                } else {
+//                    db.query("");
+//
+//                }
+
+                System.out.println("========================================================================================================================================");
+
+            }
+
+            System.out.println("========================================================================================================================================");
+
+            for(int i=0; i<chatMemberArray.length(); i++) {
+
+                chatMemberData = parse.doubleJsonObject(chatMemberArray.get(i).toString(), "chatmember");
+
+                Log.d("chatMemberPkey", chatMemberData.getString("PKey"));
+                Log.d("chatMemberName", chatMemberData.getString("RoomPKey"));
+                Log.d("chatMemberStatus", chatMemberData.getString("Status"));
+                Log.d("chatMemberNotify", chatMemberData.getString("Notify"));
+                Log.d("chatMemberCreatedDate", chatMemberData.getString("CreatedDate"));
+                Log.d("chatMemberUpdatedDate", chatMemberData.getString("UpdatedDate"));
+
+//                if(chatMemberData.getInt("PKey") <= localChatMemberPkey) {
+//                    db.query("");
+//
+//                } else {
+//                    db.query("");
+//
+//                }
+
+                System.out.println("========================================================================================================================================");
+
+            }
+
+            System.out.println("========================================================================================================================================");
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        BaseActivity.ShowDoubleArray(db.selectQuery("select * from Chat;"));
-
-        if (serverChatPkey <= localChatPkey) {
-            //update
-//            db.query("update Chat set ");
-
-        } else {
-            //insert
-//            db.query("insert into Chat values ()");
-
-        }
-
-        if (serverChatRoomPkey <= localChatRoomPkey) {
-            //update
-
-
-        } else {
-            //insert
-
-        }
-
-        if (serverChatMemberPkey <= localChatMemberPkey) {
-            //update
-
-
-        } else {
-            //insert
-//            db.query("insert into ");
-        }
-
 
     }
 
