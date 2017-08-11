@@ -32,7 +32,17 @@ public class NetworkSI {
         //패킷 정보
 
         final DBSI db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
-        userInfo = db.getUserInfo().split("/");
+
+        String[][] userInfo = db.selectQuery("SELECT PKey, ID, Password FROM User");
+
+        if(userInfo == null) {
+
+            userInfo = new String[1][3];
+            userInfo[0][0] = "1";
+            userInfo[0][1] = "admin";
+            userInfo[0][2] = "admin0101";
+
+        }
 
         Log.d("command", DataSync.Command.GETFULLDATA.toString() + ".............................................................................");
 //        Log.d("version_baseOS", Build.VERSION.BASE_OS + "");
@@ -41,9 +51,9 @@ public class NetworkSI {
 
         JSONObject packet = new JSONObject();
 
-        Log.d("UserPKey", userInfo[0]);
-        Log.d("ID", userInfo[1]);
-        Log.d("Password", userInfo[2]);
+        Log.d("UserPKey", userInfo[0][0]);
+        Log.d("ID", userInfo[0][1]);
+        Log.d("Password", userInfo[0][2]);
         Log.d("UDID", Build.ID);
         Log.d("DeviceType", Build.BRAND);
         Log.d("DeviceName", Build.MODEL);
@@ -53,9 +63,9 @@ public class NetworkSI {
 
 
         try {
-            packet.put("PKey", userInfo[0]);
-            packet.put("ID", userInfo[1]);
-            packet.put("Password", userInfo[2]);
+            packet.put("PKey", userInfo[0][0]);
+            packet.put("ID", userInfo[0][1]);
+            packet.put("Password", userInfo[0][2]);
             packet.put("UDID", Build.ID);
             packet.put("DeviceType", "1");
             packet.put("DeviceName", Build.MODEL);

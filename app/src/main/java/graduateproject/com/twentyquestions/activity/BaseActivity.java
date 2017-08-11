@@ -117,14 +117,14 @@ public class BaseActivity extends AppCompatActivity{
 
     }
 
-    public static void ShowDoubleArray(String[][] data) {
+    public static void ShowDoubleArray(String description, String[][] data) {
 
-        if(data != null) {
+        if (data != null) {
 
-            for(int i = 0; i< data.length; i++) {
-                for(int j =0; j<data[i].length; j++) {
+            for (int i = 0; i < data.length; i++) {
+                for (int j = 0; j < data[i].length; j++) {
 
-                    System.out.println("DoubleArrayResult[" + i + "][" + j + "] : " + data[i][j]);
+                    System.out.println(description + " : " + data[i][j]);
 
                 }
             }
@@ -134,10 +134,6 @@ public class BaseActivity extends AppCompatActivity{
 
         }
 
-
-
     }
-
-
 
 }

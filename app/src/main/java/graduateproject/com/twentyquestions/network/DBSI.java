@@ -3,7 +3,6 @@ package graduateproject.com.twentyquestions.network;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -74,33 +73,36 @@ public class DBSI extends SQLiteOpenHelper{
 
             this.result = new String[cursor.getCount()][cursor.getColumnCount()];
 
+//            Log.d("getCount", cursor.getCount() + "");
+//            Log.d("getColumnCount", cursor.getColumnCount() + "");
+
             cursor.moveToFirst();
 
-            for(int i = 0; i<cursor.getCount(); i++) {
-                for(int j =0; j<cursor.getColumnCount(); j++) {
+            int i = 0;
+
+            do {
+
+                for(int j = 0; j< cursor.getColumnCount(); j++) {
+
                     this.result[i][j] = cursor.getString(j);
+                    System.out.println("Select Result........" + cursor.getColumnName(j) + "... : " + cursor.getString(j));
+
                 }
-            }
+
+                System.out.println("========================================================================================================");
+
+                i++;
+//                System.out.println("moveToNext...." + cursor.moveToNext());
+            } while (cursor.moveToNext());
+
+        } else {
+            Log.d("SelectNULL", "NULL");
+            result = null;
         }
 
         db.close();
         return result;
 
-    }
-
-    public void insertUserInfo() throws SQLiteException {
-        // 읽고 쓰기가 가능하게 DB 열기
-
-        SQLiteDatabase db = getWritableDatabase();
-//         DB에 입력한 값으로 행 추가
-
-        db.execSQL("delete from User");
-        db.execSQL("INSERT INTO User(PKey, ID, Password, NickName, LoginType, Gender, Birthday, CreatedDate, UpdatedDate) " +
-                        "VALUES('1', 'ok0035', '1111', 'asdf', '0', '0', '19930116', '10:10', '10:10');");
-//
-//        db.execSQL("INSERT INTO Letter(Sender, Receiver, TableName, TablePKey, IsLock, IsRead, Type, Title, Content, CreatedDate, UpdatedDate) " +
-//                "VALUES('2', '2', '2', '2', '1', '1', '1', '1', '1', '10:10', '10:10');");
-        db.close();
     }
 
     public void update(String item, String price) {
@@ -182,6 +184,25 @@ public class DBSI extends SQLiteOpenHelper{
                 "CREATE UNIQUE INDEX User_PKey ON User (PKey);\n" +
                 "CREATE UNIQUE INDEX User_ID ON User (ID);\n");
 
+    }
 
+    public void dropTable() {
+
+        query("DROP TABLE IF EXISTS AskAnswerList;\n" +
+                "DROP TABLE IF EXISTS Chat;\n" +
+                "DROP TABLE IF EXISTS ChatMember;\n" +
+                "DROP TABLE IF EXISTS ChatRoom;\n" +
+                "DROP TABLE IF EXISTS Friend;\n" +
+                "DROP TABLE IF EXISTS GameList;\n" +
+                "DROP TABLE IF EXISTS GameMember;\n" +
+                "DROP TABLE IF EXISTS GameType;\n" +
+                "DROP TABLE IF EXISTS Hint;\n" +
+                "DROP TABLE IF EXISTS Letter;\n" +
+                "DROP TABLE IF EXISTS Notice;\n" +
+                "DROP TABLE IF EXISTS Picture;\n" +
+                "DROP TABLE IF EXISTS RandomName;\n" +
+                "DROP TABLE IF EXISTS RightAnswerList;\n" +
+                "DROP TABLE IF EXISTS TwentyQuestions;\n" +
+                "DROP TABLE IF EXISTS User;\n");
     }
 }

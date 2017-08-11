@@ -1,10 +1,10 @@
 package graduateproject.com.twentyquestions.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +18,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 import graduateproject.com.twentyquestions.R;
 import graduateproject.com.twentyquestions.controller.LoginController;
@@ -91,19 +88,24 @@ public class RegisterView extends BaseActivity {
                 LoginController loginController = new LoginController();
 //                loginController.parseLoginData(response);
                 if(loginController.parseLoginData(response)) {
-                    for(int i = 0 ; i < loginController.getParseList().size() ; i++){
-                        // getParseList는 이중 리스트 구조
-                        // 즉, List<BasicNameValuePair>를 가지고 있는 List
-                        Log.d(i+"번째 list","....");
-                        ArrayList<ArrayList<BasicNameValuePair>> doubleList = loginController.getParseList();
-                        for(int j = 0 ; j < doubleList .get(i).size() ; j++){
-                            ArrayList<BasicNameValuePair> pairList = doubleList.get(i);
-                            Log.d("KEY",pairList.get(j).getName());
-                            Log.d("Value",pairList.get(j).getValue());
-                        }
-                        // DBSI호출 후, query 실행//
-
-                    }
+//                    for(int i = 0 ; i < loginController.getParseList().size() ; i++){
+//                        // getParseList는 이중 리스트 구조
+//                        // 즉, List<BasicNameValuePair>를 가지고 있는 List
+//                        Log.d(i+"번째 list","....");
+//                        ArrayList<ArrayList<BasicNameValuePair>> doubleList = loginController.getParseList();
+//                        for(int j = 0 ; j < doubleList .get(i).size() ; j++){
+//                            ArrayList<BasicNameValuePair> pairList = doubleList.get(i);
+//                            Log.d("KEY",pairList.get(j).getName());
+//                            Log.d("Value",pairList.get(j).getValue());
+//                        }
+//                        // DBSI호출 후, query 실행//
+//
+//                    }
+                    Intent intent = new Intent(mContext, MainView.class);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    Toast.makeText(RegisterView.this, "회원가입 도중 문제가 발생했습니다.", Toast.LENGTH_SHORT).show();
                 }
 
             }

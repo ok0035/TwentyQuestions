@@ -1,7 +1,10 @@
 package graduateproject.com.twentyquestions.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -19,7 +22,7 @@ import static graduateproject.com.twentyquestions.util.CalculatePixel.calculateP
 public class SplashView extends BaseActivity {
 
     RelativeLayout parentLayout;
-
+    DBSI db;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,15 +30,47 @@ public class SplashView extends BaseActivity {
         setView();
 //        setCustomActionBar();
         setContentView(parentLayout);
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                moveToProperActivity();
+            }
+        }, 2000);
+    }
+
+    void moveToProperActivity() {
+//        String[][] userInfo = db.selectQuery("SELECT PKey, ID, Password FROM User");
+        String[][] userInfo = db.selectQuery("SELECT PKey, ID, Password FROM User");
+
+        if (userInfo == null) {
+
+            // TODO - 로그인 화면으로 이동해야함
+            Intent intent = new Intent(mContext, LoginView.class);
+            startActivity(intent);
+
+        }
+        else {
+
+            // 메인화면으로 이동
+            Intent intent = new Intent(mContext, MainView.class);
+            startActivity(intent);
+        }
+
+        finish();
+
     }
 
     @Override
     public void setUpEvents() {
         super.setUpEvents();
 
-        DBSI db = new DBSI();
+        db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
 
-        db.query("");
+
+//        db.query("");
 
     }
 

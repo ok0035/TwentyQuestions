@@ -7,107 +7,110 @@ package graduateproject.com.twentyquestions.controller;
 
 import android.util.Log;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import graduateproject.com.twentyquestions.activity.BaseActivity;
+import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.util.ParseData;
 
 public class LoginController {
 
-    private ArrayList<ArrayList<BasicNameValuePair>> parseList;
-
-
-    public ArrayList<ArrayList<BasicNameValuePair>> getParseList() {
-        return parseList;
-    }
+    private JSONArray userArray;
+    private JSONObject userData;
+    private String stringResult = "";
+    private String stringState = "";
+    private String[] userInfo;
 
     public boolean parseLoginData(String responseData) {
-//        String Result = "";
-//        String State = "";
-//        parseList = new ArrayList<>();
-//
-//        try {
-//            jsonResponse = new JSONObject(responseData);
-//
-//
-//            Result = jsonResponse.getString("Result");
-//            State = jsonResponse.getString("State");
-//
-//
-//            if (Result.equals("TRYREGIST") || Result.equals("TRYLOGIN")) { // TryRegist의 result 값인지 확인
-//                if (State.equals("REGIST_SUCCESS") || State.equals("LOGIN_SUCCESS")) { // 회원가입, 로그인 성공인지 확인
-//
-//                    JSONArray tableArray = jsonResponse.getJSONArray("User");
-//                    Iterator iterator = tableArray.getJSONObject(0).keys();
-//                    ArrayList<String> keyList = new ArrayList<>();
-//                    while (iterator.hasNext()) {
-//                        String key = iterator.next().toString();
-//                        keyList.add(key);
-//                    }
-//                    for (int i = 0; i < tableArray.length(); i++) {
-//                        for (int j = 0; j < keyList.size(); j++) {
-//                            String value = tableArray.getJSONObject(i).getString(keyList.get(j));
-//                            parseList.add(new BasicNameValuePair(keyList.get(j), value));
-//                        }
-//                    }
-//
-//
-//
-//
-////                    // 파싱 테스트용 //
-////                    for(BasicNameValuePair basicNameValuePair : parseList){
-////                        Log.d("Key : ", basicNameValuePair.getName());
-////                        Log.d("value : ", basicNameValuePair.getValue());
-////                    }
-//
-//
-//                } else {
-//                    return false;
-//                }
-//            } else {
-//                return false;
-//            }
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-        ParseData Result = new ParseData();
 
+        ParseData parseData = new ParseData();
+        final DBSI db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
+        userInfo = db.getUserInfo().split("/");
 
-        parseList = new ArrayList<>();
+        try {
+            stringResult = parseData.parseJsonObject(responseData, "Result");
+            stringState = parseData.parseJsonObject(responseData, "State");
+            userArray = parseData.jsonArrayInObject(responseData, "User");
 
-        String stringResult = Result.parseDataToPair(responseData, "Result").getValue();
-        String stringState = Result.parseDataToPair(responseData, "State").getValue();
+            if (stringResult.equals("TRYREGIST") || stringResult.equals("TRYLOGIN")) { // TryRegist의 result 값인지 확인
+                if (stringState.equals("REGIST_SUCCESS") || stringState.equals("LOGIN_SUCCESS")) {
+                    Log.d("stringResult", stringResult);
+                    Log.d("stringState", stringState);
+                    ArrayList<String> userDataKeyList = new ArrayList<>();
 
-        if (stringResult.equals("TRYREGIST") || stringResult.equals("TRYLOGIN")) { // TryRegist의 result 값인지 확인
-            if (stringState.equals("REGIST_SUCCESS") || stringState.equals("REGIST_SUCCESS")) {
-                Log.d("stringResult", stringResult);
-                Log.d("stringState", stringState);
+                    // Insert쿼리 문 만들자. => TRYREGIST SYNC
+                    String defaultQuery_Insert1 = "INSERT INTO User (";
+                    String addedNameQuery_insert = "";
+                    String defalutQuery_Insert2 = ") VALUES (";
+                    String addedValueQuery_insert = "";
 
-                try {
-                    JSONObject jsonObject = new JSONObject(responseData);
-                    JSONArray jsonArray= jsonObject.getJSONArray("User"); // 테이블 명 데이터 가져오기
-                    for(int i = 0 ; i < jsonArray.length() ; i++){
-                        ArrayList<BasicNameValuePair> pair = Result.parseDataToList(jsonArray.getJSONObject(i).toString(),"user"); //레코드 명 데이터 가져오기
-                        parseList.add(pair);
+                    // Update쿼리 문 만들자. => TRYLOGIN SYNC
+                    String defaultQuery_Update1 = "UPDATE User SET ";
+                    String addedNameValueQuery_update = "";
+                    String defaultQuery_Update2 = " WHERE PKey = " + userInfo[0];
+
+                    for (int a = 0; a < userArray.length(); a++) {
+                        userData = parseData.doubleJsonObject(userArray.get(a).toString(), "user");
+                        Iterator iterator = userData.keys();
+                        while (iterator.hasNext()) {
+                            String key = iterator.next().toString();
+                            userDataKeyList.add(key);
+                        }
+                        for (int b = 0; b < userDataKeyList.size(); b++) {
+                            if (b == userDataKeyList.size() - 1) {
+                                addedNameQuery_insert += "'" + userDataKeyList.get(b) + "'";
+                                addedValueQuery_insert += "'" + userData.getString(userDataKeyList.get(b)) + "')";
+                                addedNameValueQuery_update +=
+                                        "'" + userDataKeyList.get(b) + "' = "
+                                                + "'" + userData.getString(userDataKeyList.get(b)) + "'";
+                            } else {
+                                addedNameQuery_insert += "'" + userDataKeyList.get(b) + "',";
+                                addedValueQuery_insert += "'" + userData.getString(userDataKeyList.get(b)) + "',";
+                                addedNameValueQuery_update +=
+                                        "'" + userDataKeyList.get(b) + "' = "
+                                        + "'" + userData.getString(userDataKeyList.get(b)) + "',";
+
+                            }
+
+                        }
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    if(stringState.equals("REGIST_SUCCESS")){
+                        String finalQuery = defaultQuery_Insert1 + addedNameQuery_insert + defalutQuery_Insert2 + addedValueQuery_insert;
+                        Log.d("Query,,,,", finalQuery);
 
+                        db.query(finalQuery);
+                        String[][] localUserArray = db.selectQuery("select * from User");
+                        BaseActivity.ShowDoubleArray("localUserArray..... ",localUserArray);
+
+                    }else if(stringState.equals("LOGIN_SUCCESS")){
+                        String finalQuery = defaultQuery_Update1 + addedNameValueQuery_update + defaultQuery_Update2;
+                        Log.d("Query,,,,", finalQuery);
+
+                        db.query(finalQuery);
+                        String[][] localUserArray = db.selectQuery("select * from User");
+                        BaseActivity.ShowDoubleArray("localUserArray.....", localUserArray);
+
+                    }else{
+                        return false;
+                    }
+//                    Log.d("Query,,,,Update",defaultQuery_Update1 + addedNameValueQuery_update + defaultQuery_Update2);
+
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
-        } else {
-            return false;
-        }
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         return true;
     }

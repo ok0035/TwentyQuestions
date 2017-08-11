@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import graduateproject.com.twentyquestions.activity.BaseActivity;
 import graduateproject.com.twentyquestions.util.ParseData;
 
 /**
@@ -36,7 +35,7 @@ public class DataSyncController {
     private JSONArray chatMemberArray;
     private JSONObject chatMemberData;
 
-    private String reesult = "";
+    private String result = "";
 
     public void updateData(String response) {
 
@@ -45,164 +44,213 @@ public class DataSyncController {
 
         try {
 
-            reesult = parse.parseJsonObject(response, "Result");
-            Log.d("reesult", reesult);
+            if (!response.equals(DataSync.Command.LOGINFAILED.toString())) {
 
-            localChatRoomArray = db.selectQuery("select * from ChatRoom");
-            localChatArray = db.selectQuery("select * from Chat");
-            localChatMemberArray = db.selectQuery("select * from ChatMember");
+                result = parse.parseJsonObject(response, "Result");
+                Log.d("result", result);
 
-            localChatRoomPKey = Integer.parseInt(localChatRoomArray[localChatRoomArray.length-1][0]);
-            localChatPKey = Integer.parseInt(localChatArray[localChatArray.length -1][0]);
-            localChatMemberPKey = Integer.parseInt(localChatMemberArray[localChatMemberArray.length-1][0]);
+                chatRoomArray = parse.jsonArrayInObject(response, "ChatRoom");
+                chatArray = parse.jsonArrayInObject(response, "Chat");
+                chatMemberArray = parse.jsonArrayInObject(response, "ChatMember");
 
-            Log.d("localChatRoomPKey", localChatRoomPKey + "");
-            Log.d("localChatPKey", localChatPKey + "");
-            Log.d("localChatMemberPKey", localChatMemberPKey + "");
+                System.out.println("========================================================================================================================================");
 
-            chatRoomArray = parse.jsonArrayInObject(response, "ChatRoom");
-            chatArray = parse.jsonArrayInObject(response, "Chat");
-            chatMemberArray = parse.jsonArrayInObject(response, "ChatMember");
+                Log.d("chatRoomArrayLength", chatRoomArray.length() + "");
+                for (int i = 0; i < chatRoomArray.length(); i++) {
 
-            String[] userInfo = db.getUserInfo().split("/");
-//            System.out.println(Integer.parseInt(userInfo[0]));
+                    Log.d("JsonArray", chatRoomArray.get(i).toString());
+                    chatRoomData = parse.doubleJsonObject(chatRoomArray.get(i).toString(), "chatroom");
 
-            String[][] localChatRoomArray = db.selectQuery("select * from ChatRoom");
-            String[][] localChatArray = db.selectQuery("select * from Chat");
-            String[][] localChatMemberArray = db.selectQuery("select * from ChatMember");
+                    Log.d("chatRoomPkey", chatRoomData.getString("PKey"));
+//                    Log.d("chatRoomName", chatRoomData.getString("Name"));
+//                    Log.d("chatRoomLongitude", chatRoomData.getString("Longitude"));
+//                    Log.d("chatRoomLatitude", chatRoomData.getString("Latitude"));
+//                    Log.d("chatRoomCreatedDate", chatRoomData.getString("CreatedDate"));
+//                    Log.d("chatRoomUpdatedDate", chatRoomData.getString("UpdatedDate"));
 
-            BaseActivity.ShowDoubleArray(localChatRoomArray);
-            BaseActivity.ShowDoubleArray(localChatArray);
-            BaseActivity.ShowDoubleArray(localChatMemberArray);
+                    localChatRoomArray = db.selectQuery("select * from ChatRoom");
 
-            System.out.println("========================================================================================================================================");
+//                    BaseActivity.ShowDoubleArray("selectLocal.....",localChatRoomArray);
 
-            for (int i = 0; i < chatRoomArray.length(); i++) {
+                    if (localChatRoomArray != null && localChatRoomArray.length > 0) {
 
-                Log.d("JsonArray", chatRoomArray.get(i).toString());
-                chatRoomData = parse.doubleJsonObject(chatRoomArray.get(i).toString(), "chatroom");
+                        localChatRoomPKey = Integer.parseInt(localChatRoomArray[localChatRoomArray.length - 1][0]);
 
-                Log.d("chatRoomPkey", chatRoomData.getString("PKey"));
-                Log.d("chatRoomName", chatRoomData.getString("Name"));
-                Log.d("chatRoomLongitude", chatRoomData.getString("Longitude"));
-                Log.d("chatRoomLatitude", chatRoomData.getString("Latitude"));
-                Log.d("chatRoomCreatedDate", chatRoomData.getString("CreatedDate"));
-                Log.d("chatRoomUpdatedDate", chatRoomData.getString("UpdatedDate"));
+                        Log.d("serverRoomPKey", chatRoomData.getInt("PKey") + "");
+                        Log.d("localChatRoomPKey", localChatRoomPKey + "");
+                        if (chatRoomData.getInt("PKey") <= localChatRoomPKey) {
+                            Log.d("Update", "............................Update");
 
-                if (localChatRoomArray != null) {
+                            String query = "update ChatRoom set PKey = \'" + chatRoomData.getString("PKey") + "\', Name = \'" + chatRoomData.getString("Name") + "\', " +
+                                    "Longitude = \'" + chatRoomData.getString("Longitude") + "\', Latitude = \'" + chatRoomData.getString("Latitude") + "\', " +
+                                    "CreatedDate = \'" + chatRoomData.getString("CreatedDate") + "\', UpdatedDate = \'" + chatRoomData.getString("UpdatedDate") + "\', " +
+                                    "Description = \'" + chatRoomData.getString("Description") + "\' where PKey = " + chatRoomData.getString("PKey");
 
-                    if (chatRoomData.getInt("PKey") <= localChatRoomPKey) {
+                            Log.d("RoomUpdateQuery", query);
 
-                        db.query("update ChatRoom set PKey = \'" + chatRoomData.getString("PKey") + "\', Name = \'" + chatRoomData.getString("Name") + "\', " +
-                                "Longitude = \'"+ chatRoomData.getString("Longitude") +"\', Latitude = \'"+ chatRoomData.getString("Latitude") +"\', "+
-                                "CreatedDate = \'"+ chatRoomData.getString("CreatedDate") +"\', UpdatedDate = \'"+ chatRoomData.getString("UpdatedDate") +"\', "+
-                                "Description = \'"+ chatRoomData.getString("Description") +"\' where PKey = " + chatRoomData.getString("PKey"));
+                            db.query(query);
+
+                        } else {
+
+                            Log.d("Insert", "............................Insert");
+
+                            String query = "insert into ChatRoom(PKey, Name, Longitude, Latitude, CreatedDate, UpdatedDate, Description) values (\'" +
+                                    chatRoomData.getString("PKey") + "\', \'" + chatRoomData.getString("Name") + "\', \'" + chatRoomData.getString("Longitude") + "\', \'" + chatRoomData.getString("Latitude") +
+                                    "\', \'" + chatRoomData.getString("CreatedDate") + "\', \'" + chatRoomData.getString("UpdatedDate") + "\',\'" + chatRoomData.getString("Description") + "\')";
+
+                            Log.d("RoomInsertQuery", query);
+
+                            db.query(query);
+
+                        }
+
                     } else {
 
-                        db.query("insert into ChatRoom(PKey, Name, Longitude, Latitude, CreatedDate, UpdatedDate, Description) values (\'" +
+                        String query = "insert into ChatRoom(PKey, Name, Longitude, Latitude, CreatedDate, UpdatedDate, Description) values (\'" +
                                 chatRoomData.getString("PKey") + "\', \'" + chatRoomData.getString("Name") + "\', \'" + chatRoomData.getString("Longitude") + "\', \'" + chatRoomData.getString("Latitude") +
-                                "\', \'" +chatRoomData.getString("CreatedDate") + "\', \'" + chatRoomData.getString("UpdatedDate") + "\',\'" + chatRoomData.getString("Description") + "\')");
+                                "\', \'" + chatRoomData.getString("CreatedDate") + "\', \'" + chatRoomData.getString("UpdatedDate") + "\',\'" + chatRoomData.getString("Description") + "\')";
+
+                        Log.d("RoomNullInsertQuery", query);
+
+                        db.query(query);
+
                     }
 
-                } else {
+//                    BaseActivity.ShowDoubleArray("RoomNull........", localChatRoomArray);
 
-                    db.query("insert into ChatRoom(PKey, Name, Longitude, Latitude, CreatedDate, UpdatedDate, Description) values (\'" +
-                                chatRoomData.getString("PKey") + "\', \'" + chatRoomData.getString("Name") + "\', \'" + chatRoomData.getString("Longitude") + "\', \'" + chatRoomData.getString("Latitude") +
-                                "\', \'" +chatRoomData.getString("CreatedDate") + "\', \'" + chatRoomData.getString("UpdatedDate") + "\',\'" + chatRoomData.getString("Description") + "\')");
+                    System.out.println("========================================================================================================================================");
 
                 }
 
                 System.out.println("========================================================================================================================================");
 
-            }
+                for (int i = 0; i < chatArray.length(); i++) {
+                    chatData = parse.doubleJsonObject(chatArray.get(i).toString(), "chat");
 
-            System.out.println("========================================================================================================================================");
+                    Log.d("chatPkey", chatData.getString("PKey"));
+//                    Log.d("chatRoomPKey", chatData.getString("ChatRoomPKey"));
+//                    Log.d("chatUserPKey", chatData.getString("UserPKey"));
+//                    Log.d("chatLatitude", chatData.getString("ChatText"));
+//                    Log.d("chatCount", chatData.getString("Count"));
+//                    Log.d("chatType", chatData.getString("Type"));
+//                    Log.d("chatCreatedDate", chatData.getString("CreatedDate"));
 
-            for (int i = 0; i < chatArray.length(); i++) {
-                chatData = parse.doubleJsonObject(chatArray.get(i).toString(), "chat");
+                    localChatArray = db.selectQuery("select * from Chat");
 
-                Log.d("chatPkey", chatData.getString("PKey"));
-                Log.d("chatRoomPKey", chatData.getString("ChatRoomPKey"));
-                Log.d("chatUserPKey", chatData.getString("UserPKey"));
-                Log.d("chatLatitude", chatData.getString("ChatText"));
-                Log.d("chatCount", chatData.getString("Count"));
-                Log.d("chatType", chatData.getString("Type"));
-                Log.d("chatCreatedDate", chatData.getString("CreatedDate"));
+                    if (localChatArray != null) {
 
-                if (localChatRoomArray != null) {
+                        localChatPKey = Integer.parseInt(localChatArray[localChatArray.length - 1][0]);
 
-                    if (chatData.getInt("PKey") <= localChatPKey) {
+                        Log.d("serverChatPKey", chatData.getInt("PKey") + "");
+                        Log.d("localChatPKey", localChatPKey + "");
 
-                        db.query("update Chat set PKey = \'" + chatData.getString("PKey") + "\', ChatRoomPKey = \'" + chatData.getString("ChatRoomPKey") + "\', " +
-                                "UserPKey = \'"+ chatData.getString("UserPKey") +"\', ChatText = \'"+ chatData.getString("ChatText") +"\', "+
-                                "Count = \'"+ chatData.getString("Count") +"\', Type = \'"+ chatData.getString("Type") +"\', "+
-                                "CreatedDate = \'"+ chatData.getString("CreatedDate") +"\' where PKey = " + chatData.getString("PKey"));
+                        if (chatData.getInt("PKey") <= localChatPKey) {
+                            Log.d("Update", "............................Update");
+                            String query = "update Chat set PKey = \'" + chatData.getString("PKey") + "\', ChatRoomPKey = \'" + chatData.getString("ChatRoomPKey") + "\', " +
+                                    "UserPKey = \'" + chatData.getString("UserPKey") + "\', ChatText = \'" + chatData.getString("ChatText") + "\', " +
+                                    "Count = \'" + chatData.getString("Count") + "\', Type = \'" + chatData.getString("Type") + "\', " +
+                                    "CreatedDate = \'" + chatData.getString("CreatedDate") + "\' where PKey = " + chatData.getString("PKey");
+                            Log.d("ChatUpdateQuery", query);
+
+                            db.query(query);
+                        } else {
+                            Log.d("Insert", "............................Insert");
+                            String query = "insert into Chat(PKey, ChatRoomPKey, UserPKey, ChatText, Count, Type, CreatedDate) values (\'" +
+                                    chatData.getString("PKey") + "\', \'" + chatData.getString("ChatRoomPKey") + "\', \'" + chatData.getString("UserPKey") + "\', \'" + chatData.getString("ChatText") +
+                                    "\', \'" + chatData.getString("Count") + "\', \'" + chatData.getString("Type") + "\', \'" + chatData.getString("CreatedDate") + "\')";
+
+                            Log.d("ChatInsertQuery", query);
+                            db.query(query);
+                        }
+
                     } else {
-
-                        db.query("insert into Chat(PKey, ChatRoomPKey, UserPKey, ChatText, Count, Type, CreatedDate) values (\'" +
+                        String query = "insert into Chat(PKey, ChatRoomPKey, UserPKey, ChatText, Count, Type, CreatedDate) values (\'" +
                                 chatData.getString("PKey") + "\', \'" + chatData.getString("ChatRoomPKey") + "\', \'" + chatData.getString("UserPKey") + "\', \'" + chatData.getString("ChatText") +
-                                "\', \'" +chatData.getString("Count") + "\', \'" +chatData.getString("Type") + "\', \'" + chatData.getString("CreatedDate") + "\')");
+                                "\', \'" + chatData.getString("Count") + "\', \'" + chatData.getString("Type") + "\', \'" + chatData.getString("CreatedDate") + "\')";
+
+                        Log.d("ChatNullInsertQuery", query);
+                        db.query(query);
+
                     }
 
-                } else {
+//                    BaseActivity.ShowDoubleArray("localChatArray.........", localChatArray);
 
-                    db.query("insert into Chat(PKey, ChatRoomPKey, UserPKey, ChatText, Count, Type, CreatedDate) values (\'" +
-                            chatData.getString("PKey") + "\', \'" + chatData.getString("ChatRoomPKey") + "\', \'" + chatData.getString("UserPKey") + "\', \'" + chatData.getString("ChatText") +
-                            "\', \'" +chatData.getString("Count") + "\', \'" +chatData.getString("Type") + "\', \'" + chatData.getString("CreatedDate") + "\')");
+                    System.out.println("========================================================================================================================================");
 
                 }
 
                 System.out.println("========================================================================================================================================");
 
-            }
+                Log.d("ChatMemberArrayLength", chatMemberArray.length() + "");
+                for (int i = 0; i < chatMemberArray.length(); i++) {
 
-            System.out.println("========================================================================================================================================");
+                    chatMemberData = parse.doubleJsonObject(chatMemberArray.get(i).toString(), "chatmember");
 
-            for (int i = 0; i < chatMemberArray.length(); i++) {
+                    Log.d("chatMemberPkey", chatMemberData.getString("PKey"));
+//                    Log.d("chatMemberName", chatMemberData.getString("RoomPKey"));
+//                    Log.d("chatMemberStatus", chatMemberData.getString("Status"));
+//                    Log.d("chatMemberNotify", chatMemberData.getString("Notify"));
+//                    Log.d("chatMemberCreatedDate", chatMemberData.getString("CreatedDate"));
+//                    Log.d("chatMemberUpdatedDate", chatMemberData.getString("UpdatedDate"));
 
-                chatMemberData = parse.doubleJsonObject(chatMemberArray.get(i).toString(), "chatmember");
+                    localChatMemberArray = db.selectQuery("select * from ChatMember");
 
-                Log.d("chatMemberPkey", chatMemberData.getString("PKey"));
-                Log.d("chatMemberName", chatMemberData.getString("RoomPKey"));
-                Log.d("chatMemberStatus", chatMemberData.getString("Status"));
-                Log.d("chatMemberNotify", chatMemberData.getString("Notify"));
-                Log.d("chatMemberCreatedDate", chatMemberData.getString("CreatedDate"));
-                Log.d("chatMemberUpdatedDate", chatMemberData.getString("UpdatedDate"));
+                    if (localChatMemberArray != null) {
 
-                if (localChatMemberArray != null) {
+                        localChatMemberPKey = Integer.parseInt(localChatMemberArray[localChatMemberArray.length - 1][0]);
 
-                    if (chatMemberData.getInt("PKey") <= localChatMemberPKey) {
+                        Log.d("serverMemberPKey", chatMemberData.getInt("PKey") + "");
+                        Log.d("localMemberPKey", localChatMemberPKey + "");
+                        if (chatMemberData.getInt("PKey") <= localChatMemberPKey) {
+                            Log.d("Update", "............................Update");
 
-                        db.query("update ChatMember set PKey = \'" + chatMemberData.getString("PKey") + "\', RoomPKey = \'" + chatMemberData.getString("RoomPKey") + "\', " +
-                                "Status = \'"+ chatMemberData.getString("Status") +"\', Notify= \'"+ chatMemberData.getString("Notify") +"\', "+
-                                "CreatedDate = \'"+ chatMemberData.getString("CreatedDate") +"\', UpdatedDate = \'"+ chatMemberData.getString("UpdatedDate") +"\' " +
-                                "where PKey = " + chatMemberData.getString("PKey"));
+                            String query = "update ChatMember set PKey = \'" + chatMemberData.getString("PKey") + "\', RoomPKey = \'" + chatMemberData.getString("RoomPKey") + "\', " +
+                                    "Status = \'" + chatMemberData.getString("Status") + "\', Notify= \'" + chatMemberData.getString("Notify") + "\', " +
+                                    "CreatedDate = \'" + chatMemberData.getString("CreatedDate") + "\', UpdatedDate = \'" + chatMemberData.getString("UpdatedDate") + "\' " +
+                                    "where PKey = " + chatMemberData.getString("PKey");
+
+                            Log.d("MemberUpdateQuery", query);
+                            db.query(query);
+
+                        } else {
+                            Log.d("Insert", "............................Insert");
+
+                            String query = "insert into ChatMember(PKey, UserPKey, RoomPKey, Status, Notify, CreatedDate, UpdatedDate) values (\'" +
+                                    chatMemberData.getString("PKey") + "\', \'" + chatMemberData.getString("UserPKey") + "\', \'" + chatMemberData.getString("RoomPKey") + "\', \'" + chatMemberData.getString("Status") + "\', \'" + chatMemberData.getString("Notify") +
+                                    "\', \'" + chatMemberData.getString("CreatedDate") + "\', \'" + chatMemberData.getString("UpdatedDate") + "\')";
+
+                            db.query(query);
+                            Log.d("MemberInsertQuery", query);
+
+                        }
 
                     } else {
 
-                        db.query("insert into ChatMember(PKey, UserPKey, RoomPKey, Status, Notify, CreatedDate, UpdatedDate) values (\'" +
+                        String query = "insert into ChatMember(PKey, UserPKey, RoomPKey, Status, Notify, CreatedDate, UpdatedDate) values (\'" +
                                 chatMemberData.getString("PKey") + "\', \'" + chatMemberData.getString("UserPKey") + "\', \'" + chatMemberData.getString("RoomPKey") + "\', \'" + chatMemberData.getString("Status") + "\', \'" + chatMemberData.getString("Notify") +
-                                "\', \'" +chatMemberData.getString("CreatedDate") + "\', \'" + chatMemberData.getString("UpdatedDate") + "\')");
+                                "\', \'" + chatMemberData.getString("CreatedDate") + "\', \'" + chatMemberData.getString("UpdatedDate") + "\')";
+
+                        db.query(query);
+                        Log.d("MemberNullInsertQuery", query);
+
                     }
 
-                } else {
+//                    BaseActivity.ShowDoubleArray("localChatMemberArray...............", localChatMemberArray);
 
-                    db.query("insert into ChatMember(PKey, UserPKey, RoomPKey, Status, Notify, CreatedDate, UpdatedDate) values (\'" +
-                            chatMemberData.getString("PKey") + "\', \'" + chatMemberData.getString("UserPKey") + "\', \'" + chatMemberData.getString("RoomPKey") + "\', \'" + chatMemberData.getString("Status") + "\', \'" + chatMemberData.getString("Notify") +
-                            "\', \'" +chatMemberData.getString("CreatedDate") + "\', \'" + chatMemberData.getString("UpdatedDate") + "\')");
+                    System.out.println("========================================================================================================================================");
 
                 }
 
                 System.out.println("========================================================================================================================================");
 
-            }
+            } else Log.d("LOGIN_ERR", "LOGIN_FAILED");
 
-            System.out.println("========================================================================================================================================");
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
+
 
 }

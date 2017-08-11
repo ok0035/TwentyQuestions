@@ -37,6 +37,9 @@ public class MainView extends BaseActivity {
     private android.widget.Button test;
     private android.widget.TextView textview1;
     Handler handler;
+    private TextView idtextview;
+    private TextView pkeytextview;
+    private Button logoutbtn;
 
     public MainView() {
 
@@ -47,31 +50,44 @@ public class MainView extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout);
+        this.logoutbtn = (Button) findViewById(R.id.logout_btn);
+        this.pkeytextview = (TextView) findViewById(R.id.pkey_textview);
+        this.idtextview = (TextView) findViewById(R.id.id_textview);
 
         final DBSI db = new DBSI(mContext, "TwentyQuestions.db", null, 1);
-        db.insertUserInfo();
+//        db.insertUserInfo();
 
         DataSync.getInstance().Timer();
-        DataSync.getInstance().doSync();
+//        DataSync.getInstance().doSync();
         getLocation();
 
 
-
-
-        db.query("insert into Chat(Pkey, ChatRoomPkey, UserPkey, ChatText, CreatedDate) Values(1, 1, 3, 'asdf', datetime('now','localtime'))");
-
-        String[][] test1 = db.selectQuery("select * from Chat");
-
-        for(int i = 0; i> test1.length; i++) {
-            for(int j = 0; j< test1[i].length; j++) {
-                System.out.println("i : " + i + ", j : " + test1[i][j]);
-            }
-        }
-
+//        db.query("insert into Chat(Pkey, ChatRoomPkey, UserPkey, ChatText, CreatedDate) Values(1, 1, 3, 'asdf', datetime('now','localtime'))");
+//
+//        String[][] test1 = db.selectQuery("select * from Chat");
+//
+//        for(int i = 0; i> test1.length; i++) {
+//            for(int j = 0; j< test1[i].length; j++) {
+//                System.out.println("i : " + i + ", j : " + test1[i][j]);
+//            }
+//        }
 
 
         this.textview1 = (TextView) findViewById(R.id.textview1);
         this.test = (Button) findViewById(R.id.test);
+
+        idtextview.setText(db.selectQuery("SELECT PKey, ID, Password FROM User")[0][1]);
+        pkeytextview.setText(db.selectQuery("SELECT PKey, ID, Password FROM User")[0][0]);
+
+        logoutbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.dropTable();
+                Intent intent = new Intent(mContext, LoginView.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         handler = new Handler() {
             @Override
@@ -109,6 +125,7 @@ public class MainView extends BaseActivity {
             }
         });
 
+
     }
 
     public void getLocation() {
@@ -135,7 +152,6 @@ public class MainView extends BaseActivity {
                     Snackbar.make(getWindow().getDecorView().getRootView(), "경도 : " + MainView.getLongitude() + "\n 위도 : " + MainView.getLatitude(), Snackbar.LENGTH_LONG).setAction("알림", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
 
 
                         }
