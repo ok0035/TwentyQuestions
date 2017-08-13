@@ -26,11 +26,13 @@ public class LoginController {
     private String stringState = "";
     private String[] userInfo;
 
+    private DBSI db;
+
     public boolean parseLoginData(String responseData) {
 
         ParseData parseData = new ParseData();
-        final DBSI db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
-        userInfo = db.getUserInfo().split("/");
+
+        db = new DBSI();
 
         try {
             stringResult = parseData.parseJsonObject(responseData, "Result");
@@ -52,7 +54,7 @@ public class LoginController {
                     // Update쿼리 문 만들자. => TRYLOGIN SYNC
                     String defaultQuery_Update1 = "UPDATE User SET ";
                     String addedNameValueQuery_update = "";
-                    String defaultQuery_Update2 = " WHERE PKey = " + userInfo[0];
+
 
                     for (int a = 0; a < userArray.length(); a++) {
                         userData = parseData.doubleJsonObject(userArray.get(a).toString(), "user");
@@ -89,6 +91,8 @@ public class LoginController {
                         BaseActivity.ShowDoubleArray("localUserArray..... ",localUserArray);
 
                     }else if(stringState.equals("LOGIN_SUCCESS")){
+                        userInfo = db.getUserInfo().split("/");
+                        String defaultQuery_Update2 = " WHERE PKey = " + userInfo[0];
                         String finalQuery = defaultQuery_Update1 + addedNameValueQuery_update + defaultQuery_Update2;
                         Log.d("Query,,,,", finalQuery);
 

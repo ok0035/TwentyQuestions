@@ -1,5 +1,7 @@
 package graduateproject.com.twentyquestions.util;
 
+import android.util.Log;
+
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -155,6 +157,7 @@ public class ParseData {
     public String parseJsonObject(String response, String Key) throws JSONException {
         String result = null;
         try {
+            Log.d("Response", response);
             JSONObject json = new JSONObject(response);
             result = json.getString(Key);
 

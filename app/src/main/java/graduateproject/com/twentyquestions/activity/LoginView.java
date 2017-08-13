@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import static graduateproject.com.twentyquestions.util.CalculatePixel.calculatePixelY;
@@ -55,17 +56,27 @@ public class LoginView extends BaseActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, RegisterView.class);
                 startActivity(intent);
+                finish();
             }
         };
 
-        login = new View.OnClickListener(){
-      @Override
+        login = new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, MainView.class);
-                startActivity(intent);
+
+
+                if (IdEditText.getText().toString().length() < 8) {
+                    Toast.makeText(LoginView.this, "ID를 입력해주십시오.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(mContext, MainView.class);
+                    startActivity(intent);
+                    finish();
+                }
+
             }
         };
     }
+
     @Override
     public void setView() {
         super.setView();
@@ -99,7 +110,7 @@ public class LoginView extends BaseActivity {
         LoginByGoogleBtn.setBackgroundColor(Color.MAGENTA);
         LoginByGoogleBtn.setGravity(Gravity.CENTER);
 
-        LoginByFacebookBtn= new TextView(this);
+        LoginByFacebookBtn = new TextView(this);
         LoginByFacebookBtn.setText("FaceBook");
         LoginByFacebookBtn.setTextColor(Color.WHITE);
         LoginByFacebookBtn.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -107,7 +118,7 @@ public class LoginView extends BaseActivity {
         LoginByFacebookBtn.setBackgroundColor(Color.BLUE);
         LoginByFacebookBtn.setGravity(Gravity.CENTER);
 
-        RegistBtn= new TextView(this);
+        RegistBtn = new TextView(this);
         RegistBtn.setText("회원가입");
         RegistBtn.setTextColor(Color.WHITE);
         RegistBtn.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

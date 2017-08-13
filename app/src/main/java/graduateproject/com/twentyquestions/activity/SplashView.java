@@ -67,8 +67,8 @@ public class SplashView extends BaseActivity {
     public void setUpEvents() {
         super.setUpEvents();
 
-        db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
-
+//        db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
+        db = new DBSI();
 
 //        db.query("");
 

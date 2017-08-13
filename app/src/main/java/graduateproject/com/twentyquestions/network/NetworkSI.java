@@ -31,7 +31,9 @@ public class NetworkSI {
 
         //패킷 정보
 
-        final DBSI db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
+//        final DBSI db = new DBSI(BaseActivity.mContext, "TwentyQuestions.db", null, 1);
+
+        final DBSI db = new DBSI();
 
         String[][] userInfo = db.selectQuery("SELECT PKey, ID, Password FROM User");
 
@@ -53,7 +55,7 @@ public class NetworkSI {
 
         Log.d("UserPKey", userInfo[0][0]);
         Log.d("ID", userInfo[0][1]);
-        Log.d("Password", userInfo[0][2]);
+        Log.d("Password", userInfo[0][2]+"..");
         Log.d("UDID", Build.ID);
         Log.d("DeviceType", Build.BRAND);
         Log.d("DeviceName", Build.MODEL);
@@ -65,7 +67,7 @@ public class NetworkSI {
         try {
             packet.put("PKey", userInfo[0][0]);
             packet.put("ID", userInfo[0][1]);
-            packet.put("Password", userInfo[0][2]);
+            packet.put("Password", userInfo[0][2]+"..");
             packet.put("UDID", Build.ID);
             packet.put("DeviceType", "1");
             packet.put("DeviceName", Build.MODEL);
@@ -77,6 +79,8 @@ public class NetworkSI {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        Log.d("pakcet",packet.toString());
 
         ArrayList<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("packet", packet.toString()));

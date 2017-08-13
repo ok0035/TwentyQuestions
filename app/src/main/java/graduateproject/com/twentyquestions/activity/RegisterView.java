@@ -57,6 +57,14 @@ public class RegisterView extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        Intent intent = new Intent(mContext, LoginView.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     public void setUpEvents() {
         super.setUpEvents();
         final String[] nickName = new String[1];

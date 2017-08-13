@@ -3,10 +3,13 @@ package graduateproject.com.twentyquestions.network;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import graduateproject.com.twentyquestions.activity.BaseActivity;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by mapl0 on 2017-08-01.
@@ -21,6 +24,7 @@ public class DBSI extends SQLiteOpenHelper{
 
     public DBSI(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
+        result = null;
 
     }
 
@@ -67,38 +71,47 @@ public class DBSI extends SQLiteOpenHelper{
     public String[][] selectQuery(String query) {
         SQLiteDatabase db = getWritableDatabase();
 
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor;
 
-        if(cursor.getCount() != 0) {
+        try{
+            cursor = db.rawQuery(query, null);
 
-            this.result = new String[cursor.getCount()][cursor.getColumnCount()];
+            if(cursor.getCount() != 0) {
+
+                this.result = new String[cursor.getCount()][cursor.getColumnCount()];
 
 //            Log.d("getCount", cursor.getCount() + "");
 //            Log.d("getColumnCount", cursor.getColumnCount() + "");
 
-            cursor.moveToFirst();
+                cursor.moveToFirst();
 
-            int i = 0;
+                int i = 0;
 
-            do {
+                do {
 
-                for(int j = 0; j< cursor.getColumnCount(); j++) {
+                    for(int j = 0; j< cursor.getColumnCount(); j++) {
 
-                    this.result[i][j] = cursor.getString(j);
-                    System.out.println("Select Result........" + cursor.getColumnName(j) + "... : " + cursor.getString(j));
+                        this.result[i][j] = cursor.getString(j);
+                        System.out.println("Select Result........" + cursor.getColumnName(j) + "... : " + cursor.getString(j));
 
-                }
+                    }
 
-                System.out.println("========================================================================================================");
+                    System.out.println("========================================================================================================");
 
-                i++;
+                    i++;
 //                System.out.println("moveToNext...." + cursor.moveToNext());
-            } while (cursor.moveToNext());
+                } while (cursor.moveToNext());
 
-        } else {
-            Log.d("SelectNULL", "NULL");
-            result = null;
+            } else {
+                Log.d("SelectNULL", "NULL");
+                result = null;
+            }
+
+        } catch(SQLiteException e) {
+            this.result = null;
         }
+
+
 
         db.close();
         return result;
@@ -188,21 +201,53 @@ public class DBSI extends SQLiteOpenHelper{
 
     public void dropTable() {
 
-        query("DROP TABLE IF EXISTS AskAnswerList;\n" +
-                "DROP TABLE IF EXISTS Chat;\n" +
-                "DROP TABLE IF EXISTS ChatMember;\n" +
-                "DROP TABLE IF EXISTS ChatRoom;\n" +
-                "DROP TABLE IF EXISTS Friend;\n" +
-                "DROP TABLE IF EXISTS GameList;\n" +
-                "DROP TABLE IF EXISTS GameMember;\n" +
-                "DROP TABLE IF EXISTS GameType;\n" +
-                "DROP TABLE IF EXISTS Hint;\n" +
-                "DROP TABLE IF EXISTS Letter;\n" +
-                "DROP TABLE IF EXISTS Notice;\n" +
-                "DROP TABLE IF EXISTS Picture;\n" +
-                "DROP TABLE IF EXISTS RandomName;\n" +
-                "DROP TABLE IF EXISTS RightAnswerList;\n" +
-                "DROP TABLE IF EXISTS TwentyQuestions;\n" +
-                "DROP TABLE IF EXISTS User;\n");
+        query("DROP TABLE IF EXISTS AskAnswerList");
+        query("DROP TABLE IF EXISTS Chat");
+        query("DROP TABLE IF EXISTS Chat");
+        query("DROP TABLE IF EXISTS ChatMember");
+        query("DROP TABLE IF EXISTS ChatRoom");
+        query("DROP TABLE IF EXISTS Friend");
+        query("DROP TABLE IF EXISTS GameList");
+        query("DROP TABLE IF EXISTS GameMember");
+        query("DROP TABLE IF EXISTS GameType");
+        query("DROP TABLE IF EXISTS Hint");
+        query("DROP TABLE IF EXISTS Letter");
+        query("DROP TABLE IF EXISTS Notice");
+        query("DROP TABLE IF EXISTS Picture");
+        query("DROP TABLE IF EXISTS RandomName");
+        query("DROP TABLE IF EXISTS RightAnswerList");
+        query("DROP TABLE IF EXISTS TwentyQuestions");
+        query("DROP TABLE IF EXISTS User");
+
+    }
+
+    public void checkTable() {
+
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c;
+        try {
+            c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+
+            if(c.moveToFirst()) {
+
+                for(;;) {
+
+                    Log.e(TAG, "table name : " + c.getString(0));
+
+                    if(!c.moveToNext())
+
+                        break;
+
+                }
+
+            }
+        } catch (SQLiteException e) {
+
+            Log.d("SearchTable", "table is nothing");
+        }
+
+
+
+
     }
 }

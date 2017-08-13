@@ -40,6 +40,7 @@ public class MainView extends BaseActivity {
     private TextView idtextview;
     private TextView pkeytextview;
     private Button logoutbtn;
+    private Button dropbtn;
 
     public MainView() {
 
@@ -50,15 +51,17 @@ public class MainView extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout);
+        this.dropbtn = (Button) findViewById(R.id.drop_btn);
         this.logoutbtn = (Button) findViewById(R.id.logout_btn);
         this.pkeytextview = (TextView) findViewById(R.id.pkey_textview);
         this.idtextview = (TextView) findViewById(R.id.id_textview);
 
-        final DBSI db = new DBSI(mContext, "TwentyQuestions.db", null, 1);
+//        final DBSI db = new DBSI(mContext, "TwentyQuestions.db", null, 1);
+        final DBSI db = new DBSI();
 //        db.insertUserInfo();
 
-        DataSync.getInstance().Timer();
-//        DataSync.getInstance().doSync();
+//        DataSync.getInstance().Timer();
+        DataSync.getInstance().doSync();
         getLocation();
 
 
@@ -82,12 +85,25 @@ public class MainView extends BaseActivity {
         logoutbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                db.dropTable();
+
+                db.query("DELETE FROM User");
+                db.query("DELETE FROM Chat");
+                db.query("DELETE FROM ChatRoom");
+                db.query("DELETE FROM ChatMember");
+
                 Intent intent = new Intent(mContext, LoginView.class);
                 startActivity(intent);
                 finish();
             }
         });
+
+//        dropbtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                db.dropTable();
+//                db.checkTable();
+//            }
+//        });
 
         handler = new Handler() {
             @Override

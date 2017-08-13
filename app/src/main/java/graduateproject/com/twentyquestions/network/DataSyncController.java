@@ -144,16 +144,7 @@ public class DataSyncController {
                         Log.d("serverChatPKey", chatData.getInt("PKey") + "");
                         Log.d("localChatPKey", localChatPKey + "");
 
-                        if (chatData.getInt("PKey") <= localChatPKey) {
-                            Log.d("Update", "............................Update");
-                            String query = "update Chat set PKey = \'" + chatData.getString("PKey") + "\', ChatRoomPKey = \'" + chatData.getString("ChatRoomPKey") + "\', " +
-                                    "UserPKey = \'" + chatData.getString("UserPKey") + "\', ChatText = \'" + chatData.getString("ChatText") + "\', " +
-                                    "Count = \'" + chatData.getString("Count") + "\', Type = \'" + chatData.getString("Type") + "\', " +
-                                    "CreatedDate = \'" + chatData.getString("CreatedDate") + "\' where PKey = " + chatData.getString("PKey");
-                            Log.d("ChatUpdateQuery", query);
-
-                            db.query(query);
-                        } else {
+                        if (chatData.getInt("PKey") > localChatPKey) {
                             Log.d("Insert", "............................Insert");
                             String query = "insert into Chat(PKey, ChatRoomPKey, UserPKey, ChatText, Count, Type, CreatedDate) values (\'" +
                                     chatData.getString("PKey") + "\', \'" + chatData.getString("ChatRoomPKey") + "\', \'" + chatData.getString("UserPKey") + "\', \'" + chatData.getString("ChatText") +
