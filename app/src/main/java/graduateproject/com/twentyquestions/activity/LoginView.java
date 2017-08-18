@@ -68,7 +68,7 @@ public class LoginView extends BaseActivity {
                 if (IdEditText.getText().toString().length() < 8) {
                     Toast.makeText(LoginView.this, "ID를 입력해주십시오.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent(mContext, MainView.class);
+                    Intent intent = new Intent(mContext, MainViewTest.class);
                     startActivity(intent);
                     finish();
                 }

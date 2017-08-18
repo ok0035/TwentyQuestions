@@ -13,9 +13,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import graduateproject.com.twentyquestions.activity.BaseActivity;
-import graduateproject.com.twentyquestions.activity.MainView;
-
 /**
  * Created by mapl0 on 2017-08-01.
  */
@@ -36,51 +33,69 @@ public class NetworkSI {
         final DBSI db = new DBSI();
 
         String[][] userInfo = db.selectQuery("SELECT PKey, ID, Password FROM User");
+//
+//        if (userInfo == null) {
+//
+//            userInfo = new String[1][3];
+//            userInfo[0][0] = "1";
+//            userInfo[0][1] = "admin";
+//            userInfo[0][2] = "admin0101";
+//
+//        }
 
-        if(userInfo == null) {
-
-            userInfo = new String[1][3];
-            userInfo[0][0] = "1";
-            userInfo[0][1] = "admin";
-            userInfo[0][2] = "admin0101";
-
-        }
-
-        Log.d("command", DataSync.Command.GETFULLDATA.toString() + ".............................................................................");
+//        Log.d("command", DataSync.Command.GETFULLDATA.toString() + ".............................................................................");
 //        Log.d("version_baseOS", Build.VERSION.BASE_OS + "");
 ////        Log.d("version_codename", Build. + "");
 //        Log.d("version_release", Build.VERSION.RELEASE + "");
 
         JSONObject packet = new JSONObject();
 
-        Log.d("UserPKey", userInfo[0][0]);
-        Log.d("ID", userInfo[0][1]);
-        Log.d("Password", userInfo[0][2]+"..");
-        Log.d("UDID", Build.ID);
-        Log.d("DeviceType", Build.BRAND);
-        Log.d("DeviceName", Build.MODEL);
-        Log.d("OS", Build.VERSION.RELEASE);
-        Log.d("Longitude", MainView.getLongitude() + "");
-        Log.d("Latitude", MainView.getLatitude() + "");
-
+//        Log.d("UserPKey", checkNull(userInfo[0][0]));
+//        Log.d("ID", checkNull(userInfo[0][1]));
+//        Log.d("Password", checkNull(userInfo[0][2] + ".."));
+//        Log.d("UDID", Build.ID);
+//        Log.d("DeviceType", Build.BRAND);
+//        Log.d("DeviceName", Build.MODEL);
+//        Log.d("OS", Build.VERSION.RELEASE);
+//        Log.d("Longitude", MainViewTest.getLongitude() + "");
+//        Log.d("Latitude", MainViewTest.getLatitude() + "");
+//
+//        Log.d("Key","");
 
         try {
-            packet.put("PKey", userInfo[0][0]);
-            packet.put("ID", userInfo[0][1]);
-            packet.put("Password", userInfo[0][2]+"..");
-            packet.put("UDID", Build.ID);
-            packet.put("DeviceType", "1");
-            packet.put("DeviceName", Build.MODEL);
-            packet.put("OS", Build.VERSION.RELEASE);
-            packet.put("Phone", "");
-            packet.put("Longitude", MainView.getLongitude() + "");
-            packet.put("Latitude", MainView.getLatitude() + "");
+            if(userInfo!=null && userInfo.length>0)
+            {
+                System.out.println("userInfo Is NotNull");
+                packet.put("PKey", checkNull(userInfo[0][0]));
+                packet.put("ID", checkNull(userInfo[0][1]));
+                packet.put("Password", checkNull(userInfo[0][2]));
+                packet.put("UDID", checkNull(Build.ID));
+                packet.put("DeviceType", "1");
+                packet.put("DeviceName", checkNull(Build.MODEL));
+                packet.put("OS", checkNull(Build.VERSION.RELEASE));
+                packet.put("Phone", "");
+            }
+            else
+            {
+                System.out.println("userInfo Is Null");
+                packet.put("PKey", "");
+                packet.put("ID", "");
+                packet.put("Password", "");
+                packet.put("UDID", checkNull(Build.ID));
+                packet.put("DeviceType", "1");
+                packet.put("DeviceName", checkNull(Build.MODEL));
+                packet.put("OS", checkNull(Build.VERSION.RELEASE));
+                packet.put("Phone", "");
+            }
+
+//            packet.put("Longitude", MainViewTest.getLongitude() + "");
+//            packet.put("Latitude", MainViewTest.getLatitude() + "");
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        Log.d("pakcet",packet.toString());
+        Log.d("pakcet", packet.toString());
 
         ArrayList<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("packet", packet.toString()));
@@ -113,6 +128,20 @@ public class NetworkSI {
             e.printStackTrace();
         }
         return response;
+    }
+
+    public String checkNull(String str) {
+        if (str != null && str.length() > 0) {
+
+            System.out.println("checkNull result is NotNull... "+str);
+            return str;
+
+        } else {
+
+            System.out.println("checkNull result is Null... "+str);
+            return "";
+
+        }
     }
 
 }

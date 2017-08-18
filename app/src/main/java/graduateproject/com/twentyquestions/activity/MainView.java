@@ -1,235 +1,180 @@
 package graduateproject.com.twentyquestions.activity;
 
-import android.content.Context;
-import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.Settings;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import graduateproject.com.twentyquestions.R;
-import graduateproject.com.twentyquestions.network.DBSI;
-import graduateproject.com.twentyquestions.network.DataSync;
-
+/**
+ * Created by mapl0 on 2017-08-18.
+ */
 
 public class MainView extends BaseActivity {
 
-    private static double longitude;
-    private static double latitude;
-    public static Context mContext;
+    //View
+    private RelativeLayout parentLayout;
+    private LinearLayout tabRowLayout1, tabRowLayout2, tabLayout;
+    private TextView btnStartGame, btnFriendList, btnLetterList, btnChatList, btnCreateGame, btnFastGame, btnOnlyEmptyRoom, btnLatestOrder;
+    private ViewPager pager;
+    private View.OnClickListener movePageListener;
 
-    private LocationListener locationListener;
-    private LocationManager locationManager;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    private android.widget.Button test;
-    private android.widget.TextView textview1;
-    Handler handler;
-    private TextView idtextview;
-    private TextView pkeytextview;
-    private Button logoutbtn;
-    private Button dropbtn;
+        setValues();
+        setUpEvents();
+        setView();
+        setContentView(parentLayout);
 
-    public MainView() {
-
-        mContext = this;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout);
-        this.dropbtn = (Button) findViewById(R.id.drop_btn);
-        this.logoutbtn = (Button) findViewById(R.id.logout_btn);
-        this.pkeytextview = (TextView) findViewById(R.id.pkey_textview);
-        this.idtextview = (TextView) findViewById(R.id.id_textview);
+    public void setUpEvents() {
 
-//        final DBSI db = new DBSI(mContext, "TwentyQuestions.db", null, 1);
-        final DBSI db = new DBSI();
-//        db.insertUserInfo();
-
-//        DataSync.getInstance().Timer();
-        DataSync.getInstance().doSync();
-        getLocation();
-
-
-//        db.query("insert into Chat(Pkey, ChatRoomPkey, UserPkey, ChatText, CreatedDate) Values(1, 1, 3, 'asdf', datetime('now','localtime'))");
-//
-//        String[][] test1 = db.selectQuery("select * from Chat");
-//
-//        for(int i = 0; i> test1.length; i++) {
-//            for(int j = 0; j< test1[i].length; j++) {
-//                System.out.println("i : " + i + ", j : " + test1[i][j]);
-//            }
-//        }
-
-
-        this.textview1 = (TextView) findViewById(R.id.textview1);
-        this.test = (Button) findViewById(R.id.test);
-
-        idtextview.setText(db.selectQuery("SELECT PKey, ID, Password FROM User")[0][1]);
-        pkeytextview.setText(db.selectQuery("SELECT PKey, ID, Password FROM User")[0][0]);
-
-        logoutbtn.setOnClickListener(new View.OnClickListener() {
+        movePageListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                db.query("DELETE FROM User");
-                db.query("DELETE FROM Chat");
-                db.query("DELETE FROM ChatRoom");
-                db.query("DELETE FROM ChatMember");
-
-                Intent intent = new Intent(mContext, LoginView.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-//        dropbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                db.dropTable();
-//                db.checkTable();
-//            }
-//        });
-
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                textview1.setText("경도 : " + MainView.getLongitude() + ", 위도 : " + MainView.getLatitude());
+                int tag = (int) view.getTag();
+                pager.setCurrentItem(tag);
             }
         };
+    }
 
-        Timer timer = new Timer();
-        TimerTask tsk = new TimerTask() {
-            @Override
-            public void run() {
+    @Override
+    public void setView() {
 
-                Bundle bundle = new Bundle();
+        btnStartGame = new TextView(this);
+        btnStartGame.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.WRAP_CONTENT, 1f));
+        btnStartGame.setText("게임하기");
+        btnStartGame.setOnClickListener(movePageListener);
+        btnStartGame.setTag(0);
 
-                Message message = new Message();
-                message.setData(bundle);
+        btnFriendList = new TextView(this);
+        btnFriendList.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.WRAP_CONTENT, 1f));
+        btnFriendList.setText("친구");
+        btnFriendList.setOnClickListener(movePageListener);
+        btnFriendList.setTag(1);
 
-                handler.sendMessage(message);
+        btnChatList = new TextView(this);
+        btnChatList.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.WRAP_CONTENT, 1f));
+        btnChatList.setText("대화");
+        btnChatList.setOnClickListener(movePageListener);
+        btnChatList.setTag(2);
 
-            }
-        };
-        timer.schedule(tsk, 0, 2000);
+        btnLetterList = new TextView(this);
+        btnLetterList.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.WRAP_CONTENT, 1f));
+        btnLetterList.setText("쪽지함");
+        btnLetterList.setOnClickListener(movePageListener);
+        btnLetterList.setTag(3);
 
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "경도 : " + MainView.getLongitude() + ", 위도 : " + MainView.getLatitude(), Snackbar.LENGTH_LONG).setAction("알림", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
 
-                    }
-                }).show();
-                DataSync.getInstance().doSync();
-            }
-        });
+        tabRowLayout1 = new LinearLayout(this);
+        tabRowLayout1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tabRowLayout1.setOrientation(LinearLayout.HORIZONTAL);
 
+        tabRowLayout1.addView(btnStartGame);
+        tabRowLayout1.addView(btnFriendList);
+        tabRowLayout1.addView(btnChatList);
+        tabRowLayout1.addView(btnLetterList);
+
+
+        btnCreateGame = new TextView(this);
+        btnCreateGame.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.WRAP_CONTENT, 1f));
+        btnCreateGame.setText("게임 만들기");
+
+        btnFastGame = new TextView(this);
+        btnFastGame.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.WRAP_CONTENT, 1f));
+        btnFastGame.setText("빠른시작");
+
+        btnLatestOrder = new TextView(this);
+        btnLatestOrder.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.WRAP_CONTENT, 1f));
+        btnLatestOrder.setText("최근순");
+
+        btnOnlyEmptyRoom = new TextView(this);
+        btnOnlyEmptyRoom.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.WRAP_CONTENT, 1f));
+        btnOnlyEmptyRoom.setText("빈방만");
+
+
+        tabRowLayout2 = new LinearLayout(this);
+        tabRowLayout2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tabRowLayout2.setOrientation(LinearLayout.HORIZONTAL);
+
+        tabRowLayout2.addView(btnCreateGame);
+        tabRowLayout2.addView(btnFastGame);
+        tabRowLayout2.addView(btnLatestOrder);
+        tabRowLayout2.addView(btnOnlyEmptyRoom);
+
+        tabLayout = new LinearLayout(this);
+        tabLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tabLayout.setOrientation(LinearLayout.VERTICAL);
+
+        tabLayout.addView(tabRowLayout1);
+        tabLayout.addView(tabRowLayout2);
+
+
+        pager = new ViewPager(this);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            pager.setId(pager.hashCode());
+        } else {
+            pager.setId(View.generateViewId());
+        }
+
+        pager.setAdapter(new MainViewAdapter(getSupportFragmentManager()));
+        pager.setCurrentItem(0);
+
+        parentLayout = new RelativeLayout(this);
+        parentLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        parentLayout.addView(tabLayout);
+        parentLayout.addView(pager);
 
     }
 
-    public void getLocation() {
+    @Override
+    public void setValues() {
+        super.setValues();
+    }
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    private class MainViewAdapter extends FragmentStatePagerAdapter {
 
-        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        public MainViewAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-        if (isGPSEnabled || isNetworkEnabled) {
-            Log.e("GPS Enable", "true");
+        @Override
+        public Fragment getItem(int position) {
 
-            final List<String> m_lstProviders = locationManager.getProviders(false);
-            locationListener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    Log.e("onLocationChanged", "onLocationChanged");
-                    Log.e("location", "[" + location.getProvider() + "] (" + location.getLatitude() + "," + location.getLongitude() + ")");
-//                    locationManager.removeUpdates(locationListener);
+            switch (position) {
 
-                    longitude = location.getLongitude();
-                    latitude = location.getLatitude();
+                case 0:
+                    return new GameListView();
+                case 1:
+                    return new FriendListView();
+                case 2:
+                    return new ChatListView();
+                case 3:
+                    return new LetterListView();
+                default:
+                    return null;
 
-                    Snackbar.make(getWindow().getDecorView().getRootView(), "경도 : " + MainView.getLongitude() + "\n 위도 : " + MainView.getLatitude(), Snackbar.LENGTH_LONG).setAction("알림", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+            }
+        }
 
-
-                        }
-                    }).show();
-
-
-                    Toast.makeText(mContext, "경도 : " + location.getLongitude() + "\n 위도 : " + location.getLatitude(), Toast.LENGTH_LONG);
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                    Log.e("onStatusChanged", "onStatusChanged");
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                    Log.e("onProviderEnabled", "onProviderEnabled");
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                    Log.e("onProviderDisabled", "onProviderDisabled");
-                }
-            };
-
-            // QQQ: 시간, 거리를 0 으로 설정하면 가급적 자주 위치 정보가 갱신되지만 베터리 소모가 많을 수 있다.
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    for (String name : m_lstProviders) {
-
-                        locationManager.requestLocationUpdates(name, 1, 0, locationListener);
-                    }
-                    Log.d("test", "location");
-
-                }
-            });
-
-        } else {
-            Log.e("GPS Enable", "false");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Snackbar.make(getWindow().getDecorView().getRootView(), "GPS가 꺼져있습니다. GPS를 켜주시기발바니다.", Snackbar.LENGTH_INDEFINITE).setAction("GPS켜기", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                            startActivity(intent);
-                        }
-                    }).show();
-                }
-            });
+        @Override
+        public int getCount() {
+            return 4;
         }
     }
 
-    public static double getLongitude() {
-        return longitude;
-    }
-
-    public static double getLatitude() {
-        return latitude;
-    }
 }

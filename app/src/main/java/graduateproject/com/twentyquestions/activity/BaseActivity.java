@@ -60,6 +60,11 @@ public class BaseActivity extends AppCompatActivity{
 
     }
 
+    public void setValues() {
+        //TODO  - 변수 초기화
+    }
+
+
     public void setCustomActionBar() {
 
         // 액션바 뷰 디자인 //

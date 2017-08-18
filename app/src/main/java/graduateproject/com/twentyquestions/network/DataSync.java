@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import graduateproject.com.twentyquestions.controller.DataSyncController;
+
 /**
  * Created by mapl0 on 2017-08-01.
  * <p>

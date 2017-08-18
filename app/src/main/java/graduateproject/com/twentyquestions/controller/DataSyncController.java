@@ -1,4 +1,4 @@
-package graduateproject.com.twentyquestions.network;
+package graduateproject.com.twentyquestions.controller;
 
 import android.util.Log;
 
@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import graduateproject.com.twentyquestions.network.DBSI;
+import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.util.ParseData;
 
 /**

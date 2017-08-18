@@ -246,8 +246,43 @@ public class DBSI extends SQLiteOpenHelper{
             Log.d("SearchTable", "table is nothing");
         }
 
+    }
 
+    public void createTable() {
 
+        query("CREATE TABLE AskAnswerList (PKey integer(8) NOT NULL, TwentyQuestionsPKey integer(8) NOT NULL, Guesser integer(8), Answerer integer(8), Guess varchar(255) NOT NULL, Answer varchar(255) NOT NULL, Status integer(1) DEFAULT 0 \t\t\t, CreatedDate timestamp, UpdatedDate timestamp);\n" +
+                "CREATE TABLE IF NOT EXISTS Chat (PKey integer(8) NOT NULL, ChatRoomPKey integer(8) NOT NULL, UserPKey integer(8) NOT NULL, ChatText text NOT NULL, Count integer(1), Type integer(1), CreatedDate timestamp NOT NULL);\n" +
+                "CREATE TABLE IF NOT EXISTS ChatMember (PKey integer(8) NOT NULL, UserPKey integer(8) NOT NULL, RoomPKey integer(8) NOT NULL, Status integer(1) DEFAULT 0 NOT NULL, Notify boolean DEFAULT '1' NOT NULL, CreatedDate timestamp, UpdatedDate timestamp);\n" +
+                "CREATE TABLE IF NOT EXISTS ChatRoom (PKey integer(8) NOT NULL, Name varchar(50) NOT NULL, Longitude double(10), Latitude double(10), CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL, Description varchar(200));\n" +
+                "CREATE TABLE IF NOT EXISTS Friend (PKey integer(8) NOT NULL, UserPKey integer(8) NOT NULL, FriendPKey integer(8) NOT NULL, Status integer(1) DEFAULT 0 NOT NULL, CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
+                "CREATE TABLE IF NOT EXISTS GameList (PKey integer(8) NOT NULL, ChatRoomPKey integer(8), GameTypePKey integer(4) NOT NULL, Name varchar(50), Password varchar(20), Description varchar(255), Status boolean DEFAULT '0' NOT NULL, GameStatus integer(1), MinMember integer(4) DEFAULT 2 NOT NULL, MaxMember integer(4) DEFAULT 2 NOT NULL, Longitude double(10), Latitude double(10), CreatedDate timestamp, UpdatedDate timestamp);\n" +
+                "CREATE TABLE IF NOT EXISTS GameMember (PKey integer(8) NOT NULL, GameListPKey integer(8) NOT NULL, UserPKey integer(8) NOT NULL, MemberPriority integer(1) DEFAULT 0, Status integer(1) DEFAULT 0, IsWinner boolean DEFAULT '0', CreatedDate timestamp, UpdatedDate timestamp);\n" +
+                "CREATE TABLE IF NOT EXISTS GameType (PKey integer(4) NOT NULL, Type integer(1), TableName varchar(50) NOT NULL, GameName varchar(50) NOT NULL, Description varchar(255));\n" +
+                "CREATE TABLE IF NOT EXISTS Hint (PKey integer(8) NOT NULL, GameListPKey integer(8) NOT NULL, UserPKey integer(8) NOT NULL, HintType integer(1), CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
+                "CREATE TABLE IF NOT EXISTS Letter (PKey integer(8) NOT NULL, Sender integer(8) NOT NULL, Receiver integer(8) NOT NULL, TableName varchar(50), TablePKey integer(8), IsLock boolean DEFAULT '0' NOT NULL, IsRead boolean DEFAULT '0', Type integer(1) DEFAULT 0 NOT NULL, Title varchar(100) NOT NULL, Content text, CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
+                "CREATE TABLE IF NOT EXISTS Notice (PKey integer(4) NOT NULL, Title varchar(100), Content text, NewDisplayDay integer(1), IsRead boolean DEFAULT '0', CreatedDate timestamp, UpdatedDate timestamp);\n" +
+                "CREATE TABLE IF NOT EXISTS Picture (PKey integer(8) NOT NULL, UserPKey integer(8) NOT NULL, Priority integer(1) DEFAULT 0 NOT NULL, PicturePath varchar(255) NOT NULL, IsDeleted boolean DEFAULT '0' NOT NULL, CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
+                "CREATE TABLE IF NOT EXISTS RandomName (PKey integer(4) NOT NULL, Type integer(1), Name varchar(50) NOT NULL);\n" +
+                "CREATE TABLE IF NOT EXISTS RightAnswerList (PKey integer(8) NOT NULL, TwentyQuestionPKey integer(8) NOT NULL, Guesser integer(8), Answerer integer(8), Guess varchar(255) NOT NULL, Answer text NOT NULL, IsRight integer(1) DEFAULT 0 NOT NULL, Status integer(1) DEFAULT 0 NOT NULL, CreatdDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
+                "CREATE TABLE IF NOT EXISTS TwentyQuestions (PKey integer(8) NOT NULL, GameListPKey integer(8) NOT NULL, Object varchar(50) NOT NULL, MaxAskable integer(1) DEFAULT 20, MaxGuessable integer(1) DEFAULT 3, CreatedDate timestamp, UpdatedDate timestamp);\n" +
+                "CREATE TABLE IF NOT EXISTS User (PKey integer(8) NOT NULL, ID varchar(50), SNSAccessToken varchar(1500), Password varchar(255), LoginType integer(1) DEFAULT 0 NOT NULL, NickName varchar(20) NOT NULL, Phone varchar(15), Gender integer(1) NOT NULL, Birthday date NOT NULL, Longitude double(10), Latitude double(10), ConditionMessage varchar(200), Introduction varchar(200), IsVerification boolean DEFAULT '0', Status tinyint(3) DEFAULT 1, LatestLogin timestamp, UDID varchar(50), DeviceType integer(1), DeviceName varchar(100), OS varchar(200), CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
+                "CREATE UNIQUE INDEX AskAnswerList_PKey ON AskAnswerList (PKey);\n" +
+                "CREATE UNIQUE INDEX Chat_PKey ON Chat (PKey);\n" +
+                "CREATE UNIQUE INDEX ChatMember_PKey ON ChatMember (PKey);\n" +
+                "CREATE UNIQUE INDEX ChatRoom_PKey ON ChatRoom (PKey);\n" +
+                "CREATE UNIQUE INDEX Friend_PKey ON Friend (PKey);\n" +
+                "CREATE UNIQUE INDEX GameList_PKey ON GameList (PKey);\n" +
+                "CREATE UNIQUE INDEX GameMember_PKey ON GameMember (PKey);\n" +
+                "CREATE UNIQUE INDEX GameType_PKey ON GameType (PKey);\n" +
+                "CREATE UNIQUE INDEX Hint_PKey ON Hint (PKey);\n" +
+                "CREATE UNIQUE INDEX Letter_PKey ON Letter (PKey);\n" +
+                "CREATE INDEX Notice_PKey ON Notice (PKey);\n" +
+                "CREATE UNIQUE INDEX Picture_PKey ON Picture (PKey);\n" +
+                "CREATE UNIQUE INDEX RandomName_PKey ON RandomName (PKey);\n" +
+                "CREATE UNIQUE INDEX RightAnswerList_PKey ON RightAnswerList (PKey);\n" +
+                "CREATE UNIQUE INDEX TwentyQuestions_PKey ON TwentyQuestions (PKey);\n" +
+                "CREATE UNIQUE INDEX User_PKey ON \"User\" (PKey);\n" +
+                "CREATE UNIQUE INDEX User_ID ON \"User\" (ID);\n");
 
     }
 }
