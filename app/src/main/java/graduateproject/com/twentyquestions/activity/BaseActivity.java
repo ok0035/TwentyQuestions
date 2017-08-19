@@ -34,6 +34,7 @@ public class BaseActivity extends AppCompatActivity{
     public static Context mContext;
     public static TextView titleView;
     public static ImageView backView;
+    public static String serverAddress = "http://heronation.net/";
 
     private int firstFlag = 0;
 

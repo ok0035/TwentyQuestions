@@ -3,6 +3,8 @@ package graduateproject.com.twentyquestions.util;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
+import graduateproject.com.twentyquestions.activity.BaseActivity;
+
 /**
  * Created by Heronation on 2017-07-24.
  */
@@ -13,6 +15,7 @@ public class CalculatePixel {
     public static DisplayMetrics dm;
     public static int deviceWidth;
     public static int deviceHeight;
+    public static CalculatePixel calpixel;
 
 
     public CalculatePixel(Context context) {
@@ -20,6 +23,15 @@ public class CalculatePixel {
         dm = mContext.getResources().getDisplayMetrics();
         deviceWidth = dm.widthPixels;
         deviceHeight = dm.heightPixels;
+    }
+
+    public CalculatePixel getInstance() {
+
+        if(calpixel == null) {
+            calpixel = new CalculatePixel(BaseActivity.mContext);
+        }
+
+        return calpixel;
     }
 
 
