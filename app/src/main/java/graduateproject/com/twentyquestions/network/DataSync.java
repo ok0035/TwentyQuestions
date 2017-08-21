@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import graduateproject.com.twentyquestions.controller.DataSyncController;
+import graduateproject.com.twentyquestions.util.GPSTracer;
 
 /**
  * Created by mapl0 on 2017-08-01.
@@ -80,6 +81,7 @@ public class DataSync extends Thread {
 
                 public void run() {
                     doSync();    // 타이머가 울리면 이 곳으로 들어온다.
+                    System.out.println("GPS " + "Longitude : " + GPSTracer.longitude + "   Latitude : " + GPSTracer.latitude);
                 }
             };
             timer.schedule(timerTask, 0, 10000); // 첫번째 인자인 tmrTask 로 1초 뒤에 알림을 준다.

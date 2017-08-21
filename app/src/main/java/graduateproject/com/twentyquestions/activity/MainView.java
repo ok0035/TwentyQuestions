@@ -17,6 +17,9 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import graduateproject.com.twentyquestions.network.DataSync;
+import graduateproject.com.twentyquestions.util.GPSTracer;
+
 /**
  * Created by mapl0 on 2017-08-18.
  */
@@ -30,6 +33,7 @@ public class MainView extends BaseActivity {
     private TextView btnStartGame, btnFriendList, btnLetterList, btnChatList, btnCreateGame, btnFastGame, btnOnlyEmptyRoom, btnLatestOrder;
     private ViewPager pager;
     private View.OnClickListener movePageListener;
+    private GPSTracer locationManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +60,11 @@ public class MainView extends BaseActivity {
                 System.out.println("Click ............ " + tag);
             }
         };
+
+        GPSTracer.getInstance().getLocation();
+
+        DataSync.getInstance().Timer();
+
     }
 
     @Override
