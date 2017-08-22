@@ -3,7 +3,7 @@ package graduateproject.com.twentyquestions.util;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
-import graduateproject.com.twentyquestions.activity.BaseActivity;
+import graduateproject.com.twentyquestions.view.BaseActivity;
 
 /**
  * Created by Heronation on 2017-07-24.
@@ -25,7 +25,7 @@ public class CalculatePixel {
         deviceHeight = dm.heightPixels;
     }
 
-    public CalculatePixel getInstance() {
+    public static CalculatePixel getInstance() {
 
         if(calpixel == null) {
             calpixel = new CalculatePixel(BaseActivity.mContext);

@@ -73,8 +73,8 @@ public class HttpNetwork extends AsyncTask<String, Void, String> {
 
     @Override
     public void onPostExecute(String result) {
-        delegate.onSuccess(result);
-        Log.d("onPostExecuete", result);
+        delegate.onSuccess(result + "");
+        Log.d("onPostExecuete", result + "");
 
 //        if (mProgressDialog != null)
 //            mProgressDialog.hide();

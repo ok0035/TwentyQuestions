@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import graduateproject.com.twentyquestions.activity.MainView;
+import graduateproject.com.twentyquestions.view.MainView;
 import graduateproject.com.twentyquestions.item.GameListViewItem;
 
 /**

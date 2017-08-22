@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import graduateproject.com.twentyquestions.activity.BaseActivity;
+import graduateproject.com.twentyquestions.view.BaseActivity;
 
 import static android.content.ContentValues.TAG;
 

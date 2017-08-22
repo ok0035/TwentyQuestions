@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import static graduateproject.com.twentyquestions.activity.BaseActivity.mContext;
+import static graduateproject.com.twentyquestions.view.BaseActivity.mContext;
 
 /**
  * Created by mapl0 on 2017-08-21.

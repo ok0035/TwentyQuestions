@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import graduateproject.com.twentyquestions.activity.BaseActivity;
+import graduateproject.com.twentyquestions.view.BaseActivity;
 import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.util.ParseData;
 

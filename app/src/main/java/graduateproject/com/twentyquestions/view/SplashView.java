@@ -1,4 +1,4 @@
-package graduateproject.com.twentyquestions.activity;
+package graduateproject.com.twentyquestions.view;
 
 import android.content.Intent;
 import android.os.Bundle;

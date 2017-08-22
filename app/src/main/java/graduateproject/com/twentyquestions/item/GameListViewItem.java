@@ -2,7 +2,7 @@ package graduateproject.com.twentyquestions.item;
 
 import android.widget.Button;
 
-import graduateproject.com.twentyquestions.activity.MainView;
+import graduateproject.com.twentyquestions.view.MainView;
 
 /**
  * Created by mapl0 on 2017-08-19.

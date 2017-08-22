@@ -1,4 +1,4 @@
-package graduateproject.com.twentyquestions.activity;
+package graduateproject.com.twentyquestions.view;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import android.widget.TableLayout;
  * Created by mapl0 on 2017-08-18.
  */
 
-public class FriendListView extends Fragment {
+public class LetterListView extends Fragment {
 
     private LinearLayout parentLayout;
 
@@ -36,8 +36,7 @@ public class FriendListView extends Fragment {
 
         parentLayout = new LinearLayout(MainView.mContext);
         parentLayout.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        parentLayout.setBackgroundColor(Color.CYAN);
+        parentLayout.setBackgroundColor(Color.BLUE);
 
     }
-
 }
