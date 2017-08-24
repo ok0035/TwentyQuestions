@@ -109,7 +109,7 @@ public class RegisterView extends BaseActivity {
 //                        // DBSI호출 후, query 실행//
 //
 //                    }
-                    Intent intent = new Intent(mContext, MainViewTest.class);
+                    Intent intent = new Intent(mContext, MainView.class);
                     startActivity(intent);
                     finish();
                 }else{
