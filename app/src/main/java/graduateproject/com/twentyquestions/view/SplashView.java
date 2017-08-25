@@ -20,8 +20,10 @@ import static graduateproject.com.twentyquestions.util.CalculatePixel.calculateP
 
 public class SplashView extends BaseActivity {
 
-    RelativeLayout parentLayout;
-    DBSI db;
+    private RelativeLayout parentLayout;
+    private DBSI db;
+    private String[][] userInfo;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +44,8 @@ public class SplashView extends BaseActivity {
 
     void moveToProperActivity() {
 //        String[][] userInfo = db.selectQuery("SELECT PKey, ID, Password FROM User");
-        String[][] userInfo = db.selectQuery("SELECT PKey, ID, Password FROM User");
+
+        userInfo = db.selectQuery("SELECT PKey, ID, Password FROM User");
 
         if (userInfo == null) {
 

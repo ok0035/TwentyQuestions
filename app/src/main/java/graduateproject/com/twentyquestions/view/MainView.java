@@ -17,8 +17,15 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.network.DataSync;
+import graduateproject.com.twentyquestions.network.NetworkSI;
 import graduateproject.com.twentyquestions.util.GPSTracer;
+import graduateproject.com.twentyquestions.util.ParseData;
 
 import static graduateproject.com.twentyquestions.util.CalculatePixel.calculatePixelY;
 
@@ -41,6 +48,8 @@ public class MainView extends BaseActivity {
     private FriendListView friendListView = new FriendListView();
     private ChatListView chatListView = new ChatListView();
     private LetterListView letterListView = new LetterListView();
+
+    private NetworkSI network;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,9 +104,139 @@ public class MainView extends BaseActivity {
             }
         });
 
+        initUserData();
         GPSTracer.getInstance().getLocation();
-
         DataSync.getInstance().doSync();
+
+    }
+
+    public void initUserData() {
+
+        JSONArray jsonArray;
+        network = new NetworkSI();
+        DBSI db = new DBSI();
+
+        String response = network.request(DataSync.Command.GETINIT, "");
+
+        ParseData parse = new ParseData();
+        try {
+
+            jsonArray = parse.jsonArrayInObject(response, "ChatRoom");
+
+            for(int i=0; i<jsonArray.length(); i++) {
+
+                JSONObject json = parse.doubleJsonObject(jsonArray.get(i).toString(), "chatroom");
+                int pkey = json.getInt("PKey");
+                String name = json.getString("Name");
+                String longitude = json.getString("Longitude");
+                String latitude = json.getString("Latitude");
+                String createdDate = json.getString("CreatedDate");
+                String updatedDate = json.getString("UpdatedDate");
+                String description = json.getString("Description");
+
+                String[][] selectChatRoom = db.selectQuery("select * from ChatRoom");
+
+                if(selectChatRoom == null || Integer.parseInt(selectChatRoom[selectChatRoom.length-1][0]) < pkey) {
+                    db.query("insert into ChatRoom values(\'" + pkey + "\', \'" + name + "\', \'" + longitude + "\', \'" + latitude+ "\', \'" + createdDate + "\', \'" + updatedDate + "\', \'" + description + ")");
+                }
+
+            }
+
+            jsonArray = parse.jsonArrayInObject(response, "Chat");
+
+            for(int i=0; i<jsonArray.length(); i++) {
+
+                JSONObject json = parse.doubleJsonObject(jsonArray.get(i).toString(), "chat");
+
+                int pkey = json.getInt("PKey");
+                int chatRoomPKey = json.getInt("ChatRoomPKey");
+                int userPKey = json.getInt("UserPKey");
+                String chatText = json.getString("ChatText");
+                int count = json.getInt("Count");
+                int type = json.getInt("Type");
+                String createdDate = json.getString("CreatedDate");
+
+                String[][] selectChat = db.selectQuery("select * from Chat");
+                if(selectChat == null || Integer.parseInt(selectChat[selectChat.length-1][0]) < pkey) {
+                    db.query("insert into Chat values(\'" + pkey + "\', " + chatRoomPKey + ", " + userPKey + ", \'" + chatText + "\', " + count + ", " + type + ", \'" + createdDate + "\')");
+                }
+
+            }
+
+            jsonArray = parse.jsonArrayInObject(response, "ChatMember");
+
+            for(int i=0; i<jsonArray.length(); i++) {
+
+                JSONObject json = parse.doubleJsonObject(jsonArray.get(i).toString(), "chatmember");
+
+                int pkey = json.getInt("PKey");
+                int userPKey = json.getInt("UserPKey");
+                int roomPKey = json.getInt("RoomPKey");
+                int status = json.getInt("Status");
+                int notify = json.getInt("Notify");
+                String createdDate = json.getString("CreatedDate");
+                String updatedDate = json.getString("UpdatedDate");
+
+                String[][] selectChatMember = db.selectQuery("select * from ChatMember");
+                if(selectChatMember == null || Integer.parseInt(selectChatMember[selectChatMember.length-1][0]) < pkey) {
+                    db.query("insert into ChatMember values(" + pkey + ", " + userPKey + ", " + roomPKey + ", " + status + ", " + notify + ", \'" + createdDate + "\', \'" + updatedDate + "\')");
+                }
+
+            }
+
+            jsonArray = parse.jsonArrayInObject(response, "GameList");
+
+            for(int i=0; i<jsonArray.length(); i++) {
+
+                JSONObject json = parse.doubleJsonObject(jsonArray.get(i).toString(), "gamelist");
+
+                int pkey = json.getInt("PKey");
+                int chatRoomPKey = json.getInt("ChatRoomPKey");
+                int gameTypePKey = json.getInt("GameTypePKey");
+                String name = json.getString("Name");
+                String password = json.getString("Password");
+                String description = json.getString("Description");
+                int status = json.getInt("Status");
+                int gameStatus = json.getInt("GameStatus");
+                int minMember = json.getInt("MinMember");
+                int maxMember = json.getInt("MaxMember");
+                double longitude = json.getDouble("Longitude");
+                double latitude = json.getDouble("Latitude");
+                String createdDate = json.getString("CreatedDate");
+                String updatedDate = json.getString("UpdatedDate");
+
+                String[][] selectGameList = db.selectQuery("select * from GameList");
+                if(selectGameList == null || Integer.parseInt(selectGameList[selectGameList.length-1][0]) < pkey) {
+                    db.query("insert into GameList values( " + pkey + ", " + chatRoomPKey + ", " + gameTypePKey + ", \'" + name + "\', \'" + password + "\', \'" + description + "\', " +
+                    status + ", " + gameStatus + ", " + minMember + ", " + maxMember + ", " + longitude + ", " + latitude + ", \'" + createdDate + "\', \'" + updatedDate + "\')");
+                }
+
+            }
+
+            jsonArray = parse.jsonArrayInObject(response, "GameMember");
+
+            for(int i=0; i<jsonArray.length(); i++) {
+
+                JSONObject json = parse.doubleJsonObject(jsonArray.get(i).toString(), "gamemember");
+                int pkey = json.getInt("PKey");
+                int gameListPKey = json.getInt("GameListPKey");
+                int userPKey = json.getInt("UserPKey");
+                int memberPriority = json.getInt("MemberPriority");
+                int status = json.getInt("Status");
+                int isWinner = json.getInt("IsWinner");
+                String createdDate = json.getString("CreatedDate");
+                String updatedDate = json.getString("UpdatedDate");
+
+                String[][] selectGameMember = db.selectQuery("select * from GameMember");
+                if(selectGameMember == null || Integer.parseInt(selectGameMember[selectGameMember.length-1][0]) < pkey) {
+                    db.query("insert into GameMember values( " + pkey + ", " + gameListPKey + ", " + userPKey + ", " + memberPriority + ", " + status + ", " + isWinner + ", \'" + createdDate + "\', \'" + updatedDate + "\')");
+                }
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 

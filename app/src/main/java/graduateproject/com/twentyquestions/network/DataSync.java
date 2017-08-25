@@ -170,21 +170,54 @@ public class DataSync extends Thread {
         JSONObject chat = new JSONObject();
         JSONObject chatMember = new JSONObject();
         JSONObject chatRoom = new JSONObject();
+        JSONObject gameList = new JSONObject();
+        JSONObject gameMember = new JSONObject();
+
+        DBSI db = new DBSI();
+
+        String[][] selectChatRoom = db.selectQuery("select * from ChatRoom");
+        String[][] selectChat = db.selectQuery("select * from Chat");
+        String[][] selectChatMember = db.selectQuery("select * from ChatMember");
+        String[][] selectGameList = db.selectQuery("select * from GameList");
+        String[][] selectGameMember = db.selectQuery("select * from GameMember");
+
+        String chatRoomPKey = (selectChatRoom != null) ? selectChatRoom[selectChatRoom.length-1][0] : null;
+        String chatRoomUpdatedDate = (selectChatRoom != null) ? selectChatRoom[selectChatRoom.length-1][5] : null;
+
+        String chatPKey = (selectChat != null) ? selectChat[selectChat.length-1][0] : null;
+        String chatCreatedDate = (selectChat != null) ? selectChat[selectChat.length-1][6] : null;
+
+        String chatMemberPKey = (selectChatMember != null) ? selectChatMember[selectChatMember.length-1][0] : null;
+        String chatMemberUpdatedDate = (selectChatMember != null) ? selectChatMember[selectChatMember.length-1][6] : null;
+
+        String gameListPKey = (selectGameList != null) ? selectGameList[selectGameList.length-1][0] : null;
+        String gameListUpdatedDate = (selectGameList != null) ? selectGameList[selectGameList.length-1][13] : null;
+
+        String gameMemberPKey = (selectGameMember != null) ? selectGameMember[selectGameMember.length-1][0] : null;
+        String gameMemberUpdatedDate = (selectGameMember != null) ? selectGameMember[selectGameMember.length-1][7] : null;
 
         try {
 
-            chatRoom.put("PKey", "1");
-            chatRoom.put("UpdatedDate", "2017-08-03 13:05:31");
+            chatRoom.put("PKey", chatRoomPKey);
+            chatRoom.put("UpdatedDate", chatRoomUpdatedDate);
 
-            chat.put("PKey", "1");
-            chat.put("CreatedDate", "2017-08-03 14:28:47");
+            chat.put("PKey", chatPKey);
+            chat.put("CreatedDate", chatCreatedDate);
 
-            chatMember.put("PKey", "1");
-            chatMember.put("UpdatedDate", "2017-08-03 00:30:00");
+            chatMember.put("PKey", chatMemberPKey);
+            chatMember.put("UpdatedDate", chatMemberUpdatedDate);
+
+            gameList.put("PKey", gameListPKey);
+            gameList.put("UpdatedDate", gameListUpdatedDate);
+
+            gameMember.put("PKey", gameMemberPKey);
+            gameMember.put("UpdatedDate", gameMemberUpdatedDate);
 
             data.put("ChatRoom", chatRoom);
             data.put("Chat", chat);
             data.put("ChatMember", chatMember);
+            data.put("GameList", gameList);
+            data.put("GameMember", gameMember);
 
         } catch (JSONException e) {
             e.printStackTrace();
