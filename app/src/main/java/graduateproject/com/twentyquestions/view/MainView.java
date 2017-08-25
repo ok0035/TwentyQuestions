@@ -106,7 +106,7 @@ public class MainView extends BaseActivity {
 
         initUserData();
         GPSTracer.getInstance().getLocation();
-        DataSync.getInstance().doSync();
+        DataSync.getInstance().Timer();
 
     }
 
