@@ -137,7 +137,7 @@ public class MainView extends BaseActivity {
                 String[][] selectChatRoom = db.selectQuery("select * from ChatRoom");
 
                 if(selectChatRoom == null || Integer.parseInt(selectChatRoom[selectChatRoom.length-1][0]) < pkey) {
-                    db.query("insert into ChatRoom values(\'" + pkey + "\', \'" + name + "\', \'" + longitude + "\', \'" + latitude+ "\', \'" + createdDate + "\', \'" + updatedDate + "\', \'" + description + ")");
+                    db.query("insert into ChatRoom values(\'" + pkey + "\', \'" + name + "\', \'" + longitude + "\', \'" + latitude+ "\', \'" + createdDate + "\', \'" + updatedDate + "\', \'" + description + "\')");
                 }
 
             }
