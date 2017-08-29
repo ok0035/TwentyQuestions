@@ -96,7 +96,7 @@ public class MainView extends BaseActivity {
                 if(position == 0){
                     gameListView.updateAdapter();
                 }
-            }
+        }
 
             @Override
             public void onPageScrollStateChanged(int state) {

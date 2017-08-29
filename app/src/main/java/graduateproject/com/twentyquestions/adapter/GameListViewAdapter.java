@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -11,8 +12,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import graduateproject.com.twentyquestions.view.MainView;
 import graduateproject.com.twentyquestions.item.GameListViewItem;
+import graduateproject.com.twentyquestions.view.MainView;
 
 /**
  * Created by mapl0 on 2017-08-19.
@@ -81,12 +82,12 @@ public class GameListViewAdapter extends BaseAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(String roomNumber, String roomName, String sex) {
+    public void addItem(String roomNumber, String roomName, String roomDescription) {
         GameListViewItem item = new GameListViewItem();
 
         item.setRoomNumber(roomNumber);
         item.setRoomName(roomName);
-        item.setDescription(sex);
+        item.setDescription(roomDescription);
 
         listViewItemList.add(item);
     }
@@ -116,7 +117,7 @@ public class GameListViewAdapter extends BaseAdapter {
 
         llRoomTitles = new LinearLayout(MainView.mContext);
         llRoomTitles.setOrientation(LinearLayout.HORIZONTAL);
-        llRoomTitles.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        llRoomTitles.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         llRoomTitles.addView(tvRoomNumberTitle);
         llRoomTitles.addView(tvRoomNameTitle);
         llRoomTitles.addView(tvDescTitle);
@@ -141,7 +142,7 @@ public class GameListViewAdapter extends BaseAdapter {
 
         llRoomValues = new LinearLayout(MainView.mContext);
         llRoomValues.setOrientation(LinearLayout.HORIZONTAL);
-        llRoomValues.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        llRoomValues.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         llRoomValues.addView(tvRoomNumber);
         llRoomValues.addView(tvRoomName);
         llRoomValues.addView(tvDesc);
@@ -157,7 +158,7 @@ public class GameListViewAdapter extends BaseAdapter {
 
         parentLayout = new LinearLayout(MainView.mContext);
         parentLayout.setOrientation(LinearLayout.VERTICAL);
-        parentLayout.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        parentLayout.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         parentLayout.addView(llRoomTitles);
         parentLayout.addView(llRoomValues);

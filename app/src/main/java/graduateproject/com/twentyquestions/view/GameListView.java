@@ -192,14 +192,13 @@ public class GameListView extends Fragment {
         btnOnlyEmptyRoom.setText("빈방만");
 
         btnRefresh = new TextView(MainView.mContext);
-        btnRefresh.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT, 1f));
+        btnRefresh.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT, 1f));
         btnRefresh.setGravity(Gravity.CENTER);
         btnRefresh.setText("새로고침");
         btnRefresh.setOnClickListener(clickRefresh);
 
         tabLayout = new LinearLayout(MainView.mContext);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) calculatePixelY(30));
-        tabLayout.setLayoutParams(new TableLayout.LayoutParams(params));
+        tabLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) calculatePixelY(30)));
         tabLayout.setOrientation(LinearLayout.HORIZONTAL);
 
         tabLayout.addView(btnCreateGame);
@@ -210,17 +209,15 @@ public class GameListView extends Fragment {
 
         divisionLine = new LinearLayout(MainView.mContext);
         divisionLine.setBackgroundColor(Color.BLACK);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 5);
-        layoutParams.setMargins(0, 0, 0, 0);
-        divisionLine.setLayoutParams(layoutParams);
+        divisionLine.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 5));
 
         list = new ListView(MainView.mContext);
-        list.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        list.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         list.setAdapter(adapter);
 
         parentLayout = new LinearLayout(MainView.mContext);
         parentLayout.setOrientation(LinearLayout.VERTICAL);
-        parentLayout.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        parentLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         parentLayout.addView(tabLayout);
         parentLayout.addView(divisionLine);
