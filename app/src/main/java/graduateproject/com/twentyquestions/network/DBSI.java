@@ -71,6 +71,8 @@ public class DBSI extends SQLiteOpenHelper{
     public String[][] selectQuery(String query) {
         SQLiteDatabase db = getWritableDatabase();
 
+        Log.d("Query",query);
+
         Cursor cursor;
 
         try{

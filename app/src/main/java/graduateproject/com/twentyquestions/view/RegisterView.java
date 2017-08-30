@@ -91,11 +91,13 @@ public class RegisterView extends BaseActivity {
                 }
 
                 NetworkSI networkSI = new NetworkSI();
-                String response = networkSI.request(DataSync.Command.TRYREGIST, User.toString());
+                String response = networkSI.request(DataSync.Command.TRYREGIST, User.toString(), new NetworkSI.AsyncResponse() {
+                    @Override
+                    public void onSuccess(String response) {
 
-                LoginController loginController = new LoginController();
+                        LoginController loginController = new LoginController();
 //                loginController.parseLoginData(response);
-                if(loginController.parseLoginData(response)) {
+                        if(loginController.parseLoginData(response)) {
 //                    for(int i = 0 ; i < loginController.getParseList().size() ; i++){
 //                        // getParseList는 이중 리스트 구조
 //                        // 즉, List<BasicNameValuePair>를 가지고 있는 List
@@ -109,12 +111,22 @@ public class RegisterView extends BaseActivity {
 //                        // DBSI호출 후, query 실행//
 //
 //                    }
-                    Intent intent = new Intent(mContext, MainView.class);
-                    startActivity(intent);
-                    finish();
-                }else{
-                    Toast.makeText(RegisterView.this, "회원가입 도중 문제가 발생했습니다.", Toast.LENGTH_SHORT).show();
-                }
+                            Intent intent = new Intent(mContext, MainView.class);
+                            startActivity(intent);
+                            finish();
+                        }else{
+                            Toast.makeText(RegisterView.this, "회원가입 도중 문제가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(String response) {
+
+                    }
+                });
+
+
 
             }
         };

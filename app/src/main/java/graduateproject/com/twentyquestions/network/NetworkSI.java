@@ -6,7 +6,6 @@ import android.util.Log;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,7 +23,14 @@ public class NetworkSI {
     Handler handler;
     String response;
 
-    public String request(DataSync.Command command, String data) {
+    public interface AsyncResponse {
+        void onSuccess(String response);
+        void onFailure(String response);
+    }
+
+    public AsyncResponse delegate = null;
+
+    public String request(DataSync.Command command, String data, final AsyncResponse delegate) {
 
         //패킷 정보
 
@@ -102,7 +108,7 @@ public class NetworkSI {
         params.add(new BasicNameValuePair("command", command.toString()));
         params.add(new BasicNameValuePair("data", data));
 
-        JSONArray jsonarr = new JSONArray(params);
+//        JSONArray jsonarr = new JSONArray(params);
 
 //        handler = new Handler();
 
@@ -110,13 +116,13 @@ public class NetworkSI {
             response = new HttpNetwork(params, new HttpNetwork.AsyncResponse() {
                 @Override
                 public void onSuccess(String response) {
-
-
+                    delegate.onSuccess(response);
                     Log.d("response", response);
                 }
 
                 @Override
                 public void onFailure(String response) {
+                    delegate.onFailure(response);
 
                 }
 

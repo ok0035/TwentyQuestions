@@ -69,7 +69,13 @@ public class MainViewTest extends BaseActivity {
 
         final DBSI db = new DBSI();
 
-        DataSync.getInstance().Timer();
+        DataSync.getInstance().Timer(new DataSync.AsyncResponse() {
+            @Override
+            public void onFinished(String response) {
+
+            }
+        });
+
 //        DataSync.getInstance().doSync();
         getLocation();
 
@@ -135,7 +141,12 @@ public class MainViewTest extends BaseActivity {
 
                     }
                 }).show();
-                DataSync.getInstance().doSync();
+                DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                    @Override
+                    public void onFinished(String response) {
+
+                    }
+                });
             }
         });
 
@@ -205,7 +216,7 @@ public class MainViewTest extends BaseActivity {
 
                     for (String name : m_lstProviders) {
 
-                        locationManager.requestLocationUpdates(name, 1, 0, locationListener);
+//                        locationManager.requestLocationUpdates(name, 1, 0, locationListener);
                     }
                     Log.d("test", "location");
 
