@@ -88,6 +88,31 @@ public class GameRoomView extends BaseActivity {
                         @Override
                         public void onSuccess(String response) {
 
+                            System.out.println("/////////////////////////////////////////////");
+                            String[][] getLocalChatTable = dbsi.selectQuery("Select Max(PKey) from Chat");
+                            final String lastChatPkey = (getLocalChatTable[0][0] != null) ? getLocalChatTable[0][0] : "0";
+
+                            DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                                @Override
+                                public void onFinished(String response) {
+                                    String[][] addedChatData = dbsi.selectQuery("select * from Chat where PKey > " + lastChatPkey);
+
+                                    Log.d("addedChatData.length",addedChatData.length+"");
+
+                                    for (int i = 0; i < addedChatData.length; i++) {
+                                        ChatDataItem chatDataItem = new ChatDataItem();
+                                        chatDataItem.setUserPKey(addedChatData[i][2]);
+                                        chatDataItem.setUserName(dbsi.selectQuery("SELECT NickName FROM User WHERE PKey = " + addedChatData[i][2])[0][0]);
+                                        chatDataItem.setChattingText(addedChatData[i][3]);
+                                        chatDataItemlist.add(chatDataItem);
+                                    }
+
+                                    gameChatListViewAdapter.notifyDataSetChanged();
+
+                                    edChat.setText(null);
+                                }
+                            });
+
                         }
 
                         @Override
@@ -97,30 +122,6 @@ public class GameRoomView extends BaseActivity {
                     });
 //                    Log.d("SendChatData.php...",response);
 
-
-                    System.out.println("/////////////////////////////////////////////");
-                    String[][] getLocalChatTable = dbsi.selectQuery("Select Max(PKey) from Chat");
-                    final String lastChatPkey = (getLocalChatTable[0][0] != null) ? getLocalChatTable[0][0] : "0";
-                    DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
-                        @Override
-                        public void onFinished(String response) {
-                            String[][] addedChatData = dbsi.selectQuery("select * from Chat where PKey > " + lastChatPkey);
-
-                            Log.d("addedChatData.length",addedChatData.length+"");
-
-                            for (int i = 0; i < addedChatData.length; i++) {
-                                ChatDataItem chatDataItem = new ChatDataItem();
-                                chatDataItem.setUserPKey(addedChatData[i][2]);
-                                chatDataItem.setUserName(dbsi.selectQuery("SELECT NickName FROM User WHERE PKey = " + addedChatData[i][2])[0][0]);
-                                chatDataItem.setChattingText(addedChatData[i][3]);
-                                chatDataItemlist.add(chatDataItem);
-                            }
-
-                            gameChatListViewAdapter.notifyDataSetChanged();
-
-                            edChat.setText(null);
-                        }
-                    });
 
                     //ChatControl 사용하는 경우
 //                    ChatContoller chatContoller = new ChatContoller();
