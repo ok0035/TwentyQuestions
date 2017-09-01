@@ -1,5 +1,6 @@
 package graduateproject.com.twentyquestions.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -40,6 +41,7 @@ public class GameRoomView extends BaseActivity {
     JSONObject data = new JSONObject();
     View.OnClickListener send;
     ArrayList<ChatDataItem> chatDataItemlist;
+    public static Context context;
 
     public GameRoomView() {
         super();
@@ -87,32 +89,31 @@ public class GameRoomView extends BaseActivity {
                     String response = networkSI.request(DataSync.Command.SENDCHATDATA, data.toString(), new NetworkSI.AsyncResponse() {
                         @Override
                         public void onSuccess(String response) {
-
                             System.out.println("/////////////////////////////////////////////");
-                            String[][] getLocalChatTable = dbsi.selectQuery("Select Max(PKey) from Chat");
-                            final String lastChatPkey = (getLocalChatTable[0][0] != null) ? getLocalChatTable[0][0] : "0";
-
+//                            String[][] getLocalChatTable = dbsi.selectQuery("Select Max(PKey) from Chat");
+//                            final String lastChatPkey = (getLocalChatTable[0][0] != null) ? getLocalChatTable[0][0] : "0";
                             DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                                 @Override
                                 public void onFinished(String response) {
-                                    String[][] addedChatData = dbsi.selectQuery("select * from Chat where PKey > " + lastChatPkey);
-
-                                    Log.d("addedChatData.length",addedChatData.length+"");
-
-                                    for (int i = 0; i < addedChatData.length; i++) {
-                                        ChatDataItem chatDataItem = new ChatDataItem();
-                                        chatDataItem.setUserPKey(addedChatData[i][2]);
-                                        chatDataItem.setUserName(dbsi.selectQuery("SELECT NickName FROM User WHERE PKey = " + addedChatData[i][2])[0][0]);
-                                        chatDataItem.setChattingText(addedChatData[i][3]);
-                                        chatDataItemlist.add(chatDataItem);
-                                    }
-
-                                    gameChatListViewAdapter.notifyDataSetChanged();
+//                                    String[][] addedChatData = dbsi.selectQuery("select * from Chat where PKey > " + lastChatPkey);
+//
+//                                    Log.d("addedChatData.length", addedChatData.length + "");
+//
+//                                    for (int i = 0; i < addedChatData.length; i++) {
+//                                        ChatDataItem chatDataItem = new ChatDataItem();
+//                                        chatDataItem.setUserPKey(addedChatData[i][2]);
+//                                        String[][] userNameAndFlag = dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + addedChatData[i][2]);
+//                                        chatDataItem.setUserName(userNameAndFlag[0][0]);
+//                                        chatDataItem.setUserMySelf(userNameAndFlag[0][1]);
+//                                        chatDataItem.setChattingText(addedChatData[i][3]);
+//                                        chatDataItemlist.add(chatDataItem);
+//                                    }
+//
+//                                    gameChatListViewAdapter.notifyDataSetChanged();
 
                                     edChat.setText(null);
                                 }
                             });
-
                         }
 
                         @Override
@@ -120,32 +121,6 @@ public class GameRoomView extends BaseActivity {
 
                         }
                     });
-//                    Log.d("SendChatData.php...",response);
-
-
-                    //ChatControl 사용하는 경우
-//                    ChatContoller chatContoller = new ChatContoller();
-//
-//                    String[][] getLocalChatTable = dbsi.selectQuery("Select Max(PKey) from Chat");
-//                    String lastChatPkey = getLocalChatTable[0][0];
-//
-//                    if(chatContoller.parseChatData(response)){
-//                        // dosync와의 충돌을 막기위해서 로컬 db chat테이블의 마지막 레코드 pkey가 가져온값과 일치하는지 확인한다.
-//                        // 일치하면 insert 생략
-//                        try {
-//                            if(!lastChatPkey.equals(chatContoller.getChatData().getString("PKey"))){
-//                                Log.d("Query,,,,", chatContoller.getFinalQuery());
-//                                dbsi.query(chatContoller.getFinalQuery());
-//                            }else{
-//                                // 이미 dosync로 가져갔기 때문에 insert 과정 생략
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                    }
-//                    Log.d("//////////////","//////////////");
-
 
                 }
 
@@ -195,6 +170,8 @@ public class GameRoomView extends BaseActivity {
 
     @Override
     public void setValues() {
+        context = this;
+        DataSync.getInstance().setDSContext(context);
         //  localDB의 GameMember와 GameList를 이용해서 게임방의 데이터들을 가져온다.
         dbsi = new DBSI();
         Log.d("GameRoomView", " setValues()");
@@ -202,20 +179,18 @@ public class GameRoomView extends BaseActivity {
         localGameList = dbsi.selectQuery("SELECT * FROM GameList");
         Log.d("GameListPKey", localGameList[0][0]);
         Log.d("ChatRoomPKey", localGameList[0][1]);
-        memberCount = dbsi.selectQuery("SELECT Count(PKey) FROM GameMember WHERE GameListPKey = " + localGameList[0][0] )[0][0];
+        memberCount = dbsi.selectQuery("SELECT Count(PKey) FROM GameMember WHERE GameListPKey = " + localGameList[0][0])[0][0];
         localChat = dbsi.selectQuery("SELECT * FROM Chat WHERE ChatRoomPKey = " + localGameList[0][1]);
-        int localChatLength = (localChat != null ) ? localChat.length : 0;
-
-        Log.d("UserPKey", dbsi.getUserInfo().split("/")[0]);
-        Log.d("Count", memberCount);
-
+        int localChatLength = (localChat != null) ? localChat.length : 0;
 
         chatDataItemlist = new ArrayList<>();
         if (localChatLength != 0) {
             for (int i = 0; i < localChatLength; i++) {
                 ChatDataItem chatDataItem = new ChatDataItem();
                 chatDataItem.setUserPKey(localChat[i][2]);
-                chatDataItem.setUserName(dbsi.selectQuery("SELECT NickName FROM User WHERE PKey = " + localChat[i][2])[0][0]);
+                String[][] userNameAndFlag = dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + localChat[i][2]);
+                chatDataItem.setUserName(userNameAndFlag[0][0]);
+                chatDataItem.setUserMySelf(userNameAndFlag[0][1]);
                 chatDataItem.setChattingText(localChat[i][3]);
                 chatDataItemlist.add(chatDataItem);
             }
@@ -223,9 +198,35 @@ public class GameRoomView extends BaseActivity {
 
         gameChatListViewAdapter = new GameChatListViewAdapter(mContext, chatDataItemlist);
 
+
+        /// 임시로 친구 데이터 삽입
+        // 나중엔 지우자
+        if ((dbsi.selectQuery("SELECT * FROM User WHERE PKey = 1") == null) ? true : false) {
+            dbsi.query("INSERT INTO User('PKey', 'ID', 'LoginType' ,'NickName','Gender','BirthDay','MySelf', 'CreatedDate', 'UpdatedDate') " +
+                    "VALUES('1','admin','0','toby','1','1993-12-06 12:00:00','1','2017-08-03 12:27:47','17-08-11 11:54:09')");
+        }
+        dbsi.selectQuery("SELECT * FROM User");
+
+
     }
 
-    public void testFunc(){
-        System.out.println("This is GAMEROOMVIEW");
+    public void testFunc(String lastChatPkey) {
+
+        String[][] addedChatData = dbsi.selectQuery("select * from Chat where PKey > " + lastChatPkey);
+        int localSyncChatLength = (addedChatData != null) ? addedChatData.length : 0;
+        Log.d("addedChatData.length", localSyncChatLength  + "");
+
+        for (int i = 0; i < localSyncChatLength ; i++) {
+            ChatDataItem chatDataItem = new ChatDataItem();
+            chatDataItem.setUserPKey(addedChatData[i][2]);
+            String[][] userNameAndFlag = dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + addedChatData[i][2]);
+            chatDataItem.setUserName(userNameAndFlag[0][0]);
+            chatDataItem.setUserMySelf(userNameAndFlag[0][1]);
+            chatDataItem.setChattingText(addedChatData[i][3]);
+            chatDataItemlist.add(chatDataItem);
+        }
+
+        gameChatListViewAdapter.notifyDataSetChanged();
     }
+
 }

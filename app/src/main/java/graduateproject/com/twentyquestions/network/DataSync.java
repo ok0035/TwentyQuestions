@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -19,6 +20,7 @@ import java.util.TimerTask;
 import graduateproject.com.twentyquestions.controller.DataSyncController;
 import graduateproject.com.twentyquestions.util.GPSTracer;
 import graduateproject.com.twentyquestions.view.GameRoomView;
+import graduateproject.com.twentyquestions.view.MainView;
 
 /**
  * Created by mapl0 on 2017-08-01.
@@ -34,14 +36,19 @@ public class DataSync extends Thread {
     public static boolean endingFlag = false;
     DataSyncController datasyncController;
 
+    // added by CHS
+    private String latestChatPKey;
+    private Context dsContext;
+
+
     public interface AsyncResponse {
         void onFinished(String response);
     }
 
     public AsyncResponse delegate = null;
 
-    ActivityManager am ;
-    ComponentName cn ;
+    static ActivityManager am;
+    static ComponentName cn;
 
     public static enum DeviceType {IPHONE, ANDROID, WEB, PC, ECT}
 
@@ -79,24 +86,54 @@ public class DataSync extends Thread {
         needSyncing = false;
         isSyncing = false;
         timerFlag = false;
+//        dsContext = null;
 
-        am = (ActivityManager) GameRoomView.mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        cn = am.getRunningTasks(1).get(0).topActivity;
-        if(cn.getClassName().contains("GameRoomView")){
-            Log.d("cd MainView","/ cn : ");
-            Class<?> myClass = null;
-            try {
-                myClass = Class.forName(cn.getClassName());
-                Activity obj = (Activity) myClass.newInstance();
-                GameRoomView gameRoomView = (GameRoomView)obj;
-                gameRoomView.testFunc();
-            } catch (Exception e) {
-                e.printStackTrace();
+
+    }
+
+    public void setDSContext(Context context) {
+        dsContext = context;
+    }
+
+    private void traceActivityClass() {
+
+//            am = (ActivityManager) GameRoomView.mContext.getSystemService(Context.ACTIVITY_SERVICE);
+//            cn = am.getRunningTasks(1).get(0).topActivity;
+//            Log.d(" cn : ", cn.getClassName());
+//            if(cn.getClassName().contains("GameRoomView")){
+//                Log.d("cd GameRoomView","/ cn : ");
+//                Class<?> myClass = null;
+//                try {
+//                    myClass = Class.forName(cn.getClassName());
+//                    Activity obj = (Activity) myClass.newInstance();
+//                    GameRoomView gameRoomView = (GameRoomView)obj;
+////                    gameRoomView.testFunc();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+//            }
+//            Log.d("cd",cn.getClass().toString());
+
+        if (dsContext != null) {
+
+            String callerName = dsContext.getClass().getName();
+
+            Log.d("callerName", callerName);
+            if (callerName.contains("GameRoomView")) {
+                GameRoomView gameRoomView = (GameRoomView) dsContext;
+                if (gameRoomView != null) {
+                    gameRoomView.testFunc(latestChatPKey);
+                }
+            } else if (callerName.contains("MainView")) {
+                MainView mainView = (MainView) dsContext;
+                if (mainView != null) {
+                    System.out.println("This is MainView");
+                }
             }
-
-
         }
-        Log.d("cd",cn.getClass().toString());
+
 
     }
 
@@ -130,7 +167,7 @@ public class DataSync extends Thread {
 
                 }
             };
-            timer.schedule(timerTask, 0, 10000); // 첫번째 인자인 tmrTask 로 1초 뒤에 알림을 준다.
+            timer.schedule(timerTask, 0, 2000); // 첫번째 인자인 tmrTask 로 1초 뒤에 알림을 준다.
 
             timerFlag = true;
 
@@ -246,12 +283,16 @@ public class DataSync extends Thread {
                     datasyncController.updateData(response);
                     Log.d("response", response);
 
-                    if(needSyncing) {
+                    if (needSyncing) {
                         requestNeedSync(Command.GETFULLDATA, data);
+
                     } else {
                         isSyncing = false;
                         delegate.onFinished(response);
+                        traceActivityClass();
                     }
+
+
                 }
 
                 @Override
@@ -322,6 +363,8 @@ public class DataSync extends Thread {
                     needSyncing = false;
                     Log.d("response", response);
                     delegate.onFinished(response);
+                    traceActivityClass();
+
                 }
 
                 @Override
@@ -355,6 +398,7 @@ public class DataSync extends Thread {
             String chatRoomUpdatedDate = (selectChatRoom != null) ? selectChatRoom[selectChatRoom.length - 1][5] : "NOW()";
 
             String chatPKey = (selectChat != null) ? selectChat[selectChat.length - 1][0] : "0";
+            latestChatPKey = chatPKey;
             String chatCreatedDate = (selectChat != null) ? selectChat[selectChat.length - 1][6] : "NOW()";
 
             String chatMemberPKey = (selectChatMember != null) ? selectChatMember[selectChatMember.length - 1][0] : "0";

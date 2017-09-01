@@ -62,6 +62,9 @@ public class MainViewTest extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout);
+
+        mContext = this;
+
         this.dropbtn = (Button) findViewById(R.id.drop_btn);
         this.logoutbtn = (Button) findViewById(R.id.logout_btn);
         this.pkeytextview = (TextView) findViewById(R.id.pkey_textview);

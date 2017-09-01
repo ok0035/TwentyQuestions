@@ -60,14 +60,14 @@ public class GameChatListViewAdapter extends ArrayAdapter {
         nameView = new TextView(mContext);
         chatView = new TextView(mContext);
 
+//
+//        String localUserPKey = dbsi.getUserInfo().split("/")[0];
+//
+//        Log.d("getUserPKey",mList.get(position).getUserPKey());
+//        Log.d("dbUserPKey", localUserPKey);
 
-        String localUserPKey = dbsi.getUserInfo().split("/")[0];
 
-        Log.d("getUserPKey",mList.get(position).getUserPKey());
-        Log.d("dbUserPKey", localUserPKey);
-
-
-        if(mList.get(position).getUserPKey().equals(localUserPKey)){
+        if(mList.get(position).getUserMySelf().equals("0")){
 
             System.out.println("My ID");
 

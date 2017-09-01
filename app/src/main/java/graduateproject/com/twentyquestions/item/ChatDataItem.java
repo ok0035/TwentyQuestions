@@ -9,6 +9,7 @@ public class ChatDataItem {
     private String userName;
     private String chattingText;
     private String userPKey;
+    private String userMySelf;
     private String thumbnailPath;
 
     public String getUserName() {
@@ -43,7 +44,13 @@ public class ChatDataItem {
         this.thumbnailPath = thumbnailPath;
     }
 
+    public String getUserMySelf() {
+        return userMySelf;
+    }
 
+    public void setUserMySelf(String userMySelf) {
+        this.userMySelf = userMySelf;
+    }
 
 
 }
