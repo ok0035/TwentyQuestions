@@ -61,6 +61,8 @@ public class DBSI extends SQLiteOpenHelper{
 
     public void query(String query) {
 
+        Log.d("query : ",query);
+
         SQLiteDatabase db = getWritableDatabase();
 
         db.execSQL(query);

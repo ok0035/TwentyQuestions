@@ -87,13 +87,12 @@ public class GPSTracer {
 
             for (String name : m_lstProviders) {
 
-                locationManager.requestLocationUpdates(name, 1, 0, locationListener);
+                locationManager.requestLocationUpdates(name, 10000, 0, locationListener);
             }
 
             new Runnable() {
                 @Override
                 public void run() {
-
 
                     Log.d("test", "location");
 

@@ -91,9 +91,11 @@ public class LoginController {
                         BaseActivity.ShowDoubleArray("localUserArray..... ",localUserArray);
 
                     }else if(stringState.equals("LOGIN_SUCCESS")){
-                        userInfo = db.getUserInfo().split("/");
-                        String defaultQuery_Update2 = " WHERE PKey = " + userInfo[0];
-                        String finalQuery = defaultQuery_Update1 + addedNameValueQuery_update + defaultQuery_Update2;
+//                        userInfo = db.getUserInfo().split("/");
+//                        String defaultQuery_Update2 = " WHERE PKey = " + userInfo[0];
+//                        String finalQuery = defaultQuery_Update1 + addedNameValueQuery_update + defaultQuery_Update2;
+//                        Log.d("Query,,,,", finalQuery);
+                        String finalQuery = defaultQuery_Insert1 + addedNameQuery_insert + defalutQuery_Insert2 + addedValueQuery_insert;
                         Log.d("Query,,,,", finalQuery);
 
                         db.query(finalQuery);

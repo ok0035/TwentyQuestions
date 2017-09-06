@@ -35,11 +35,15 @@ public class DataSync extends Thread {
     private static boolean timerFlag = false;
     public static boolean endingFlag = false;
     DataSyncController datasyncController;
+    private Timer timer;
 
     // added by CHS
     private String latestChatPKey;
     private Context dsContext;
 
+    public String getLatestChatPKey(){
+        return latestChatPKey;
+    }
 
     public interface AsyncResponse {
         void onFinished(String response);
@@ -74,6 +78,7 @@ public class DataSync extends Thread {
         SENDREPORT,
         LOGINFAILED,
         LOGINSUCCESS,
+        ENTERGAMEROOM
 
     }
 
@@ -96,25 +101,6 @@ public class DataSync extends Thread {
     }
 
     private void traceActivityClass() {
-
-//            am = (ActivityManager) GameRoomView.mContext.getSystemService(Context.ACTIVITY_SERVICE);
-//            cn = am.getRunningTasks(1).get(0).topActivity;
-//            Log.d(" cn : ", cn.getClassName());
-//            if(cn.getClassName().contains("GameRoomView")){
-//                Log.d("cd GameRoomView","/ cn : ");
-//                Class<?> myClass = null;
-//                try {
-//                    myClass = Class.forName(cn.getClassName());
-//                    Activity obj = (Activity) myClass.newInstance();
-//                    GameRoomView gameRoomView = (GameRoomView)obj;
-////                    gameRoomView.testFunc();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//
-//            }
-//            Log.d("cd",cn.getClass().toString());
 
         if (dsContext != null) {
 
@@ -149,10 +135,15 @@ public class DataSync extends Thread {
     public void Timer(final AsyncResponse delegate) {
 
 //        new DataSync(new TimerRunnable()).start();
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+            timerFlag = false;
+        }
 
         if (timerFlag == false) {
-
-            Timer timer = new Timer();
+            timerFlag = true;
+            timer = new Timer();
             final TimerTask timerTask = new TimerTask() {
 
                 public void run() {
@@ -160,6 +151,7 @@ public class DataSync extends Thread {
                         @Override
                         public void onFinished(String response) {
                             delegate.onFinished(response);
+
                         }
                     });    // 타이머가 울리면 이 곳으로 들어온다.
                     endingFlag = false;
@@ -169,11 +161,17 @@ public class DataSync extends Thread {
             };
             timer.schedule(timerTask, 0, 2000); // 첫번째 인자인 tmrTask 로 1초 뒤에 알림을 준다.
 
-            timerFlag = true;
+            timerFlag = false;
 
         }
 
 
+    }
+
+    public void cancelTimer() {
+        timer.cancel();
+        timer  = null;
+        timerFlag = false;
     }
 
     public void doSync(final AsyncResponse delegate) {
@@ -289,7 +287,7 @@ public class DataSync extends Thread {
                     } else {
                         isSyncing = false;
                         delegate.onFinished(response);
-                        traceActivityClass();
+//                        traceActivityClass();
                     }
 
 
@@ -363,7 +361,7 @@ public class DataSync extends Thread {
                     needSyncing = false;
                     Log.d("response", response);
                     delegate.onFinished(response);
-                    traceActivityClass();
+//                    traceActivityClass();
 
                 }
 

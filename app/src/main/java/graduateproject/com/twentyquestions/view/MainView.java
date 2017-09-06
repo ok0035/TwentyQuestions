@@ -348,6 +348,19 @@ public class MainView extends BaseActivity {
     public void setValues() {
 
         pager = new ViewPager(this);
+        //        /// 임시로 친구 데이터 삽입
+
+        DBSI dbsi = new DBSI();
+//        // 나중엔 지우자
+        if ((dbsi.selectQuery("SELECT * FROM User WHERE PKey = 1") == null) ? true : false) {
+            dbsi.query("INSERT INTO User('PKey', 'ID', 'LoginType' ,'NickName','Gender','BirthDay','MySelf', 'CreatedDate', 'UpdatedDate') " +
+                    "VALUES('1','admin','0','toby','1','1993-12-06 12:00:00','1','2017-08-03 12:27:47','17-08-11 11:54:09')");
+        }else{
+            dbsi.query("INSERT INT" +
+                    "O User('PKey', 'ID', 'LoginType' ,'NickName','Gender','BirthDay','MySelf', 'CreatedDate', 'UpdatedDate') " +
+                    "VALUES('274','aA0JC8jmqtL5NK5','0','Clear','0','2001-01-01 12:00:00','1','2017-09-04 17:02:54','2017-09-04 17:02:54')");
+        }
+        dbsi.selectQuery("SELECT * FROM User");
 
     }
 

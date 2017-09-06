@@ -1,6 +1,8 @@
 package graduateproject.com.twentyquestions.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +11,18 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import graduateproject.com.twentyquestions.item.GameListViewItem;
+import graduateproject.com.twentyquestions.network.DBSI;
+import graduateproject.com.twentyquestions.network.DataSync;
+import graduateproject.com.twentyquestions.network.NetworkSI;
+import graduateproject.com.twentyquestions.view.GameRoomView;
 import graduateproject.com.twentyquestions.view.MainView;
 
 /**
@@ -35,12 +45,12 @@ public class GameListViewAdapter extends BaseAdapter {
     // Adapter에 사용되는 데이터의 개수를 리턴. : 필수 구현
     @Override
     public int getCount() {
-        return listViewItemList.size() ;
+        return listViewItemList.size();
     }
 
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final int pos = position;
         final Context context = parent.getContext();
 
@@ -59,12 +69,121 @@ public class GameListViewAdapter extends BaseAdapter {
 //        TextView descTextView = (TextView) convertView.findViewById(R.id.textView2) ;
 
 //         Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        GameListViewItem listViewItem = listViewItemList.get(position);
+        final GameListViewItem listViewItem = listViewItemList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
         tvRoomNumber.setText(listViewItem.getRoomNumber() + "");
         tvRoomName.setText(listViewItem.getRoomName());
         tvDesc.setText(listViewItem.getDescription());
+
+
+        // 방입장 구현 위한 onClickListener
+        parentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final DBSI dbsi = new DBSI();
+                // 로컬 DB GameList 정보 있는 지 확인
+                NetworkSI networkSI = new NetworkSI();
+                JSONObject entergamedata = new JSONObject();
+                String[][] selectGameList = dbsi.selectQuery("SELECT * FROM GameList");
+                if (selectGameList == null) {
+                    // GameList 없으면, 최초 입장 -> 서버 DB GameMember, ChatMember만 추가 : Flag 1
+                    try {
+                        entergamedata.put("GameListPKey", listViewItem.getRoomNumber());
+                        entergamedata.put("ChatRoomPKey", listViewItem.getChatRoomPKey());
+                        entergamedata.put("Flag", "1");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    networkSI.request(DataSync.Command.ENTERGAMEROOM, entergamedata.toString(), new NetworkSI.AsyncResponse() {
+                        @Override
+                        public void onSuccess(String response) {
+                            Log.d("EnterResponse", response + "/");
+                            if (response.contains("ENTER_SUCCESS"))
+                                DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                                    @Override
+                                    public void onFinished(String response) {
+                                        Intent intent = new Intent(MainView.mContext, GameRoomView.class);
+                                        MainView.mContext.startActivity(intent);
+                                    }
+                                });
+                            else
+                                Toast.makeText(context, "EnterFail", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        @Override
+                        public void onFailure(String response) {
+
+                        }
+                    });
+
+                } else if (selectGameList[0][0].equals(listViewItem.getRoomNumber()) &&
+                        selectGameList[0][1].equals(listViewItem.getChatRoomPKey())) {
+
+                    // 들어갔던방 또 들어가는경우
+                    // 그냥 dosync만 한번 때려주자
+                    System.out.println("다시 입장");
+                    Log.d("selectGameList[0][0] ",selectGameList[0][0]);
+                    Log.d("Item.getRoomNumber()",listViewItem.getRoomNumber());
+
+                    DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                        @Override
+                        public void onFinished(String response) {
+                            Intent intent = new Intent(MainView.mContext, GameRoomView.class);
+                            MainView.mContext.startActivity(intent);
+                        }
+                    });
+
+                } else {
+                    Log.d("selectGameList[0][0] ",selectGameList[0][0]);
+                    Log.d("Item.getRoomNumber()",listViewItem.getRoomNumber());
+                    Log.d("selectGameList[0][0] ",selectGameList[0][1]);
+                    Log.d("Item.getChatRoomPKey()",listViewItem.getChatRoomPKey());
+
+                    // GameList 있으면, 서버 DB(GameMember, ChatMember) 해당 레코드 status -1로 수정 Flag : 2
+                    // 이때, GameList, ChatRoom의 PKey들로 GameMember, ChatMember의 레코드를 찾을수 있다. -> 어차피 방은 한번밖에 안들어가고 각각 자기의 UserPKey의 정보밖에 가지고 있지 않아서 무조건 한개의 결과만 나온다.
+                    // 여기서 서버 DB GameMemeber에 들어가는 방의 GameListPKey를 확인해서 전에 들어갔던 방이면 status를 다시 0으로
+                    // 처음들어가는 방이면 Insert 만 실시
+                    try {
+                        entergamedata.put("GameMemberPKeyOld", dbsi.selectQuery("SELECT * FROM GameMember where GameListPKey = " + selectGameList[0][0])[0][0]);
+                        entergamedata.put("ChatMemberPKeyOld", dbsi.selectQuery("SELECT * FROM ChatMember where RoomPKey = " + selectGameList[0][1])[0][0]);
+                        entergamedata.put("GameListPKeyNew", listViewItem.getRoomNumber());
+                        entergamedata.put("ChatRoomPKeyNew", listViewItem.getChatRoomPKey());
+                        entergamedata.put("Flag", "2");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    networkSI.request(DataSync.Command.ENTERGAMEROOM, entergamedata.toString(), new NetworkSI.AsyncResponse() {
+                        @Override
+                        public void onSuccess(String response) {
+                            Log.d("EnterRoom2Response", response);
+                            dbsi.query("Delete from GameList");
+                            if (response.contains("ENTER_SUCCESS")) {
+                                DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                                    @Override
+                                    public void onFinished(String response) {
+                                    Intent intent = new Intent(MainView.mContext, GameRoomView.class);
+                                    MainView.mContext.startActivity(intent);
+
+                                    }
+                                });
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(String response) {
+
+                        }
+                    });
+
+                }
+
+
+            }
+        });
 
         return parentLayout;
     }
@@ -72,22 +191,23 @@ public class GameListViewAdapter extends BaseAdapter {
     // 지정한 위치(position)에 있는 데이터와 관계된 아이템(row)의 ID를 리턴. : 필수 구현
     @Override
     public long getItemId(int position) {
-        return position ;
+        return position;
     }
 
     // 지정한 위치(position)에 있는 데이터 리턴 : 필수 구현
     @Override
     public Object getItem(int position) {
-        return listViewItemList.get(position) ;
+        return listViewItemList.get(position);
     }
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(String roomNumber, String roomName, String roomDescription) {
+    public void addItem(String roomNumber, String roomName, String roomDescription, String chatRoomPKey) {
         GameListViewItem item = new GameListViewItem();
 
         item.setRoomNumber(roomNumber);
         item.setRoomName(roomName);
         item.setDescription(roomDescription);
+        item.setChatRoomPKey(chatRoomPKey);
 
         listViewItemList.add(item);
     }

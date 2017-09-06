@@ -114,7 +114,16 @@ public class CreateRoomDialog extends Dialog implements BasicMethod {
                 String response = network.request(DataSync.Command.SETGAME, params.toString(), new NetworkSI.AsyncResponse() {
                     @Override
                     public void onSuccess(String response) {
+                        DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                            @Override
+                            public void onFinished(String response) {
+                                Log.d("GameRoomData", response);
 
+                                Intent intent = new Intent(MainView.mContext, GameRoomView.class);
+                                MainView.mContext.startActivity(intent);
+                                dismiss();
+                            }
+                        });
                     }
 
                     @Override
@@ -123,16 +132,7 @@ public class CreateRoomDialog extends Dialog implements BasicMethod {
                     }
                 });
 
-                DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
-                    @Override
-                    public void onFinished(String response) {
-                        Log.d("GameRoomData", response);
 
-                        Intent intent = new Intent(MainView.mContext, GameRoomView.class);
-                        MainView.mContext.startActivity(intent);
-                        dismiss();
-                    }
-                });
 
 
             }

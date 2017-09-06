@@ -1,6 +1,8 @@
 package graduateproject.com.twentyquestions.view;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +27,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import graduateproject.com.twentyquestions.adapter.GameListViewAdapter;
+import graduateproject.com.twentyquestions.network.DBSI;
+import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.HttpNetwork;
 import graduateproject.com.twentyquestions.util.ParseData;
 
@@ -45,6 +49,8 @@ public class GameListView extends Fragment {
     private TextView btnCreateGame, btnFastGame, btnOnlyEmptyRoom, btnLatestOrder, btnRefresh;
     private View.OnClickListener clickRefresh, clickCreateRoom;
 
+    private Context context;
+
     public GameListView() {
         super();
 
@@ -53,7 +59,8 @@ public class GameListView extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        context = this.getContext();
+        DataSync.getInstance().setDSContext(context);
         setUpEvents();
 
     }
@@ -85,7 +92,7 @@ public class GameListView extends Fragment {
                     for (int i = 0; i < gameListArray.length(); i++) {
 
                         JSONObject json = parse.doubleJsonObject(gameListArray.get(i).toString(), "gameroom");
-                        adapter.addItem(json.getString("GamePKey"), json.getString("GameName"), json.getString("GameDescription"));
+                        adapter.addItem(json.getString("GamePKey"), json.getString("GameName"), json.getString("GameDescription"), json.getString("ChatRoomPKey"));
 //                        adapter.notifyDataSetChanged();
 
                     }
@@ -124,7 +131,7 @@ public class GameListView extends Fragment {
                     for (int i = 0; i < gameListArray.length(); i++) {
 
                         JSONObject json = parse.doubleJsonObject(gameListArray.get(i).toString(), "gameroom");
-                        adapter.addItem(json.getString("GamePKey"), json.getString("GameName"), json.getString("GameDescription"));
+                        adapter.addItem(json.getString("GamePKey"), json.getString("GameName"), json.getString("GameDescription"), json.getString("ChatRoomPKey"));
                         adapter.notifyDataSetChanged();
 
                     }
@@ -150,16 +157,22 @@ public class GameListView extends Fragment {
         clickCreateRoom = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                DBSI dbsi = new DBSI();
+                String[][] findLocalGameList = dbsi.selectQuery("SELECT * FROM GameList");
+                if (findLocalGameList == null) {
+                    dialog = new CreateRoomDialog(getContext());
+                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface dialogInterface) {
 
-                dialog = new CreateRoomDialog(getContext());
-                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialogInterface) {
+                        }
+                    });
+                    dialog.show();
+                }else{
+                    Intent intent = new Intent(MainView.mContext, GameRoomView.class);
+                    startActivity(intent);
+                }
 
-                    }
-                });
-
-                dialog.show();
             }
 
         };
