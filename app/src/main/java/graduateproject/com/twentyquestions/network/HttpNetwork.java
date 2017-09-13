@@ -32,6 +32,7 @@ public class HttpNetwork extends AsyncTask<String, Void, String> {
     public interface AsyncResponse {
         void onSuccess(String response);
         void onFailure(String response);
+        void onPreExcute();
     }
 
     public AsyncResponse delegate = null;
@@ -48,7 +49,7 @@ public class HttpNetwork extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPreExecute() {
-
+        delegate.onPreExcute();
 //        mProgressDialog = new ProgressDialog(BaseActivity.mContext);
 //        mProgressDialog.setMessage("Please wait...");
 //        mProgressDialog.setCancelable(false);

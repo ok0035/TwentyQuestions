@@ -77,6 +77,11 @@ public class MainViewTest extends BaseActivity {
             public void onFinished(String response) {
 
             }
+
+            @Override
+            public void onPreExcute() {
+
+            }
         });
 
 //        DataSync.getInstance().doSync();
@@ -147,6 +152,11 @@ public class MainViewTest extends BaseActivity {
                 DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                     @Override
                     public void onFinished(String response) {
+
+                    }
+
+                    @Override
+                    public void onPreExcute() {
 
                     }
                 });

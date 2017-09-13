@@ -4,6 +4,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -75,7 +77,7 @@ public class NetworkSI {
                 packet.put("PKey", checkNull(userInfo[0][0]));
                 packet.put("ID", checkNull(userInfo[0][1]));
                 packet.put("Password", checkNull(userInfo[0][2]));
-                packet.put("UDID", checkNull(Build.ID));
+                packet.put("UDID", checkNull(FirebaseInstanceId.getInstance().getToken()));
                 packet.put("DeviceType", "1");
                 packet.put("DeviceName", checkNull(Build.MODEL));
                 packet.put("OS", checkNull(Build.VERSION.RELEASE));
@@ -87,7 +89,7 @@ public class NetworkSI {
                 packet.put("PKey", "");
                 packet.put("ID", "");
                 packet.put("Password", "");
-                packet.put("UDID", checkNull(Build.ID));
+                packet.put("UDID", checkNull(FirebaseInstanceId.getInstance().getToken()));
                 packet.put("DeviceType", "1");
                 packet.put("DeviceName", checkNull(Build.MODEL));
                 packet.put("OS", checkNull(Build.VERSION.RELEASE));
@@ -123,6 +125,11 @@ public class NetworkSI {
                 @Override
                 public void onFailure(String response) {
                     delegate.onFailure(response);
+
+                }
+
+                @Override
+                public void onPreExcute() {
 
                 }
 

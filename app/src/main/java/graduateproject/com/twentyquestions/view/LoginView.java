@@ -41,6 +41,7 @@ public class LoginView extends BaseActivity {
     View.OnClickListener loginByGoogle;
     View.OnClickListener loginByFacebook;
     View.OnClickListener regist;
+    View.OnClickListener tempUser;
 
     public LoginView() {
         mContext = this;
@@ -113,6 +114,47 @@ public class LoginView extends BaseActivity {
 
             }
         };
+
+        tempUser = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 회원번호 2번유저 강제 로그인
+
+                JSONObject data = new JSONObject();
+                try {
+                    data.put("UserPKey","2");
+                    data.put("UserID","qwerty");
+                    data.put("LoginType","0");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                NetworkSI networkSI = new NetworkSI();
+                networkSI.request(DataSync.Command.TRYLOGIN, data.toString(), new NetworkSI.AsyncResponse() {
+                    @Override
+                    public void onSuccess(String response) {
+//                            Log.d("Login_Response",response);
+                        LoginController loginController = new LoginController();
+                        if(loginController.parseLoginData(response)) {
+                            Intent intent = new Intent(mContext, MainView.class);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(String response) {
+
+                    }
+                });
+
+//                    Intent intent = new Intent(mContext, MainView.class);
+//                    startActivity(intent);
+//                    finish();
+            }
+        };
     }
 
     @Override
@@ -155,6 +197,7 @@ public class LoginView extends BaseActivity {
         LoginByFacebookBtn.setY(calculatePixelY(140));
         LoginByFacebookBtn.setBackgroundColor(Color.BLUE);
         LoginByFacebookBtn.setGravity(Gravity.CENTER);
+        LoginByFacebookBtn.setOnClickListener(tempUser);
 
         RegistBtn = new TextView(this);
         RegistBtn.setText("회원가입");

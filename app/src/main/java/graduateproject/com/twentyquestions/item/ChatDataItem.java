@@ -11,6 +11,17 @@ public class ChatDataItem {
     private String userPKey;
     private String userMySelf;
     private String thumbnailPath;
+    private String chatPKey;
+
+    public String getChatPKey() {
+        return chatPKey;
+    }
+
+    public void setChatPKey(String chatPKey) {
+        this.chatPKey = chatPKey;
+    }
+
+
 
     public String getUserName() {
         return userName;

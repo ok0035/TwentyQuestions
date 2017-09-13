@@ -17,10 +17,14 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import graduateproject.com.twentyquestions.Firebase.MyFirebaseInstanceIdSerivce;
 import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.NetworkSI;
@@ -66,6 +70,7 @@ public class MainView extends BaseActivity {
 //        Intent intent = new Intent(getApplicationContext(), GameRoomView.class);
 //        startActivity(intent);
 //        finish();
+
     }
 
     @Override
@@ -113,6 +118,11 @@ public class MainView extends BaseActivity {
         DataSync.getInstance().Timer(new DataSync.AsyncResponse() {
             @Override
             public void onFinished(String response) {
+
+            }
+
+            @Override
+            public void onPreExcute() {
 
             }
         });
@@ -355,12 +365,16 @@ public class MainView extends BaseActivity {
         if ((dbsi.selectQuery("SELECT * FROM User WHERE PKey = 1") == null) ? true : false) {
             dbsi.query("INSERT INTO User('PKey', 'ID', 'LoginType' ,'NickName','Gender','BirthDay','MySelf', 'CreatedDate', 'UpdatedDate') " +
                     "VALUES('1','admin','0','toby','1','1993-12-06 12:00:00','1','2017-08-03 12:27:47','17-08-11 11:54:09')");
-        }else{
-            dbsi.query("INSERT INT" +
-                    "O User('PKey', 'ID', 'LoginType' ,'NickName','Gender','BirthDay','MySelf', 'CreatedDate', 'UpdatedDate') " +
-                    "VALUES('274','aA0JC8jmqtL5NK5','0','Clear','0','2001-01-01 12:00:00','1','2017-09-04 17:02:54','2017-09-04 17:02:54')");
+        }else if((dbsi.selectQuery("SELECT * FROM User WHERE PKey = 2") == null) ? true : false){
+            dbsi.query("INSERT INTO User('PKey', 'ID', 'LoginType' ,'NickName','Gender','BirthDay','MySelf', 'CreatedDate', 'UpdatedDate') " +
+                    "VALUES('2','qwerty','0','test','0','2001-01-01 12:00:00','1','2017-09-04 17:02:54','2017-09-04 17:02:54')");
         }
         dbsi.selectQuery("SELECT * FROM User");
+
+        // FCM Access Token 받아오기
+        FirebaseInstanceId.getInstance().getToken();
+        String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d("FCM_TOKEN",token);
 
     }
 

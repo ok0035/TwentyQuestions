@@ -108,6 +108,11 @@ public class GameListView extends Fragment {
             public void onFailure(String response) {
 
             }
+
+            @Override
+            public void onPreExcute() {
+
+            }
         }).execute(BaseActivity.serverAddress + "android/twentyQuestions/include/GetGameList.php");
 
     }
@@ -143,6 +148,11 @@ public class GameListView extends Fragment {
 
             @Override
             public void onFailure(String response) {
+
+            }
+
+            @Override
+            public void onPreExcute() {
 
             }
         }).execute(BaseActivity.serverAddress + "android/twentyQuestions/include/GetGameList.php");

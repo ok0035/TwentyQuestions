@@ -123,6 +123,11 @@ public class CreateRoomDialog extends Dialog implements BasicMethod {
                                 MainView.mContext.startActivity(intent);
                                 dismiss();
                             }
+
+                            @Override
+                            public void onPreExcute() {
+
+                            }
                         });
                     }
 

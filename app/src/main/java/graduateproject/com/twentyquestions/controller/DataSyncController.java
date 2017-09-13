@@ -21,12 +21,18 @@ public class DataSyncController {
     private String[][] localChatMemberArray;
     private String[][] localGameListArray;
     private String[][] localGameMemberArray;
+    private String[][] localTwentyQuestionsArray;
+    private String[][] localAskAnswerListArray;
+    private String[][] localRightAnswerListArray;
 
     private int localChatPKey = 0;
     private int localChatRoomPKey = 0;
     private int localChatMemberPKey = 0;
     private int localGameListPKey = 0;
     private int localGameMemberPKey = 0;
+    private int localTwentyQuestionsPKey = 0;
+    private int localAskAnswerListPKey = 0;
+    private int localRightAnswerListPKey = 0;
 
     private int serverChatPkey = 0;
     private int serverChatRoomPkey = 0;
@@ -49,6 +55,15 @@ public class DataSyncController {
     private JSONArray gameMemberArray;
     private JSONObject gameMemberData;
 
+    private JSONArray twentyQuestionsArray;
+    private JSONObject twentyQuestionsData;
+
+    private JSONArray askAnswerListArray;
+    private JSONObject askAnswerListData;
+
+    private JSONArray rightAnswerListArray;
+    private JSONObject rightAnswerListData;
+
     private String result = "";
 
     public void updateData(String response) {
@@ -68,6 +83,9 @@ public class DataSyncController {
                 chatMemberArray = parse.jsonArrayInObject(response, "ChatMember");
                 gameListArray = parse.jsonArrayInObject(response, "GameList");
                 gameMemberArray = parse.jsonArrayInObject(response, "GameMember");
+                twentyQuestionsArray = parse.jsonArrayInObject(response, "TwentyQuestions");
+                askAnswerListArray = parse.jsonArrayInObject(response,"AskAnswerList");
+                rightAnswerListArray = parse.jsonArrayInObject(response,"RightAnswerList");
 
                 System.out.println("========================================================================================================================================");
 
@@ -382,6 +400,213 @@ public class DataSyncController {
                     System.out.println("========================================================================================================================================");
 
                 }
+
+
+                System.out.println("========================================================================================================================================");
+
+                Log.d("TQArrayLength", twentyQuestionsArray.length() + "");
+                for (int i = 0; i < twentyQuestionsArray.length(); i++) {
+
+                    Log.d("JsonArray", twentyQuestionsArray.get(i).toString());
+                    twentyQuestionsData= parse.doubleJsonObject(twentyQuestionsArray.get(i).toString(), "twentyquestions");
+
+                    Log.d("TQPKey", twentyQuestionsData.getString("PKey"));
+
+                    localTwentyQuestionsArray = db.selectQuery("select * from TwentyQuestions");
+
+                    if (localTwentyQuestionsArray != null && localTwentyQuestionsArray.length > 0) {
+
+                        localTwentyQuestionsPKey = Integer.parseInt(localTwentyQuestionsArray[localTwentyQuestionsArray.length - 1][0]);
+
+                        Log.d("serverTQPKey", twentyQuestionsData.getInt("PKey") + "");
+                        Log.d("localTQPKey", localTwentyQuestionsPKey + "");
+                        if (twentyQuestionsData.getInt("PKey") <= localTwentyQuestionsPKey) {
+                            Log.d("Update", "............................Update");
+
+                            String query = "update TwentyQuestions set PKey = \'" + twentyQuestionsData.getString("PKey") + "\', GameListPKey = \'" + twentyQuestionsData.getString("GameListPKey") +
+                                    "\', Object = \'" + twentyQuestionsData.getString("Object") + "\', MaxAskable = \'" + twentyQuestionsData.getString("MaxAskable") +
+                                    "\', MaxGuessable = \'" + twentyQuestionsData.getString("MaxGuessable")  + "\', CreatedDate = \'" +  twentyQuestionsData.getString("CreatedDate") + "\', UpdatedDate = \'" + twentyQuestionsData.getString("UpdatedDate") + "\' " +
+                                    "where PKey = " + twentyQuestionsData.getString("PKey");
+
+                            Log.d("TQUpdateQuery", query);
+
+                            db.query(query);
+
+                        } else {
+
+                            Log.d("Insert", "............................Insert");
+
+                            String query = "insert into TwentyQuestions values (\'" +
+                                    twentyQuestionsData.getString("PKey") + "\', \'" + twentyQuestionsData.getString("GameListPKey") + "\', \'" +
+                                    twentyQuestionsData.getString("Object") + "\', \'" + twentyQuestionsData.getString("MaxAskable") + "\', \'" + twentyQuestionsData.getString("MaxGuessable")+
+                                    twentyQuestionsData.getString("CreatedDate") + "\', \'" + twentyQuestionsData.getString("UpdatedDate") + "\')";
+
+                            Log.d("TQInsertQuery", query);
+
+                            db.query(query);
+
+                        }
+
+                    } else {
+
+                        String query = "insert into TwentyQuestions values (\'" +
+                                twentyQuestionsData.getString("PKey") + "\', \'" + twentyQuestionsData.getString("GameListPKey") + "\', \'" +
+                                twentyQuestionsData.getString("Object") + "\', \'" + twentyQuestionsData.getString("MaxAskable") + "\', \'" + twentyQuestionsData.getString("MaxGuessable")+ "\', \'" +
+                                twentyQuestionsData.getString("CreatedDate") + "\', \'" + twentyQuestionsData.getString("UpdatedDate") + "\')";
+
+                        Log.d("TQNullInsertQuery", query);
+
+                        db.query(query);
+
+                    }
+
+//                    BaseActivity.ShowDoubleArray("RoomNull........", localChatRoomArray);
+
+                    System.out.println("========================================================================================================================================");
+
+                }
+
+
+                System.out.println("========================================================================================================================================");
+
+                Log.d("AAListArrayLength", askAnswerListArray.length() + "");
+                for (int i = 0; i < askAnswerListArray.length(); i++) {
+
+                    Log.d("JsonArray", askAnswerListArray.get(i).toString());
+                    askAnswerListData= parse.doubleJsonObject(askAnswerListArray.get(i).toString(), "askanswerlist");
+
+                    Log.d("AAPKey", askAnswerListData.getString("PKey"));
+
+                    localAskAnswerListArray= db.selectQuery("select * from AskAnswerList");
+
+                    if (localAskAnswerListArray != null && localAskAnswerListArray.length > 0) {
+
+                        localAskAnswerListPKey = Integer.parseInt(localAskAnswerListArray[localAskAnswerListArray.length - 1][0]);
+
+                        Log.d("serverAAPKey", askAnswerListData.getInt("PKey") + "");
+                        Log.d("localAAPKey", localAskAnswerListPKey + "");
+                        if (askAnswerListData.getInt("PKey") <= localAskAnswerListPKey) {
+                            Log.d("Update", "............................Update");
+
+                            String query = "update AskAnswerList set PKey = \'" + askAnswerListData.getString("PKey") + "\', TwentyQuestionsPKey = \'" + askAnswerListData.getString("TwentyQuestionsPKey") +
+                                    "\', Guesser = \'" + askAnswerListData.getString("Guesser") + "\', Answerer = \'" + askAnswerListData.getString("Answerer") +
+                                    "\', Guess = \'" + askAnswerListData.getString("Guess") + "\', Answer = \'" +askAnswerListData.getString("Answer") +
+                                    "\', Status = \'" + askAnswerListData.getString("Status") + "\' " +
+                                    "\', CreatedDate = \'" + askAnswerListData.getString("CreatedDate") + "\', UpdatedDate = \'" + askAnswerListData.getString("UpdatedDate") +
+                                    "where PKey = " + askAnswerListData.getString("PKey");
+
+                            Log.d("AAUpdateQuery", query);
+
+                            db.query(query);
+
+                        } else {
+
+                            Log.d("Insert", "............................Insert");
+
+                            String query = "insert into AskAnswerList values (\'" +
+                                    askAnswerListData.getString("PKey") + "\', \'" + askAnswerListData.getString("TwentyQuestionsPKey") + "\', \'" +
+                                    askAnswerListData.getString("Guesser") + "\', \'" + askAnswerListData.getString("Answerer") + "\', \'" +
+                                    askAnswerListData.getString("Guess")+ "\', \'" + askAnswerListData.getString("Answer") + "\', \'" +
+                                    askAnswerListData.getString("Status") + "\', \'" +
+                                    askAnswerListData.getString("CreatedDate") + "\', \'" + askAnswerListData.getString("UpdatedDate") + "\')";
+
+                            Log.d("AAInsertQuery", query);
+
+                            db.query(query);
+
+                        }
+
+                    } else {
+
+                        String query =  "insert into AskAnswerList values (\'" +
+                                askAnswerListData.getString("PKey") + "\', \'" + askAnswerListData.getString("TwentyQuestionsPKey") + "\', \'" +
+                                askAnswerListData.getString("Guesser") + "\', \'" + askAnswerListData.getString("Answerer") + "\', \'" +
+                                askAnswerListData.getString("Guess")+ "\', \'" + askAnswerListData.getString("Answer") + "\', \'" +
+                                askAnswerListData.getString("Status") + "\', \'" +
+                                askAnswerListData.getString("CreatedDate") + "\', \'" + askAnswerListData.getString("UpdatedDate") + "\')";
+
+                        Log.d("AANullInsertQuery", query);
+
+                        db.query(query);
+
+                    }
+
+//                    BaseActivity.ShowDoubleArray("RoomNull........", localChatRoomArray);
+
+                    System.out.println("========================================================================================================================================");
+
+                }
+
+                System.out.println("========================================================================================================================================");
+
+                Log.d("RAListArrayLength", rightAnswerListArray.length() + "");
+                for (int i = 0; i < rightAnswerListArray.length(); i++) {
+
+                    Log.d("JsonArray", rightAnswerListArray.get(i).toString());
+                    rightAnswerListData= parse.doubleJsonObject(rightAnswerListArray.get(i).toString(), "rightanswerlist");
+
+                    Log.d("RAPKey", rightAnswerListData.getString("PKey"));
+
+                    localRightAnswerListArray= db.selectQuery("select * from RightAnswerList");
+
+                    if (localRightAnswerListArray != null && localRightAnswerListArray.length > 0) {
+
+                        localRightAnswerListPKey = Integer.parseInt(localRightAnswerListArray[localRightAnswerListArray.length - 1][0]);
+
+                        Log.d("serverRAPKey", rightAnswerListData.getInt("PKey") + "");
+                        Log.d("localRAPKey", localRightAnswerListPKey + "");
+                        if (rightAnswerListData.getInt("PKey") <= localRightAnswerListPKey) {
+                            Log.d("Update", "............................Update");
+
+                            String query = "update RightAnswerList set PKey = \'" + rightAnswerListData.getString("PKey") + "\', TwentyQuestionsPKey = \'" + rightAnswerListData.getString("TwentyQuestionsPKey") +
+                                    "\', Guesser = \'" + rightAnswerListData.getString("Guesser") + "\', Answerer = \'" + rightAnswerListData.getString("Answerer") +
+                                    "\', Guess = \'" + rightAnswerListData.getString("Guess") + "\', Answer = \'" +rightAnswerListData.getString("Answer") +
+                                    "\', IsRight = \'" + rightAnswerListData.getString("IsRight") + "\', Status = \'" +rightAnswerListData.getString("Status") +
+                                    "\', CreatedDate = \'" + rightAnswerListData.getString("CreatedDate") + "\', UpdatedDate = \'" + rightAnswerListData.getString("UpdatedDate") +
+                                    "where PKey = " + rightAnswerListData.getString("PKey");
+
+                            Log.d("RAUpdateQuery", query);
+
+                            db.query(query);
+
+                        } else {
+
+                            Log.d("Insert", "............................Insert");
+
+                            String query = "insert into RightAnswerList values (\'" +
+                                    rightAnswerListData.getString("PKey") + "\', \'" + rightAnswerListData.getString("TwentyQuestionsPKey") + "\', \'" +
+                                    rightAnswerListData.getString("Guesser") + "\', \'" + rightAnswerListData.getString("Answerer") + "\', \'" +
+                                    rightAnswerListData.getString("Guess")+ "\', \'" + rightAnswerListData.getString("Answer") + "\', \'" +
+                                    rightAnswerListData.getString("IsRight") + "\', \'" + rightAnswerListData.getString("Status") + "\', \'" +
+                                    rightAnswerListData.getString("CreatedDate") + "\', \'" + rightAnswerListData.getString("UpdatedDate") + "\')";
+
+                            Log.d("RAInsertQuery", query);
+
+                            db.query(query);
+
+                        }
+
+                    } else {
+
+                        String query = "insert into RightAnswerList values (\'" +
+                                rightAnswerListData.getString("PKey") + "\', \'" + rightAnswerListData.getString("TwentyQuestionsPKey") + "\', \'" +
+                                rightAnswerListData.getString("Guesser") + "\', \'" + rightAnswerListData.getString("Answerer") + "\', \'" +
+                                rightAnswerListData.getString("Guess")+ "\', \'" + rightAnswerListData.getString("Answer") + "\', \'" +
+                                rightAnswerListData.getString("IsRight") + "\', \'" + rightAnswerListData.getString("Status") + "\', \'" +
+                                rightAnswerListData.getString("CreatedDate") + "\', \'" + rightAnswerListData.getString("UpdatedDate") + "\')";
+
+                        Log.d("RANullInsertQuery", query);
+
+                        db.query(query);
+
+                    }
+
+//                    BaseActivity.ShowDoubleArray("RoomNull........", localChatRoomArray);
+
+                    System.out.println("========================================================================================================================================");
+
+                }
+
 
             } else Log.d("LOGIN_ERR", "LOGIN_FAILED");
 

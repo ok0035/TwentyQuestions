@@ -106,6 +106,11 @@ public class GameListViewAdapter extends BaseAdapter {
                                         Intent intent = new Intent(MainView.mContext, GameRoomView.class);
                                         MainView.mContext.startActivity(intent);
                                     }
+
+                                    @Override
+                                    public void onPreExcute() {
+
+                                    }
                                 });
                             else
                                 Toast.makeText(context, "EnterFail", Toast.LENGTH_SHORT).show();
@@ -114,7 +119,7 @@ public class GameListViewAdapter extends BaseAdapter {
 
                         @Override
                         public void onFailure(String response) {
-
+                                Log.d("EnterFailResponse",response);
                         }
                     });
 
@@ -132,6 +137,11 @@ public class GameListViewAdapter extends BaseAdapter {
                         public void onFinished(String response) {
                             Intent intent = new Intent(MainView.mContext, GameRoomView.class);
                             MainView.mContext.startActivity(intent);
+                        }
+
+                        @Override
+                        public void onPreExcute() {
+
                         }
                     });
 
@@ -158,7 +168,7 @@ public class GameListViewAdapter extends BaseAdapter {
                     networkSI.request(DataSync.Command.ENTERGAMEROOM, entergamedata.toString(), new NetworkSI.AsyncResponse() {
                         @Override
                         public void onSuccess(String response) {
-                            Log.d("EnterRoom2Response", response);
+                            Log.d("EnterRoom2Response", response+"?");
                             dbsi.query("Delete from GameList");
                             if (response.contains("ENTER_SUCCESS")) {
                                 DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
@@ -168,7 +178,14 @@ public class GameListViewAdapter extends BaseAdapter {
                                     MainView.mContext.startActivity(intent);
 
                                     }
+
+                                    @Override
+                                    public void onPreExcute() {
+
+                                    }
                                 });
+                            }else{
+                                System.out.println("EnterFail Whene Other Room");
                             }
 
                         }

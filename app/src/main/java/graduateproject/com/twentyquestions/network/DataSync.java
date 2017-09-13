@@ -8,6 +8,8 @@ import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -47,6 +49,7 @@ public class DataSync extends Thread {
 
     public interface AsyncResponse {
         void onFinished(String response);
+        void onPreExcute();
     }
 
     public AsyncResponse delegate = null;
@@ -153,13 +156,18 @@ public class DataSync extends Thread {
                             delegate.onFinished(response);
 
                         }
+
+                        @Override
+                        public void onPreExcute() {
+                            delegate.onPreExcute();
+                        }
                     });    // 타이머가 울리면 이 곳으로 들어온다.
                     endingFlag = false;
                     System.out.println("GPS " + "Longitude : " + GPSTracer.longitude + "   Latitude : " + GPSTracer.latitude);
 
                 }
             };
-            timer.schedule(timerTask, 0, 2000); // 첫번째 인자인 tmrTask 로 1초 뒤에 알림을 준다.
+            timer.schedule(timerTask, 0, 200000); // 첫번째 인자인 tmrTask 로 1초 뒤에 알림을 준다.
 
             timerFlag = false;
 
@@ -180,6 +188,11 @@ public class DataSync extends Thread {
             @Override
             public void onFinished(String response) {
                 delegate.onFinished(response);
+            }
+
+            @Override
+            public void onPreExcute() {
+                delegate.onPreExcute();
             }
         })).start();
 
@@ -240,7 +253,7 @@ public class DataSync extends Thread {
                     packet.put("PKey", checkNull(userInfo[0][0]));
                     packet.put("ID", checkNull(userInfo[0][1]));
                     packet.put("Password", checkNull(userInfo[0][2]));
-                    packet.put("UDID", checkNull(Build.ID));
+                    packet.put("UDID", checkNull(FirebaseInstanceId.getInstance().getToken()));
                     packet.put("DeviceType", "1");
                     packet.put("DeviceName", checkNull(Build.MODEL));
                     packet.put("OS", checkNull(Build.VERSION.RELEASE));
@@ -250,7 +263,7 @@ public class DataSync extends Thread {
                     packet.put("PKey", "");
                     packet.put("ID", "");
                     packet.put("Password", "");
-                    packet.put("UDID", checkNull(Build.ID));
+                    packet.put("UDID", checkNull(FirebaseInstanceId.getInstance().getToken()));
                     packet.put("DeviceType", "1");
                     packet.put("DeviceName", checkNull(Build.MODEL));
                     packet.put("OS", checkNull(Build.VERSION.RELEASE));
@@ -298,6 +311,12 @@ public class DataSync extends Thread {
 
                 }
 
+                @Override
+                public void onPreExcute() {
+                    delegate.onPreExcute();
+                }
+
+
             }).execute("http://heronation.net/android/twentyQuestions/Request.php");
 
         }
@@ -318,7 +337,7 @@ public class DataSync extends Thread {
                     packet.put("PKey", checkNull(userInfo[0][0]));
                     packet.put("ID", checkNull(userInfo[0][1]));
                     packet.put("Password", checkNull(userInfo[0][2]));
-                    packet.put("UDID", checkNull(Build.ID));
+                    packet.put("UDID", checkNull(FirebaseInstanceId.getInstance().getToken()));
                     packet.put("DeviceType", "1");
                     packet.put("DeviceName", checkNull(Build.MODEL));
                     packet.put("OS", checkNull(Build.VERSION.RELEASE));
@@ -328,7 +347,7 @@ public class DataSync extends Thread {
                     packet.put("PKey", "");
                     packet.put("ID", "");
                     packet.put("Password", "");
-                    packet.put("UDID", checkNull(Build.ID));
+                    packet.put("UDID", checkNull(FirebaseInstanceId.getInstance().getToken()));
                     packet.put("DeviceType", "1");
                     packet.put("DeviceName", checkNull(Build.MODEL));
                     packet.put("OS", checkNull(Build.VERSION.RELEASE));
@@ -370,6 +389,11 @@ public class DataSync extends Thread {
 
                 }
 
+                @Override
+                public void onPreExcute() {
+                    delegate.onPreExcute();
+                }
+
             }).execute("http://heronation.net/android/twentyQuestions/Request.php");
 
         }
@@ -383,6 +407,10 @@ public class DataSync extends Thread {
             JSONObject chatRoom = new JSONObject();
             JSONObject gameList = new JSONObject();
             JSONObject gameMember = new JSONObject();
+            JSONObject twentyQuestions = new JSONObject();
+            JSONObject askAnswerList = new JSONObject();
+            JSONObject rightAnswerList = new JSONObject();
+
 
             DBSI db = new DBSI();
 
@@ -391,6 +419,11 @@ public class DataSync extends Thread {
             String[][] selectChatMember = db.selectQuery("select * from ChatMember");
             String[][] selectGameList = db.selectQuery("select * from GameList");
             String[][] selectGameMember = db.selectQuery("select * from GameMember");
+            String[][] selectTwentyQuestions = db.selectQuery("select * from TwentyQuestions");
+            String[][] selectAskAnswerList = db.selectQuery("select * from AskAnswerList");
+            String[][] selectRightAnswerList= db.selectQuery("select * from RightAnswerList");
+
+
 
             String chatRoomPKey = (selectChatRoom != null) ? selectChatRoom[selectChatRoom.length - 1][0] : "0";
             String chatRoomUpdatedDate = (selectChatRoom != null) ? selectChatRoom[selectChatRoom.length - 1][5] : "NOW()";
@@ -407,6 +440,16 @@ public class DataSync extends Thread {
 
             String gameMemberPKey = (selectGameMember != null) ? selectGameMember[selectGameMember.length - 1][0] : "0";
             String gameMemberUpdatedDate = (selectGameMember != null) ? selectGameMember[selectGameMember.length - 1][7] : "NOW()";
+
+            String twentyQuestionsPKey = (selectTwentyQuestions != null) ? selectTwentyQuestions[selectTwentyQuestions.length - 1][0] : "0";
+            String twentyUpdatedDate = (selectTwentyQuestions != null) ? selectTwentyQuestions[selectTwentyQuestions.length - 1][6] : "NOW()";
+
+            String askAnswerListPKey = (selectAskAnswerList != null) ? selectAskAnswerList[selectAskAnswerList.length - 1][0] : "0";
+            String askAnswerUpdatedDate = (selectAskAnswerList != null) ? selectAskAnswerList[selectAskAnswerList.length - 1][8] : "NOW()";
+
+            String rightAnswerListPKey = (selectRightAnswerList != null) ? selectRightAnswerList[selectRightAnswerList.length - 1][0] : "0";
+            String rightAnswerUpdatedDate = (selectRightAnswerList != null) ? selectRightAnswerList[selectRightAnswerList.length - 1][9] : "NOW()";
+
 
             try {
 
@@ -425,11 +468,23 @@ public class DataSync extends Thread {
                 gameMember.put("PKey", gameMemberPKey);
                 gameMember.put("UpdatedDate", gameMemberUpdatedDate);
 
+                twentyQuestions.put("PKey", twentyQuestionsPKey);
+                twentyQuestions.put("UpdatedDate", twentyUpdatedDate);
+
+                askAnswerList.put("PKey", askAnswerListPKey);
+                askAnswerList.put("UpdatedDate", askAnswerUpdatedDate);
+
+                rightAnswerList.put("PKey", rightAnswerListPKey);
+                rightAnswerList.put("UpdatedDate", rightAnswerUpdatedDate);
+
                 data.put("ChatRoom", chatRoom);
                 data.put("Chat", chat);
                 data.put("ChatMember", chatMember);
                 data.put("GameList", gameList);
                 data.put("GameMember", gameMember);
+                data.put("TwentyQuetions",twentyQuestions);
+                data.put("AskAnswerList",askAnswerList);
+                data.put("RightAnswerList",rightAnswerList);
 
             } catch (JSONException e) {
                 e.printStackTrace();

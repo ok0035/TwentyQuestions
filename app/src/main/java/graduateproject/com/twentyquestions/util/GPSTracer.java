@@ -94,6 +94,7 @@ public class GPSTracer {
                 @Override
                 public void run() {
 
+
                     Log.d("test", "location");
 
                 }
