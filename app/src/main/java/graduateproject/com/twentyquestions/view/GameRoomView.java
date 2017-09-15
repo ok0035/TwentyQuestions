@@ -59,13 +59,16 @@ public class GameRoomView extends BaseActivity {
     View.OnClickListener send_chat;
     View.OnClickListener send_QA;
     View.OnClickListener QAMode;
+    View.OnClickListener guessRightEvent;
+    GuessRightDialog guessDialog;
 
 
     ArrayList<ChatDataItem> chatDataItemlist;
-    private Context context;
+    public static Context context;
 
     public GameRoomView() {
         super();
+        context = this;
     }
 
     @Override
@@ -144,18 +147,31 @@ public class GameRoomView extends BaseActivity {
             }
         };
 
+        guessRightEvent = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+//                guessDialog = new GuessRightDialog(BaseActivity.mContext);
+//                guessDialog.show();
+
+                JudgeRightDialog judgeDialog = new JudgeRightDialog(BaseActivity.mContext);
+                judgeDialog.show();
+
+            }
+        };
+
         send_QA = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (getMemberPriority().equals("0")) {
                     Toast.makeText(mContext, "질답모드_출시자", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
 //                    Toast.makeText(mContext, "질답모드_참가자", Toast.LENGTH_SHORT).show();
                     JSONObject data = new JSONObject();
                     try {
-                        data.put("GameListPKey",dbsi.selectQuery("Select PKey from GameList")[0][0]);
-                        data.put("Guess",edChat.getText().toString());
-                        data.put("MemberPriority","1");
+                        data.put("GameListPKey", dbsi.selectQuery("Select PKey from GameList")[0][0]);
+                        data.put("Guess", edChat.getText().toString());
+                        data.put("MemberPriority", "1");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -272,6 +288,7 @@ public class GameRoomView extends BaseActivity {
         tvGuessRight = new TextView(MainView.mContext);
         tvGuessRight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         tvGuessRight.setGravity(Gravity.CENTER);
+        tvGuessRight.setOnClickListener(guessRightEvent);
         if (getMemberPriority().equals("0")) {
             tvGuessRight.setText("정답이 올라왔어요");
         } else {

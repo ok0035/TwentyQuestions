@@ -178,6 +178,9 @@ public class GameListView extends Fragment {
                         }
                     });
                     dialog.show();
+
+//                    GuessRightDialog dial = new GuessRightDialog(getContext());
+//                    dial.show();
                 }else{
                     Intent intent = new Intent(MainView.mContext, GameRoomView.class);
                     startActivity(intent);
