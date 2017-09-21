@@ -491,9 +491,9 @@ public class DataSyncController {
                             String query = "update AskAnswerList set PKey = \'" + askAnswerListData.getString("PKey") + "\', TwentyQuestionsPKey = \'" + askAnswerListData.getString("TwentyQuestionsPKey") +
                                     "\', Guesser = \'" + askAnswerListData.getString("Guesser") + "\', Answerer = \'" + askAnswerListData.getString("Answerer") +
                                     "\', Guess = \'" + askAnswerListData.getString("Guess") + "\', Answer = \'" +askAnswerListData.getString("Answer") +
-                                    "\', Status = \'" + askAnswerListData.getString("Status") + "\' " +
-                                    "\', CreatedDate = \'" + askAnswerListData.getString("CreatedDate") + "\', UpdatedDate = \'" + askAnswerListData.getString("UpdatedDate") +
-                                    "where PKey = " + askAnswerListData.getString("PKey");
+                                    "\', Status = \'" + askAnswerListData.getString("Status") +
+                                    "\', CreatedDate = \'" + askAnswerListData.getString("CreatedDate") + "\', UpdatedDate = \'" + askAnswerListData.getString("UpdatedDate") + "\' "+
+                                    " where PKey = " + askAnswerListData.getString("PKey");
 
                             Log.d("AAUpdateQuery", query);
 
@@ -563,7 +563,7 @@ public class DataSyncController {
                                     "\', Guess = \'" + rightAnswerListData.getString("Guess") + "\', Answer = \'" +rightAnswerListData.getString("Answer") +
                                     "\', IsRight = \'" + rightAnswerListData.getString("IsRight") + "\', Status = \'" +rightAnswerListData.getString("Status") +
                                     "\', CreatedDate = \'" + rightAnswerListData.getString("CreatedDate") + "\', UpdatedDate = \'" + rightAnswerListData.getString("UpdatedDate") +
-                                    "where PKey = " + rightAnswerListData.getString("PKey");
+                                    "' where PKey = " + rightAnswerListData.getString("PKey");
 
                             Log.d("RAUpdateQuery", query);
 

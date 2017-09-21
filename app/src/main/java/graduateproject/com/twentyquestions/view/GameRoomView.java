@@ -55,20 +55,21 @@ public class GameRoomView extends BaseActivity {
     JSONObject data = new JSONObject();
     private boolean QAFlag = false;
 
-    View.OnClickListener send;
-    View.OnClickListener send_chat;
-    View.OnClickListener send_QA;
-    View.OnClickListener QAMode;
-    View.OnClickListener guessRightEvent;
-    GuessRightDialog guessDialog;
+    private View.OnClickListener send;
+    private View.OnClickListener send_chat;
+    private View.OnClickListener send_QA;
+    private View.OnClickListener QAMode;
+    private View.OnClickListener sendReceiveRA;
+
+    private JudgeRightDialog judgeRightDialog;
+    private GuessRightDialog guessRightDialog;
 
 
     ArrayList<ChatDataItem> chatDataItemlist;
-    public static Context context;
+
 
     public GameRoomView() {
         super();
-        context = this;
     }
 
     @Override
@@ -100,7 +101,7 @@ public class GameRoomView extends BaseActivity {
 //                System.out.println("StartCli  ckEvent");
 
                 Log.d("getScrollY", gameChatListView.getScrollY() + "//");
-                final String beforeSendLastChatPKey = findLastChatPKey();
+                final String beforeSendLastChatDate = findLastChatDate();
 
                 if (chat.length() != 0) { // 텍스트 입력안하면 메세지 전송x -> 카톡 따라함
                     try {
@@ -122,7 +123,7 @@ public class GameRoomView extends BaseActivity {
                             DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                                 @Override
                                 public void onFinished(String response) {
-                                    testFunc(beforeSendLastChatPKey);
+                                    testFunc(beforeSendLastChatDate);
                                     gameChatListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                 }
 
@@ -147,47 +148,125 @@ public class GameRoomView extends BaseActivity {
             }
         };
 
-        guessRightEvent = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-//                guessDialog = new GuessRightDialog(BaseActivity.mContext);
-//                guessDialog.show();
-
-                JudgeRightDialog judgeDialog = new JudgeRightDialog(BaseActivity.mContext);
-                judgeDialog.show();
-
-            }
-        };
-
         send_QA = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                String twentyquestionsPKey = dbsi.selectQuery("Select PKey from TwentyQuestions")[0][0];
+                String userPKey = dbsi.selectQuery("Select PKey from User where MySelf = 0")[0][0];
+
                 if (getMemberPriority().equals("0")) {
-                    Toast.makeText(mContext, "질답모드_출시자", Toast.LENGTH_SHORT).show();
-                } else {
-//                    Toast.makeText(mContext, "질답모드_참가자", Toast.LENGTH_SHORT).show();
-                    JSONObject data = new JSONObject();
-                    try {
-                        data.put("GameListPKey", dbsi.selectQuery("Select PKey from GameList")[0][0]);
-                        data.put("Guess", edChat.getText().toString());
-                        data.put("MemberPriority", "1");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+//                    Toast.makeText(mContext, "질답모드_출시자", Toast.LENGTH_SHORT).show();
+                    // 출시자에게는 2가지의 상황이있다.
+                    // 질문에 대해서 답을 할때와, 새 질문이 없을때
+                    String[][] findlocalAskAnswerList_Ans = dbsi.selectQuery("select * from AskAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " and Answerer = " + userPKey);
+                    final String beforeSendLastChatDate = findLastChatDate();
+                    if (findlocalAskAnswerList_Ans[findlocalAskAnswerList_Ans.length - 1][5].isEmpty() && findlocalAskAnswerList_Ans != null) {
+                        // 답변을 AskAnswerList에 입력해주자.
+//                        Toast.makeText(mContext,"답변",Toast.LENGTH_SHORT).show();
+
+                        JSONObject data = new JSONObject();
+                        try {
+                            data.put("AskAnswerListPKey", findlocalAskAnswerList_Ans[findlocalAskAnswerList_Ans.length - 1][0]);
+                            data.put("Answer", edChat.getText().toString());
+                            data.put("MemberPriority", getMemberPriority());
+                            data.put("ChatRoomPKey", dbsi.selectQuery("select ChatRoomPKey from GameList")[0][0]);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        NetworkSI networkSI = new NetworkSI();
+                        networkSI.request(DataSync.Command.SENDQA, data.toString(), new NetworkSI.AsyncResponse() {
+                            @Override
+                            public void onSuccess(String response) {
+//                                Toast.makeText(mContext,response,Toast.LENGTH_SHORT).show();
+
+                                if (response.contains("AAList_UPDATE_SUCCESS")) {
+                                    DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                                        @Override
+                                        public void onFinished(String response) {
+                                            edChat.setText(null);
+                                            testFunc(beforeSendLastChatDate);
+
+                                        }
+
+                                        @Override
+                                        public void onPreExcute() {
+
+                                        }
+                                    });
+                                }
+
+
+                            }
+
+                            @Override
+                            public void onFailure(String response) {
+
+                            }
+                        });
+
+                    } else {
+                        Toast.makeText(mContext, "아직 질문이 올라오지 않았습니다.", Toast.LENGTH_SHORT).show();
                     }
 
-                    NetworkSI networkSI = new NetworkSI();
-                    networkSI.request(DataSync.Command.SENDQA, data.toString(), new NetworkSI.AsyncResponse() {
-                        @Override
-                        public void onSuccess(String response) {
-                            Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
-                        }
 
-                        @Override
-                        public void onFailure(String response) {
-                            Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
+                } else {
+                    // MaxAskable이 0이 되면 버튼을 막아버린다.
+                    if (dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0].equals("0")) {
+                        Toast.makeText(mContext, "모든 질문 기회를 소비했습니다 \n 정답을 맞춰주세요", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // local AskAnswerList에서 마지막 항의 질문에 대답이 없다 -> 질문을 막는다.
+
+                        String[][] findlocalAskAnswerList_guess = dbsi.selectQuery("select * from AskAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " and Guesser = " + userPKey);
+                        final String beforeSendLastChatDate = findLastChatDate();
+                        if (findlocalAskAnswerList_guess[findlocalAskAnswerList_guess.length - 1][5].isEmpty()) {
+                            Toast.makeText(mContext, "아직 지난 질문의 답변이 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // 질문한적이 없거나, 전의 질문에 대답이 되었다.
+//                    Toast.makeText(mContext, "질답모드_참가자", Toast.LENGTH_SHORT).show();
+                            JSONObject data = new JSONObject();
+                            try {
+                                data.put("GameListPKey", dbsi.selectQuery("Select PKey from GameList")[0][0]);
+                                data.put("Guess", edChat.getText().toString());
+                                data.put("MemberPriority", "1");
+                                data.put("ChatRoomPKey", dbsi.selectQuery("select ChatRoomPKey from GameList")[0][0]);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            NetworkSI networkSI = new NetworkSI();
+                            networkSI.request(DataSync.Command.SENDQA, data.toString(), new NetworkSI.AsyncResponse() {
+                                @Override
+                                public void onSuccess(String response) {
+//                            Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
+                                    if (response.contains("AAList_INSERT_SUCCESS")) {
+                                        DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                                            @Override
+                                            public void onFinished(String response) {
+                                                edChat.setText(null);
+                                                testFunc(beforeSendLastChatDate);
+                                                exchangeView();
+                                            }
+
+                                            @Override
+                                            public void onPreExcute() {
+
+                                            }
+                                        });
+                                    }
+
+                                }
+
+                                @Override
+                                public void onFailure(String response) {
+                                    Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                         }
-                    });
+                    }
+
 
                 }
 
@@ -199,6 +278,7 @@ public class GameRoomView extends BaseActivity {
         QAMode = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if (!QAFlag) { // QAFlag = false -> 질답 모드
                     edChat.setBackgroundColor(Color.MAGENTA);
                     if (getMemberPriority().equals("0")) {
@@ -217,6 +297,52 @@ public class GameRoomView extends BaseActivity {
                     QAFlag = false;
                 }
 
+            }
+        };
+
+        // 정답맞추기 클릭
+        sendReceiveRA = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String twentyquestionsPKey = dbsi.selectQuery("Select PKey from TwentyQuestions")[0][0];
+                String userPKey = dbsi.selectQuery("Select PKey from User where MySelf = 0")[0][0];
+
+                if (getMemberPriority().equals("0")) { // 방장
+                    String[][] findlocalRightAnswerList_Ans = dbsi.selectQuery("select * from RightAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " and Answerer = " + userPKey);
+
+                    if (findlocalRightAnswerList_Ans[findlocalRightAnswerList_Ans.length - 1][5].isEmpty() && findlocalRightAnswerList_Ans != null) {
+                        judgeRightDialog = new JudgeRightDialog(mContext);
+                        judgeRightDialog.show();
+                    } else {
+                        Toast.makeText(mContext, "상대방이 답을 작성하지 않았습니다.", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else {
+
+                    // MaxGuessable이 0이면 버튼을 막아버린다.
+                    if(dbsi.selectQuery("Select MaxGuessable From TwentyQuestions")[0][0].equals("0")){
+                        Toast.makeText(mContext, "모든 기회를 소진했습니다.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        String[][] findlocalRightAnswerList_guess = dbsi.selectQuery("select * from RightAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " and Guesser = " + userPKey);
+                        if (findlocalRightAnswerList_guess != null) {
+                            if (findlocalRightAnswerList_guess[findlocalRightAnswerList_guess.length - 1][5].isEmpty()) {
+                                Toast.makeText(mContext, "아직 지난 정답의 답변이 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                guessRightDialog = new GuessRightDialog(mContext);
+                                guessRightDialog.show();
+                            }
+                        } else {
+                            guessRightDialog = new GuessRightDialog(mContext);
+                            guessRightDialog.show();
+                        }
+
+                    }
+
+
+
+                }
             }
         };
 
@@ -288,13 +414,15 @@ public class GameRoomView extends BaseActivity {
         tvGuessRight = new TextView(MainView.mContext);
         tvGuessRight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         tvGuessRight.setGravity(Gravity.CENTER);
-        tvGuessRight.setOnClickListener(guessRightEvent);
         if (getMemberPriority().equals("0")) {
-            tvGuessRight.setText("정답이 올라왔어요");
+            if (dbsi.selectQuery("Select Guess from RightAnswerList where Answer == \"\" Order by PKey desc ") != null)
+                tvGuessRight.setText("정답이 올라왔어요");
+            else
+                tvGuessRight.setText("정답을 기다리는 중...");
         } else {
             tvGuessRight.setText("정답 맞히기");
         }
-
+        tvGuessRight.setOnClickListener(sendReceiveRA);
 
         llGuessRight = new LinearLayout(MainView.mContext);
         llGuessRight.setOrientation(LinearLayout.VERTICAL);
@@ -405,8 +533,6 @@ public class GameRoomView extends BaseActivity {
     public void setValues() {
 
 
-        context = this;
-
         //  localDB의 GameMember와 GameList를 이용해서 게임방의 데이터들을 가져온다.
         dbsi = new DBSI();
         Log.d("GameRoomView", " setValues()");
@@ -415,76 +541,133 @@ public class GameRoomView extends BaseActivity {
         Log.d("GameListPKey", localGameList[0][0]);
         Log.d("ChatRoomPKey", localGameList[0][1]);
         memberCount = dbsi.selectQuery("SELECT Count(PKey) FROM GameMember WHERE GameListPKey = " + localGameList[0][0])[0][0];
-        localChat = dbsi.selectQuery("SELECT * FROM Chat WHERE ChatRoomPKey = " + localGameList[0][1]);
+
+
+//        localChat = dbsi.selectQuery("SELECT * FROM Chat WHERE ChatRoomPKey = " + localGameList[0][1]);
+
+
+        localChat = dbsi.selectQuery(
+                makeChatQuery(localGameList[0][0], localGameList[0][1]) + "order by U.Date, U.Flag;"
+        );
+
+
         int localChatLength = (localChat != null) ? localChat.length : 0;
+        System.out.println("localChat.length" + localChatLength);
 
         chatDataItemlist = new ArrayList<>();
         if (localChatLength != 0) {
             for (int i = 0; i < localChatLength; i++) {
+                Log.d("Flag 내용", " chat");
                 ChatDataItem chatDataItem = new ChatDataItem();
-                chatDataItem.setUserPKey(localChat[i][2]);
-                String[][] userNameAndFlag = dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + localChat[i][2]);
+                chatDataItem.setUserPKey(localChat[i][1]);
+                String[][] userNameAndFlag = dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + localChat[i][1]);
                 chatDataItem.setUserName(userNameAndFlag[0][0]);
                 chatDataItem.setUserMySelf(userNameAndFlag[0][1]);
-                chatDataItem.setChattingText(localChat[i][3]);
-                chatDataItem.setChatPKey(localChat[i][0]);
+                chatDataItem.setChattingText(localChat[i][2]);
+                chatDataItem.setObjPKey(localChat[i][0]);
+                if (localChat[i][4].contains("askans")) {
+                    chatDataItem.setChatFlag("askans");
+                } else if (localChat[i][4].contains("right")) {
+                    chatDataItem.setChatFlag("right");
+                } else {
+                    chatDataItem.setChatFlag("chat");
+                }
                 chatDataItemlist.add(chatDataItem);
             }
         }
 
+        Log.d("어레이리스트 길이 ", chatDataItemlist.size() + " / ");
         gameChatListViewAdapter = new GameChatListViewAdapter(mContext, chatDataItemlist);
 
 
-        DataSync.getInstance().Timer(new DataSync.AsyncResponse() {
-            String beforeChatPKey;
-
-            @Override
-            public void onFinished(String response) {
-
-
-                Log.d("chatDataItemlist.size()", chatDataItemlist.size() + "");
-                if (chatDataItemlist.size() > 0) {
-
-                    testFunc(beforeChatPKey);
-                    System.out.println("TestFuncLoadFinish");
-                }
-
-            }
-
-            @Override
-            public void onPreExcute() {
-                beforeChatPKey = findLastChatPKey();
-            }
-        });
+//        DataSync.getInstance().Timer(new DataSync.AsyncResponse() {
+//            String beforeChatPKey;
+//
+//            @Override
+//            public void onFinished(String response) {
+//
+//
+//                Log.d("chatDataItemlist.size()", chatDataItemlist.size() + "");
+//                if (chatDataItemlist.size() > 0) {
+//
+//                    testFunc(beforeChatPKey);
+//                    System.out.println("TestFuncLoadFinish");
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onPreExcute() {
+//                beforeChatPKey = findLastChatDate();
+//            }
+//        });
 
 
     }
 
-    public void testFunc(String lastChatPkey) {
+    public String makeChatQuery(String GameListPKey, String ChatRoomPKey) {
+
+        return "select * from \n" +
+                "(select C.PKey as PKey, C.UserPKey as User, C.ChatText as Text, C.CreatedDate as Date, 'chat' as Flag\n" +
+                "from Chat as C where ChatRoomPKey = " + ChatRoomPKey + "\n" +
+                "union\n" +
+                "select A.PKey as PKey, A.Guesser as User, A.Guess as Text, A.UpdatedDate as Date, 'askans1' as Flag \n" +
+                "from AskAnswerList as A where A.TwentyQuestionsPKey = (Select PKey from TwentyQuestions where GameListPKey = " + GameListPKey + ")\n" +
+                "union\n" +
+                "select A.PKey as PKey, A.Answerer as User, A.Answer as Text, A.UpdatedDate as Date, 'askans2' as Flag\n" +
+                "from AskAnswerList as A where A.TwentyQuestionsPKey = (Select PKey from TwentyQuestions where GameListPKey = " + GameListPKey + ") and A.Answer != \"\"\n" +
+                "union\n" +
+                "select R.PKey as PKey, R.Guesser as User, R.Guess as Text, R.UpdatedDate as Date, 'right1' as Flag \n" +
+                "from RightAnswerList as R where R.TwentyQuestionsPKey = (Select PKey from TwentyQuestions where GameListPKey = " + GameListPKey + ")\n" +
+                "union\n" +
+                "select R.PKey as PKey, R.Answerer as User, R.Answer as Text, R.UpdatedDate as Date, 'right2' as Flag\n" +
+                "from RightAnswerList as R where R.TwentyQuestionsPKey = (Select PKey from TwentyQuestions where GameListPKey = " + GameListPKey + ") and R.Answer != \"\")As U \n";
+    }
+
+    public void testFunc(String lastChatDate) {
 
         Log.d("Start ", "testFunc");
         String[][] localGameList = dbsi.selectQuery("SELECT * FROM GameList");
-        String[][] localChat = dbsi.selectQuery("SELECT * FROM Chat WHERE ChatRoomPKey = " + localGameList[0][1]);
-        String[][] addedChatData = dbsi.selectQuery("select * from Chat where ChatRoomPKey = " + localGameList[0][1] + " and PKey > " + lastChatPkey);
+//        String[][] addedChatData = dbsi.selectQuery("select * from Chat where ChatRoomPKey = " + localGameList[0][1] + " and PKey > " + lastChatDate);
+
+        String[][] addedChatData = dbsi.selectQuery(
+                makeChatQuery(localGameList[0][0], localGameList[0][1]) + "where U.Date > '" + lastChatDate + "' order by U.Date, U.Flag;"
+        );
+
         int localSyncChatLength = (addedChatData != null) ? addedChatData.length : 0;
         Log.d("addedChatData.length", localSyncChatLength + "");
 
         for (int i = 0; i < localSyncChatLength; i++) {
+            Log.d("Flag 내용", " chat");
             ChatDataItem chatDataItem = new ChatDataItem();
-            chatDataItem.setUserPKey(addedChatData[i][2]);
-            String[][] userNameAndFlag = dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + addedChatData[i][2]);
+            chatDataItem.setUserPKey(addedChatData[i][1]);
+            String[][] userNameAndFlag = dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + addedChatData[i][1]);
             chatDataItem.setUserName(userNameAndFlag[0][0]);
             chatDataItem.setUserMySelf(userNameAndFlag[0][1]);
-            chatDataItem.setChattingText(addedChatData[i][3]);
-            chatDataItem.setChatPKey(localChat[i][0]);
-            chatDataItemlist.add(chatDataItem);
-        }
+            chatDataItem.setChattingText(addedChatData[i][2]);
+            chatDataItem.setObjPKey(addedChatData[i][0]);
+            if (addedChatData[i][4].contains("askans")) {
+                chatDataItem.setChatFlag("askans");
+            } else if (addedChatData[i][4].contains("right")) {
+                chatDataItem.setChatFlag("right");
+            } else {
+                chatDataItem.setChatFlag("chat");
+            }
 
+
+            if (chatDataItemlist.get(chatDataItemlist.size() - 1).getObjPKey().equals(addedChatData[i][0])
+                    && (addedChatData[i][4].equals("askans1") || (addedChatData[i][4].equals("right1")))) {
+
+            } else {
+                chatDataItemlist.add(chatDataItem);
+            }
+
+        }
 
         gameChatListViewAdapter.notifyDataSetChanged();
 
 
-//        gameChatListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        gameChatListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
     }
 
     @Override
@@ -493,13 +676,14 @@ public class GameRoomView extends BaseActivity {
         titleView.setText(localGameList[0][3]);
     }
 
-    public String findLastChatPKey() {
+    public String findLastChatDate() {
         String[][] localGameList = dbsi.selectQuery("SELECT * FROM GameList");
-        String[][] localChatData = dbsi.selectQuery("SELECT * FROM Chat Where ChatRoomPKey = " + localGameList[0][1]);
+        String[][] localChatData = dbsi.selectQuery(makeChatQuery(localGameList[0][0], localGameList[0][1]) + "order by U.Date, U.Flag;");
+
         if (localChatData != null) {
-            return localChatData[localChatData.length - 1][0];
+            return localChatData[localChatData.length - 1][3];
         } else {
-            return "0";
+            return "Now()";
         }
     }
 
@@ -511,6 +695,27 @@ public class GameRoomView extends BaseActivity {
         memberPriority = dbsi.selectQuery("SELECT MemberPriority FROM GameMember WHERE GameListPKey = " + gameListKey)[0][0];
 
         return memberPriority;
+    }
+
+    public void exchangeView() {
+        if (getMemberPriority().equals("0")) {
+            // 정답맞히기 textView
+            if (dbsi.selectQuery("Select Guess from RightAnswerList where Answer == \"\" Order by PKey desc ") != null)
+                tvGuessRight.setText("정답이 올라왔어요");
+            else
+                tvGuessRight.setText("정답을 기다리는 중...");
+
+
+        } else {
+            tvGuessRight.setText("정답 맞히기");
+        }
+
+        // 남은 질문 갯수 textView
+        tvQeustionCount.setText(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]);
+        tvRightCount.setText(dbsi.selectQuery("Select MaxGuessable From TwentyQuestions")[0][0]);
+
+        // 남은 기회 갯수 textView
+
     }
 
 }

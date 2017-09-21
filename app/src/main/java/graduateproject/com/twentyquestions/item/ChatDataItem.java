@@ -11,16 +11,25 @@ public class ChatDataItem {
     private String userPKey;
     private String userMySelf;
     private String thumbnailPath;
-    private String chatPKey;
+    private String chatFlag;
+    private String objPKey;
 
-    public String getChatPKey() {
-        return chatPKey;
+    public String getObjPKey() {
+        return objPKey;
     }
 
-    public void setChatPKey(String chatPKey) {
-        this.chatPKey = chatPKey;
+    public void setObjPKey(String objPKey) {
+        this.objPKey = objPKey;
     }
 
+
+    public String getChatFlag() {
+        return chatFlag;
+    }
+
+    public void setChatFlag(String chatFlag) {
+        this.chatFlag = chatFlag;
+    }
 
 
     public String getUserName() {

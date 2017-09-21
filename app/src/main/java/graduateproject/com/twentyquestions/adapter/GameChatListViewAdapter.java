@@ -1,6 +1,7 @@
 package graduateproject.com.twentyquestions.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -36,6 +37,7 @@ public class GameChatListViewAdapter extends ArrayAdapter {
         mContext = context;
         mList = list;
         dbsi = new DBSI();
+        System.out.println("리스트뷰 생성 완료");
     }
 
     @NonNull
@@ -66,6 +68,7 @@ public class GameChatListViewAdapter extends ArrayAdapter {
 //        Log.d("getUserPKey",mList.get(position).getUserPKey());
 //        Log.d("dbUserPKey", localUserPKey);
 
+        Log.d("어레이리스트 길이 in Adapter",mList.size()+"/");
 
         if(mList.get(position).getUserMySelf().equals("0")){
 
@@ -96,6 +99,11 @@ public class GameChatListViewAdapter extends ArrayAdapter {
 
         }
 
+        if(mList.get(position).getChatFlag().contains("askans")){
+            linearLayout.setBackgroundColor(Color.LTGRAY);
+        }else if(mList.get(position).getChatFlag().contains("right")){
+            linearLayout.setBackgroundColor(Color.YELLOW);
+        }
 
         return linearLayout;
     }

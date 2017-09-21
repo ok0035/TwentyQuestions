@@ -64,7 +64,9 @@ public class DBSI extends SQLiteOpenHelper{
 //        Log.d("query : ",query);
 
         SQLiteDatabase db = getWritableDatabase();
+
         db.execSQL(query);
+
         db.close();
 
     }
@@ -72,7 +74,7 @@ public class DBSI extends SQLiteOpenHelper{
     public String[][] selectQuery(String query) {
         SQLiteDatabase db = getWritableDatabase();
 
-//        Log.d("Query",query);
+        Log.d("Query",query);
 
         Cursor cursor;
 
@@ -180,7 +182,7 @@ public class DBSI extends SQLiteOpenHelper{
         db.execSQL("CREATE TABLE IF NOT EXISTS Notice (PKey integer(4) NOT NULL, Title varchar(100), Content text, NewDisplayDay integer(1), IsRead boolean DEFAULT '0', CreatedDate timestamp, UpdatedDate timestamp);");
         db.execSQL("CREATE TABLE IF NOT EXISTS Picture (PKey integer(8) NOT NULL, UserPKey integer(8) NOT NULL, Priority integer(1) DEFAULT 0 NOT NULL, PicturePath varchar(255) NOT NULL, IsDeleted boolean DEFAULT '0' NOT NULL, CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);");
         db.execSQL("CREATE TABLE IF NOT EXISTS RandomName (PKey integer(4) NOT NULL, Type integer(1), Name varchar(50) NOT NULL);");
-        db.execSQL("CREATE TABLE IF NOT EXISTS RightAnswerList (PKey integer(8) NOT NULL, TwentyQuestionsPKey integer(8) NOT NULL, Guesser integer(8), Answerer integer(8), Guess varchar(255) NOT NULL, Answer text NOT NULL, IsRight integer(1) DEFAULT 0 NOT NULL, Status integer(1) DEFAULT 0 NOT NULL, CreatdDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS RightAnswerList (PKey integer(8) NOT NULL, TwentyQuestionsPKey integer(8) NOT NULL, Guesser integer(8), Answerer integer(8), Guess varchar(255) NOT NULL, Answer text NOT NULL, IsRight integer(1) DEFAULT 0 NOT NULL, Status integer(1) DEFAULT 0 NOT NULL, CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);");
         db.execSQL("CREATE TABLE IF NOT EXISTS TwentyQuestions (PKey integer(8) NOT NULL, GameListPKey integer(8) NOT NULL, Object varchar(50) NOT NULL, MaxAskable integer(1) DEFAULT 20, MaxGuessable integer(1) DEFAULT 3, CreatedDate timestamp, UpdatedDate timestamp);");
 
         db.execSQL("" +
@@ -268,7 +270,7 @@ public class DBSI extends SQLiteOpenHelper{
                 "CREATE TABLE IF NOT EXISTS Notice (PKey integer(4) NOT NULL, Title varchar(100), Content text, NewDisplayDay integer(1), IsRead boolean DEFAULT '0', CreatedDate timestamp, UpdatedDate timestamp);\n" +
                 "CREATE TABLE IF NOT EXISTS Picture (PKey integer(8) NOT NULL, UserPKey integer(8) NOT NULL, Priority integer(1) DEFAULT 0 NOT NULL, PicturePath varchar(255) NOT NULL, IsDeleted boolean DEFAULT '0' NOT NULL, CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
                 "CREATE TABLE IF NOT EXISTS RandomName (PKey integer(4) NOT NULL, Type integer(1), Name varchar(50) NOT NULL);\n" +
-                "CREATE TABLE IF NOT EXISTS RightAnswerList (PKey integer(8) NOT NULL, TwentyQuestionsPKey integer(8) NOT NULL, Guesser integer(8), Answerer integer(8), Guess varchar(255) NOT NULL, Answer text NOT NULL, IsRight integer(1) DEFAULT 0 NOT NULL, Status integer(1) DEFAULT 0 NOT NULL, CreatdDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
+                "CREATE TABLE IF NOT EXISTS RightAnswerList (PKey integer(8) NOT NULL, TwentyQuestionsPKey integer(8) NOT NULL, Guesser integer(8), Answerer integer(8), Guess varchar(255) NOT NULL, Answer text NOT NULL, IsRight integer(1) DEFAULT 0 NOT NULL, Status integer(1) DEFAULT 0 NOT NULL, CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
                 "CREATE TABLE IF NOT EXISTS TwentyQuestions (PKey integer(8) NOT NULL, GameListPKey integer(8) NOT NULL, Object varchar(50) NOT NULL, MaxAskable integer(1) DEFAULT 20, MaxGuessable integer(1) DEFAULT 3, CreatedDate timestamp, UpdatedDate timestamp);\n" +
                 "CREATE TABLE IF NOT EXISTS User (PKey integer(8) NOT NULL, ID varchar(50), SNSAccessToken varchar(1500), Password varchar(255), LoginType integer(1) DEFAULT 0 NOT NULL, NickName varchar(20) NOT NULL, Phone varchar(15), Gender integer(1) NOT NULL, Birthday date NOT NULL, Longitude double(10), Latitude double(10), ConditionMessage varchar(200), Introduction varchar(200), IsVerification boolean DEFAULT '0', Status tinyint(3) DEFAULT 1, LatestLogin timestamp, UDID varchar(200), DeviceType integer(1), DeviceName varchar(100), OS varchar(200), CreatedDate timestamp NOT NULL, UpdatedDate timestamp NOT NULL);\n" +
                 "CREATE UNIQUE INDEX AskAnswerList_PKey ON AskAnswerList (PKey);\n" +

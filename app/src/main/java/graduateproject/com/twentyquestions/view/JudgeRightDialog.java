@@ -6,13 +6,21 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import graduateproject.com.twentyquestions.R;
+import graduateproject.com.twentyquestions.network.DBSI;
+import graduateproject.com.twentyquestions.network.DataSync;
+import graduateproject.com.twentyquestions.network.NetworkSI;
 import graduateproject.com.twentyquestions.util.BasicMethod;
 import graduateproject.com.twentyquestions.util.CalculatePixel;
 
@@ -34,7 +42,10 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
             tvRightAnswer, tvWrongAnswer, tvSimilarAnswer, tvNoSelect;
 
     EditText edChat;
-
+    private View.OnClickListener cancelEvent;
+    private View.OnClickListener okEvent;
+    private DBSI dbsi;
+    private String guessObj;
 
     public JudgeRightDialog(@NonNull Context context) {
         super(context);
@@ -43,18 +54,92 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setValues();
+        setUpEvents();
         setView();
         setContentView(rlParent);
     }
 
     @Override
     public void setValues() {
-
+        dbsi = new DBSI();
+        guessObj = dbsi.selectQuery("Select Guess from RightAnswerList Order by PKey desc")[0][0];
     }
 
     @Override
     public void setUpEvents() {
+        cancelEvent = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        };
 
+        okEvent = new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+
+                    String twentyquestionsPKey = dbsi.selectQuery("Select PKey from TwentyQuestions")[0][0];
+                    String userPKey = dbsi.selectQuery("Select PKey from User where MySelf = 0")[0][0];
+                    String[][] findlocalRightAnswerList_Ans = dbsi.selectQuery("select * from RightAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " and Answerer = " + userPKey);
+
+                    JSONObject data = new JSONObject();
+
+                    try {
+                        data.put("MemberPriority","0");
+                        data.put("ChatRoomPKey",dbsi.selectQuery("select ChatRoomPKey from GameList")[0][0]);
+                        data.put("RightAnswerListPKey",findlocalRightAnswerList_Ans[findlocalRightAnswerList_Ans.length-1][0]);
+                        if(view.getId() == 0){ // 땡
+                            data.put("Answer","Wrong");
+                        }else if(view.getId() == 1){ // 아쉽
+                            data.put("Answer","Similar");
+                        }else{
+                            data.put("Answer","Right");
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    final GameRoomView gameRoomView = (GameRoomView) GameRoomView.mContext;
+
+                    if(gameRoomView!=null){
+
+                        final String[] beforeSendLastChatDate = {null};
+
+                        NetworkSI networkSI = new NetworkSI();
+                        networkSI.request(DataSync.Command.SENDRA, data.toString(), new NetworkSI.AsyncResponse() {
+                            @Override
+                            public void onSuccess(String response) {
+                                DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                                    @Override
+                                    public void onFinished(String response) {
+                                        gameRoomView.testFunc(beforeSendLastChatDate[0]);
+                                        gameRoomView.exchangeView();
+                                        dismiss();
+                                    }
+
+                                    @Override
+                                    public void onPreExcute() {
+                                        beforeSendLastChatDate[0] = gameRoomView.findLastChatDate();
+                                    }
+                                });
+
+                            }
+
+                            @Override
+                            public void onFailure(String response) {
+                                Toast.makeText(getOwnerActivity(), response, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+
+                }
+
+
+        };
     }
 
     @Override
@@ -107,34 +192,35 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
 
         edChat = new EditText(BaseActivity.mContext);
 
-        tvTitle.setLayoutParams(new RelativeLayout.LayoutParams((int) CalculatePixel.calculatePixelX(80), (int)CalculatePixel.calculatePixelY(30)));
+        tvTitle.setLayoutParams(new RelativeLayout.LayoutParams((int) CalculatePixel.calculatePixelX(80), (int) CalculatePixel.calculatePixelY(30)));
         tvTitle.setGravity(Gravity.CENTER);
         tvTitle.setTextColor(Color.rgb(255,255,255));
         tvTitle.setText("정답이 \n올라왔어요");
 
         RelativeLayout.LayoutParams rlTitleParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        rlTitleParams.setMargins(0,(int)CalculatePixel.calculatePixelY(5),0,0);
+        rlTitleParams.setMargins(0,(int) CalculatePixel.calculatePixelY(5),0,0);
         rlTitleParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         rlTitle.setLayoutParams(rlTitleParams);
         rlTitle.setBackgroundResource(R.color.colorPrimaryDark);
         rlTitle.addView(tvTitle);
 
-        tvCancelButton.setLayoutParams(new LinearLayout.LayoutParams(0, (int)CalculatePixel.calculatePixelY(25), 0.3f));
+        tvCancelButton.setLayoutParams(new LinearLayout.LayoutParams(0, (int) CalculatePixel.calculatePixelY(25), 0.3f));
         tvCancelButton.setGravity(Gravity.CENTER);
         tvCancelButton.setBackgroundResource(R.color.colorPrimaryDark);
         tvCancelButton.setTextColor(Color.rgb(255,255,255));
         tvCancelButton.setTextSize(CalculatePixel.calculatePixelY(5));
         tvCancelButton.setText("선택하지 않고\n 돌아가기");
+        tvCancelButton.setOnClickListener(cancelEvent);
 
         LinearLayout.LayoutParams llCancelRightParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        llCancelRightParams.setMargins(0, 0, (int)CalculatePixel.calculatePixelX(5), 0);
+        llCancelRightParams.setMargins(0, 0, (int) CalculatePixel.calculatePixelX(5), 0);
         llButtonRow2.setLayoutParams(llCancelRightParams);
         llButtonRow2.setGravity(Gravity.CENTER);
         llButtonRow2.setWeightSum(1);
 //        llButtonRow2.setBackgroundResource(R.color.colorPrimary);
         llButtonRow2.addView(tvCancelButton);
 
-        LinearLayout.LayoutParams tvRightAnswerParams = new LinearLayout.LayoutParams(0, (int)CalculatePixel.calculatePixelY(25), 0.3f);
+        LinearLayout.LayoutParams tvRightAnswerParams = new LinearLayout.LayoutParams(0, (int) CalculatePixel.calculatePixelY(25), 0.3f);
 //        tvRightAnswerParams.setMargins(0,0,(int)CalculatePixel.calculatePixelX(5), 0);
         tvRightAnswer.setLayoutParams(tvRightAnswerParams);
         tvRightAnswer.setGravity(Gravity.CENTER);
@@ -143,26 +229,31 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         tvRightAnswer.setBackgroundResource(R.color.colorPrimaryDark);
         tvRightAnswer.setText("정답!");
 
-        LinearLayout.LayoutParams tvWrongAnswerParams = new LinearLayout.LayoutParams(0, (int)CalculatePixel.calculatePixelY(25), 0.2f);
-        tvWrongAnswerParams.setMargins(0,0,(int)CalculatePixel.calculatePixelX(5), 0);
+        LinearLayout.LayoutParams tvWrongAnswerParams = new LinearLayout.LayoutParams(0, (int) CalculatePixel.calculatePixelY(25), 0.2f);
+        tvWrongAnswerParams.setMargins(0,0,(int) CalculatePixel.calculatePixelX(5), 0);
         tvWrongAnswer.setLayoutParams(tvWrongAnswerParams);
         tvWrongAnswer.setTextSize(CalculatePixel.calculatePixelY(6));
         tvWrongAnswer.setBackgroundResource(R.color.colorPrimaryDark);
         tvWrongAnswer.setTextColor(Color.rgb(255,255,255));
         tvWrongAnswer.setGravity(Gravity.CENTER);
         tvWrongAnswer.setText("땡!");
+        tvWrongAnswer.setId(0);
+        tvWrongAnswer.setOnClickListener(okEvent);
 
-        LinearLayout.LayoutParams tvSimilarAnswerParams = new LinearLayout.LayoutParams(0, (int)CalculatePixel.calculatePixelY(25), 0.5f);
-        tvSimilarAnswerParams.setMargins(0,0,(int)CalculatePixel.calculatePixelX(5), 0);
+
+        LinearLayout.LayoutParams tvSimilarAnswerParams = new LinearLayout.LayoutParams(0, (int) CalculatePixel.calculatePixelY(25), 0.5f);
+        tvSimilarAnswerParams.setMargins(0,0,(int) CalculatePixel.calculatePixelX(5), 0);
         tvSimilarAnswer.setLayoutParams(tvSimilarAnswerParams);
         tvSimilarAnswer.setTextSize(CalculatePixel.calculatePixelY(5));
         tvSimilarAnswer.setTextColor(Color.rgb(255,255,255));
         tvSimilarAnswer.setBackgroundResource(R.color.colorPrimaryDark);
         tvSimilarAnswer.setGravity(Gravity.CENTER);
         tvSimilarAnswer.setText("땡!\n아쉬웠어요!");
+        tvSimilarAnswer.setId(1);
+        tvSimilarAnswer.setOnClickListener(okEvent);
 
         LinearLayout.LayoutParams llButtonRow1Params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        llButtonRow1Params.setMargins((int)CalculatePixel.calculatePixelX(5), 0, 0, (int)CalculatePixel.calculatePixelY(5));
+        llButtonRow1Params.setMargins((int) CalculatePixel.calculatePixelX(5), 0, 0, (int) CalculatePixel.calculatePixelY(5));
         llButtonRow1.setOrientation(LinearLayout.HORIZONTAL);
         llButtonRow1.setLayoutParams(llButtonRow1Params);
         llButtonRow1.setWeightSum(1);
@@ -179,7 +270,7 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         llButton.addView(llButtonRow2);
 
         RelativeLayout.LayoutParams rlButtonParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        rlButtonParams.setMargins(0,(int)CalculatePixel.calculatePixelY(270), 0, (int)CalculatePixel.calculatePixelY(5));
+        rlButtonParams.setMargins(0,(int) CalculatePixel.calculatePixelY(270), 0, (int) CalculatePixel.calculatePixelY(5));
         rlButton.setLayoutParams(rlButtonParams);
 //        rlButton.setY();
         rlButton.addView(llButton);
@@ -188,13 +279,15 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         tvIsRight.setTextSize(CalculatePixel.calculatePixelY(5));
         tvIsRight.setTextColor(Color.rgb(255,255,255));
         tvIsRight.setText("정오답 처리 : ");
+        tvIsRight.setId(2);
+        tvIsRight.setOnClickListener(okEvent);
 
         tvGuessRight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         tvGuessRight.setTextSize(CalculatePixel.calculatePixelY(5));
         tvGuessRight.setTextColor(Color.rgb(255,255,255));
-        tvGuessRight.setText("바나나");
+        tvGuessRight.setText(guessObj);
 
-        llRight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)CalculatePixel.calculatePixelY(30)));
+        llRight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) CalculatePixel.calculatePixelY(30)));
         llRight.setOrientation(LinearLayout.HORIZONTAL);
         llRight.setGravity(Gravity.CENTER);
         llRight.setBackgroundResource(R.color.colorPrimaryDark);
@@ -202,7 +295,7 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         llRight.addView(tvGuessRight);
 
         RelativeLayout.LayoutParams tvDescriptionParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        tvDescriptionParams.setMargins(0,(int)CalculatePixel.calculatePixelY(35), 0, 0);
+        tvDescriptionParams.setMargins(0,(int) CalculatePixel.calculatePixelY(35), 0, 0);
         tvDescription.setLayoutParams(tvDescriptionParams);
         tvDescription.setGravity(Gravity.CENTER);
         tvDescription.setTextSize(CalculatePixel.calculatePixelY(5));
@@ -210,7 +303,7 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         tvDescription.setText("정오답 처리에 대해서는\n아래 버튼 중 선택해 주세요.");
 
         RelativeLayout.LayoutParams rlJudgeRightParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        rlJudgeRightParams.setMargins((int)CalculatePixel.calculatePixelX(35), 0, (int)CalculatePixel.calculatePixelX(35), 0);
+        rlJudgeRightParams.setMargins((int) CalculatePixel.calculatePixelX(35), 0, (int) CalculatePixel.calculatePixelX(35), 0);
         rlJudgeRightParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         rlJudgeRight.setGravity(Gravity.CENTER);
         rlJudgeRight.setLayoutParams(rlJudgeRightParams);
@@ -296,7 +389,7 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         llGameInfo.addView(llProgress);
 
         RelativeLayout.LayoutParams rlRemainderParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        rlRemainderParams.setMargins((int)CalculatePixel.calculatePixelX(20), 0, (int) CalculatePixel.calculatePixelX(20), 0);
+        rlRemainderParams.setMargins((int) CalculatePixel.calculatePixelX(20), 0, (int) CalculatePixel.calculatePixelX(20), 0);
         rlRemainder.setLayoutParams(rlRemainderParams);
         rlRemainder.setY(CalculatePixel.calculatePixelY(150));
         rlRemainder.addView(llGameInfo);
@@ -306,7 +399,7 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         tvQuestionTitle.setTextColor(Color.rgb(255, 255, 255));
         tvQuestionTitle.setText("문제");
 
-        RelativeLayout.LayoutParams rlQuestionTextParams = new RelativeLayout.LayoutParams((int)CalculatePixel.calculatePixelX(80), (int) CalculatePixel.calculatePixelY(20));
+        RelativeLayout.LayoutParams rlQuestionTextParams = new RelativeLayout.LayoutParams((int) CalculatePixel.calculatePixelX(80), (int) CalculatePixel.calculatePixelY(20));
         rlQuestionTextParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         rlQuestionText.setLayoutParams(rlQuestionTextParams);
         rlQuestionText.setY(CalculatePixel.calculatePixelY(40));
@@ -316,9 +409,9 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         tvQuestion.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         tvQuestion.setGravity(Gravity.CENTER);
         tvQuestion.setTextSize(CalculatePixel.calculatePixelY(20));
-        tvQuestion.setText(" ??? ");
+        tvQuestion.setText(dbsi.selectQuery("Select Object From TwentyQuestions")[0][0]);
 
-        RelativeLayout.LayoutParams rlQuestionParams = new RelativeLayout.LayoutParams((int)CalculatePixel.calculatePixelX(120), (int)CalculatePixel.calculatePixelY(70));
+        RelativeLayout.LayoutParams rlQuestionParams = new RelativeLayout.LayoutParams((int) CalculatePixel.calculatePixelX(120), (int) CalculatePixel.calculatePixelY(70));
 //        rlQuestionParams.setMargins(0,0,0,(int)CalculatePixel.calculatePixelY(55));
         rlQuestionParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         rlQuestion.setY(CalculatePixel.calculatePixelY(55));
@@ -340,7 +433,7 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         rlMain.addView(rlButton);
 
         rlParent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        rlParent.setBackgroundResource(R.color.colorTransparent);
+        rlParent.setBackgroundResource(R.color.colorPrimary);
         rlParent.addView(rlMain);
         rlParent.addView(rlTitle);
 

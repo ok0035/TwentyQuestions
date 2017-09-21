@@ -40,12 +40,8 @@ public class DataSync extends Thread {
     private Timer timer;
 
     // added by CHS
-    private String latestChatPKey;
-    private Context dsContext;
 
-    public String getLatestChatPKey(){
-        return latestChatPKey;
-    }
+    private Context dsContext;
 
     public interface AsyncResponse {
         void onFinished(String response);
@@ -73,6 +69,7 @@ public class DataSync extends Thread {
         SENDCHATDATA,
         SETGAME,
         SENDQA,
+        SENDRA,
         SETMEMBER,
         FINDFRIEND,
         SETFRIEND,
@@ -103,28 +100,6 @@ public class DataSync extends Thread {
         dsContext = context;
     }
 
-    private void traceActivityClass() {
-
-        if (dsContext != null) {
-
-            String callerName = dsContext.getClass().getName();
-
-            Log.d("callerName", callerName);
-            if (callerName.contains("GameRoomView")) {
-                GameRoomView gameRoomView = (GameRoomView) dsContext;
-                if (gameRoomView != null) {
-                    gameRoomView.testFunc(latestChatPKey);
-                }
-            } else if (callerName.contains("MainView")) {
-                MainView mainView = (MainView) dsContext;
-                if (mainView != null) {
-                    System.out.println("This is MainView");
-                }
-            }
-        }
-
-
-    }
 
     public static DataSync getInstance() {
 
@@ -399,8 +374,6 @@ public class DataSync extends Thread {
         }
 
         public String getFullData() {
-
-
             JSONObject data = new JSONObject();
             JSONObject chat = new JSONObject();
             JSONObject chatMember = new JSONObject();
@@ -410,7 +383,6 @@ public class DataSync extends Thread {
             JSONObject twentyQuestions = new JSONObject();
             JSONObject askAnswerList = new JSONObject();
             JSONObject rightAnswerList = new JSONObject();
-
 
             DBSI db = new DBSI();
 
@@ -423,13 +395,10 @@ public class DataSync extends Thread {
             String[][] selectAskAnswerList = db.selectQuery("select * from AskAnswerList");
             String[][] selectRightAnswerList= db.selectQuery("select * from RightAnswerList");
 
-
-
             String chatRoomPKey = (selectChatRoom != null) ? selectChatRoom[selectChatRoom.length - 1][0] : "0";
             String chatRoomUpdatedDate = (selectChatRoom != null) ? selectChatRoom[selectChatRoom.length - 1][5] : "NOW()";
 
             String chatPKey = (selectChat != null) ? selectChat[selectChat.length - 1][0] : "0";
-            latestChatPKey = chatPKey;
             String chatCreatedDate = (selectChat != null) ? selectChat[selectChat.length - 1][6] : "NOW()";
 
             String chatMemberPKey = (selectChatMember != null) ? selectChatMember[selectChatMember.length - 1][0] : "0";
@@ -449,7 +418,6 @@ public class DataSync extends Thread {
 
             String rightAnswerListPKey = (selectRightAnswerList != null) ? selectRightAnswerList[selectRightAnswerList.length - 1][0] : "0";
             String rightAnswerUpdatedDate = (selectRightAnswerList != null) ? selectRightAnswerList[selectRightAnswerList.length - 1][9] : "NOW()";
-
 
             try {
 
