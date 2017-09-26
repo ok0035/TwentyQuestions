@@ -1,10 +1,8 @@
 package graduateproject.com.twentyquestions.network;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -21,8 +19,6 @@ import java.util.TimerTask;
 
 import graduateproject.com.twentyquestions.controller.DataSyncController;
 import graduateproject.com.twentyquestions.util.GPSTracer;
-import graduateproject.com.twentyquestions.view.GameRoomView;
-import graduateproject.com.twentyquestions.view.MainView;
 
 /**
  * Created by mapl0 on 2017-08-01.
@@ -80,7 +76,8 @@ public class DataSync extends Thread {
         LOGINSUCCESS,
         ENTERGAMEROOM,
         LEAVEGAMEROOM,
-        TEMPUSERDATA
+        TEMPUSERDATA,
+        CHECKUSERNUMBER
 
     }
 
