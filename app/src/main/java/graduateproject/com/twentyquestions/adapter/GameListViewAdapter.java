@@ -92,6 +92,7 @@ public class GameListViewAdapter extends BaseAdapter {
 
                 try {
                     checkJson.put("ChatRoomPKey", chatRoomPKey);
+                    checkJson.put("UserPKey", dbsi.selectQuery("select PKey from User where MySelf = 0")[0][0]);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
