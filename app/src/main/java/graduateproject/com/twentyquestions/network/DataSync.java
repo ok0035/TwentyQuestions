@@ -78,7 +78,9 @@ public class DataSync extends Thread {
         SENDREPORT,
         LOGINFAILED,
         LOGINSUCCESS,
-        ENTERGAMEROOM
+        ENTERGAMEROOM,
+        LEAVEGAMEROOM,
+        TEMPUSERDATA
 
     }
 

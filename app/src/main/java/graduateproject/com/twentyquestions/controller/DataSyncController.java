@@ -438,7 +438,7 @@ public class DataSyncController {
 
                             String query = "insert into TwentyQuestions values (\'" +
                                     twentyQuestionsData.getString("PKey") + "\', \'" + twentyQuestionsData.getString("GameListPKey") + "\', \'" +
-                                    twentyQuestionsData.getString("Object") + "\', \'" + twentyQuestionsData.getString("MaxAskable") + "\', \'" + twentyQuestionsData.getString("MaxGuessable")+
+                                    twentyQuestionsData.getString("Object") + "\', \'" + twentyQuestionsData.getString("MaxAskable") + "\', \'" + twentyQuestionsData.getString("MaxGuessable")+"\', \'" +
                                     twentyQuestionsData.getString("CreatedDate") + "\', \'" + twentyQuestionsData.getString("UpdatedDate") + "\')";
 
                             Log.d("TQInsertQuery", query);

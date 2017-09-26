@@ -184,7 +184,8 @@ public class GameListViewAdapter extends BaseAdapter {
 
                                     }
                                 });
-                            }else{
+
+                            } else {
                                 System.out.println("EnterFail Whene Other Room");
                             }
 

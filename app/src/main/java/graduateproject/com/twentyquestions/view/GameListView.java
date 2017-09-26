@@ -65,6 +65,12 @@ public class GameListView extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateAdapter();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

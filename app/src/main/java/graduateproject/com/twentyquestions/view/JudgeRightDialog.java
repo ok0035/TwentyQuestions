@@ -97,6 +97,10 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
                         }else{
                             data.put("Answer","Right");
                         }
+                        data.put("GameListPKey",dbsi.selectQuery("select PKey from GameList")[0][0]);
+                        data.put("Guesser",dbsi.selectQuery("select Guesser from RightAnswerList Order By UpdatedDate Desc")[0][0]);
+                        data.put("MaxGuessable",dbsi.selectQuery("select MaxGuessable from TwentyQuestions")[0][0]);
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -431,6 +435,9 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
         rlMain.addView(rlRemainder);
         rlMain.addView(rlJudgeRight);
         rlMain.addView(rlButton);
+
+
+
 
         rlParent.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         rlParent.setBackgroundResource(R.color.colorPrimary);

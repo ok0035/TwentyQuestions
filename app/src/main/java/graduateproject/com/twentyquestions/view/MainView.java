@@ -73,6 +73,8 @@ public class MainView extends BaseActivity {
 
     }
 
+
+
     @Override
     public void setUpEvents() {
 

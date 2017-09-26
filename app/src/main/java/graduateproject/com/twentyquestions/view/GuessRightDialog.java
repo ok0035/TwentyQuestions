@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +103,7 @@ public class GuessRightDialog extends Dialog implements BasicMethod {
                         networkSI.request(DataSync.Command.SENDRA, data.toString(), new NetworkSI.AsyncResponse() {
                             @Override
                             public void onSuccess(String response) {
+                                Log.d("정답맞추기", response);
                                 DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                                     @Override
                                     public void onFinished(String response) {

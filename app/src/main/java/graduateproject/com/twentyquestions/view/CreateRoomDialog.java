@@ -38,7 +38,7 @@ public class CreateRoomDialog extends Dialog implements BasicMethod {
     TextView tvRoomName, tvDescription, tvQuestion, tvPassword, tvExample, btnStartGame, btnCancel;
     EditText edRoomName, edQuestion, edPassword, edDescription;
 
-    View.OnClickListener clickStartGame, clickCancel;
+    public View.OnClickListener clickStartGame, clickCancel;
 
     public CreateRoomDialog(@NonNull Context context) {
         super(context);
