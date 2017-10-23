@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "816531305401",
+    "firebase_url": "https://twentyquiz.firebaseio.com",
+    "project_id": "twentyquiz",
+    "storage_bucket": "twentyquiz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816531305401:android:785415ac6494269c",
+        "android_client_info": {
+          "package_name": "graduateproject.com.twentyquestions"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "816531305401-sg4sesl6sulrj9tka43ovjloejmp73f9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "graduateproject.com.twentyquestions",
+            "certificate_hash": "49780b01951b7ba6ea6e5edac20446bf7f896226"
+          }
+        },
+        {
+          "client_id": "816531305401-gq1nj3dlj5uptn5960j10uvjcr9nh6fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcN18E7Ad6TRLFqGXLdAyJsK7-G-4vaGg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "816531305401-gq1nj3dlj5uptn5960j10uvjcr9nh6fm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
