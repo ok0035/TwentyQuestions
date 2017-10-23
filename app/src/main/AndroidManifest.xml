@@ -2,32 +2,54 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="graduateproject.com.twentyquestions">
 
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+=======
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+>>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.GET_TASKS" />
 
+=======
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+>>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+<<<<<<< HEAD
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+=======
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:largeHeap="true"
+>>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
         android:theme="@style/AppTheme">
         <activity android:name=".view.MainViewTest">
 
         </activity>
 
+<<<<<<< HEAD
         <activity android:name=".view.BaseActivity" />
         <activity android:name=".view.LoginView">
 
         </activity>
         <activity
             android:name=".view.SplashView"
+=======
+        <activity android:name=".view.BaseActivity"/>
+        <activity android:name=".view.LoginView">
+
+        </activity>
+        <activity android:name=".view.SplashView"
+>>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +58,7 @@
             </intent-filter>
         </activity>
 
+<<<<<<< HEAD
         <activity android:name=".view.RegisterView" />
         <activity android:name=".view.MainView" />
         <activity android:name=".view.GameRoomView" />
@@ -57,6 +80,23 @@
         <service android:name=".Firebase.MyFirebaseInstanceIdSerivce">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+=======
+        <activity android:name=".view.RegisterView"/>
+        <activity android:name=".view.MainView"/>
+        <activity android:name=".view.GameRoomView"/>
+
+        <service
+            android:name=".Firebase.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".Firebase.MyFirebaseInstanceIdSerivce">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+>>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
             </intent-filter>
         </service>
 

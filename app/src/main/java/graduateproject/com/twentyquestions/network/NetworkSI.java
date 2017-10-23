@@ -133,7 +133,11 @@ public class NetworkSI {
 
                 }
 
+<<<<<<< HEAD
             }).execute(serverAddress + "TQTest/twentyQuestions/Request.php").get();
+=======
+            }).execute(serverAddress + "android/twentyQuestions/Request.php").get();
+>>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
 
         } catch (InterruptedException e) {
             e.printStackTrace();
