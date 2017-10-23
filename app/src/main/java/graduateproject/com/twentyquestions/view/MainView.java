@@ -1,9 +1,6 @@
 package graduateproject.com.twentyquestions.view;
 
-<<<<<<< HEAD
 import android.content.Intent;
-=======
->>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,30 +13,20 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-<<<<<<< HEAD
-import android.view.WindowManager;
-=======
->>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import graduateproject.com.twentyquestions.Firebase.MyFirebaseInstanceIdSerivce;
 import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.NetworkSI;
-<<<<<<< HEAD
-import graduateproject.com.twentyquestions.util.CalculatePixel;
-=======
->>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
 import graduateproject.com.twentyquestions.util.GPSTracer;
 import graduateproject.com.twentyquestions.util.ParseData;
 
@@ -77,10 +64,7 @@ public class MainView extends BaseActivity {
         setUpEvents();
         setView();
         setContentView(parentLayout);
-<<<<<<< HEAD
 
-=======
->>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
         // 채팅 기능 구현 테스트용 인텐트
         // 끝나면 바로 지우자
 //        Intent intent = new Intent(getApplicationContext(), GameRoomView.class);
@@ -101,16 +85,11 @@ public class MainView extends BaseActivity {
                 pager.setCurrentItem(tag);
                 Log.d("Click", tag + "");
                 System.out.println("Click ............ " + tag);
-<<<<<<< HEAD
 
                 Intent intent = new Intent(getApplicationContext(), LetterDialog.class);
                 intent.putExtra("letterFlag",String.valueOf(tag));
                 startActivity(intent);
 
-
-
-=======
->>>>>>> a8896de26416d9ad3a77602b4a9376164df89284
             }
         };
 
