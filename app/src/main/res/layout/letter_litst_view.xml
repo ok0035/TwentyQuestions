@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tvDeleteAll"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.2"
+                android:background="@drawable/round_rectangle_btn"
+                android:gravity="center"
+                android:text="전체 삭제" />
+
+            <TextView
+                android:id="@+id/tvReadAll"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.2"
+                android:background="@drawable/round_rectangle_btn"
+                android:gravity="center"
+                android:text="전체 읽음처리" />
+
+            <TextView
+                android:id="@+id/tvOnlyFriend"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.2"
+                android:background="@drawable/round_rectangle_btn"
+                android:gravity="center"
+                android:text="친구만" />
+
+            <TextView
+                android:id="@+id/tvOnlyNotice"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.2"
+                android:background="@drawable/round_rectangle_btn"
+                android:gravity="center"
+                android:text="공지만" />
+
+            <TextView
+                android:id="@+id/tvRefuseAllRequest"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+
+                android:layout_weight="0.2"
+                android:background="@drawable/round_rectangle_btn"
+                android:gravity="center"
+                android:text="친구신청 모두 거절/삭제" />
+
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/letterListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.8">
+
+        </ListView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:gravity="right">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="100/200" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

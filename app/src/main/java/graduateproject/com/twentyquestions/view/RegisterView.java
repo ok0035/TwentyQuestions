@@ -1,10 +1,12 @@
 package graduateproject.com.twentyquestions.view;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -246,5 +248,6 @@ public class RegisterView extends BaseActivity {
         super.setCustomActionBar();
         titleView.setText("지근거리 스무고개");
         backView.setVisibility(GONE);
+
     }
 }

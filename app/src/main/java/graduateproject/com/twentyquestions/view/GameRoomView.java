@@ -1,11 +1,13 @@
 package graduateproject.com.twentyquestions.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -942,6 +944,31 @@ public class GameRoomView extends BaseActivity {
     public void setCustomActionBar() {
         super.setCustomActionBar();
         titleView.setText(localGameList[0][3]);
+
+        backView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog.Builder alert_confirm = new AlertDialog.Builder(mContext);
+                alert_confirm.setMessage("친구 신청을 하시겠습니까?").setCancelable(false).setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(mContext,"신청 완료",Toast.LENGTH_SHORT).show();
+
+                            }
+                        }).setNegativeButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                return;
+                            }
+                        });
+                AlertDialog alert = alert_confirm.create();
+                alert.show();
+
+            }
+        });
     }
 
     public String findLastChatDate() {
