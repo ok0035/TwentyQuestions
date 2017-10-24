@@ -632,7 +632,7 @@ public class GameRoomView extends BaseActivity {
 //        endingTextView.setY(400);
         endingTextView.setBackgroundColor(Color.WHITE);
         String endingMent = "게임이 종료되었습니다. \n 새로운 게임을 시작하려면 클릭해주세요";
-        if (dbsi.selectQuery("Select isWinner From GameMember Where GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
+        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = "+myUserPKey+" and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
             endingMent = "패배\n" + endingMent;
         } else {
             endingMent = "승리\n" + endingMent;
@@ -989,7 +989,7 @@ public class GameRoomView extends BaseActivity {
         String memberPriority = null;
 
         gameListKey = dbsi.selectQuery("SELECT PKey FROM GameList")[0][0];
-        memberPriority = dbsi.selectQuery("SELECT MemberPriority FROM GameMember WHERE GameListPKey = " + gameListKey)[0][0];
+        memberPriority = dbsi.selectQuery("SELECT MemberPriority FROM GameMember WHERE UserPKey = "+myUserPKey+" and GameListPKey = " + gameListKey)[0][0];
 
         return memberPriority;
     }
@@ -1048,7 +1048,7 @@ public class GameRoomView extends BaseActivity {
         }
 
         String endingMent = "게임이 종료되었습니다. \n 새로운 게임을 시작하려면 클릭해주세요";
-        if (dbsi.selectQuery("Select isWinner From GameMember Where GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
+        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = "+myUserPKey+" and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
             endingMent = "패배\n" + endingMent;
         } else {
             endingMent = "승리\n" + endingMent;
