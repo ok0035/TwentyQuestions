@@ -632,7 +632,7 @@ public class GameRoomView extends BaseActivity {
 //        endingTextView.setY(400);
         endingTextView.setBackgroundColor(Color.WHITE);
         String endingMent = "게임이 종료되었습니다. \n 새로운 게임을 시작하려면 클릭해주세요";
-        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = "+myUserPKey+" and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
+        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = " + myUserPKey + " and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
             endingMent = "패배\n" + endingMent;
         } else {
             endingMent = "승리\n" + endingMent;
@@ -953,7 +953,34 @@ public class GameRoomView extends BaseActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(mContext,"신청 완료",Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(mContext,"신청 완료",Toast.LENGTH_SHORT).show();
+                                String otherUserPKey = dbsi.selectQuery("SELECT UserPKey from GameMember Where UserPKey != " + myUserPKey)[0][0];
+                                Toast.makeText(mContext, otherUserPKey, Toast.LENGTH_SHORT).show();
+                                String otherUserNickName = dbsi.selectQuery("SELECT NickName from User Where PKey = " + otherUserPKey )[0][0];
+
+                                JSONObject data = new JSONObject();
+                                try {
+                                    data.put("OtherUserPKey", otherUserPKey);
+                                    data.put("letterFlag", "Friend");
+                                    data.put("Content",otherUserNickName +"님이 친구 신청하셨습니다.");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                new NetworkSI().request(DataSync.Command.SENDLETTER, data.toString(), new NetworkSI.AsyncResponse() {
+                                    @Override
+                                    public void onSuccess(String response) {
+
+                                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(String response) {
+                                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
 
                             }
                         }).setNegativeButton("취소",
@@ -989,7 +1016,7 @@ public class GameRoomView extends BaseActivity {
         String memberPriority = null;
 
         gameListKey = dbsi.selectQuery("SELECT PKey FROM GameList")[0][0];
-        memberPriority = dbsi.selectQuery("SELECT MemberPriority FROM GameMember WHERE UserPKey = "+myUserPKey+" and GameListPKey = " + gameListKey)[0][0];
+        memberPriority = dbsi.selectQuery("SELECT MemberPriority FROM GameMember WHERE UserPKey = " + myUserPKey + " and GameListPKey = " + gameListKey)[0][0];
 
         return memberPriority;
     }
@@ -1048,7 +1075,7 @@ public class GameRoomView extends BaseActivity {
         }
 
         String endingMent = "게임이 종료되었습니다. \n 새로운 게임을 시작하려면 클릭해주세요";
-        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = "+myUserPKey+" and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
+        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = " + myUserPKey + " and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
             endingMent = "패배\n" + endingMent;
         } else {
             endingMent = "승리\n" + endingMent;
@@ -1076,91 +1103,91 @@ class MyCreateRoomDialog extends CreateRoomDialog {
         dbsi = new DBSI();
         myUserPKey = dbsi.selectQuery("Select PKey from User where MySelf = 0")[0][0];
 
-                clickStartGame = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+        clickStartGame = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 //                Toast.makeText(getContext(), "TEST", Toast.LENGTH_SHORT).show();
-                        //1.서버디비에서 게임 관련된거 전부 수정
+                //1.서버디비에서 게임 관련된거 전부 수정
 
 
-                        JSONObject data = new JSONObject();
-                        try {
-                            data.put("GameMemberPKey", dbsi.selectQuery("Select PKey From GameMember Where Status != -1 And UserPKey = " + myUserPKey)[0][0]);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                JSONObject data = new JSONObject();
+                try {
+                    data.put("GameMemberPKey", dbsi.selectQuery("Select PKey From GameMember Where Status != -1 And UserPKey = " + myUserPKey)[0][0]);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                        NetworkSI networkSI = new NetworkSI();
-                        networkSI.request(DataSync.Command.LEAVEGAMEROOM, data.toString(), new NetworkSI.AsyncResponse() {
-                            @Override
-                            public void onSuccess(String response) {
-                                //2. 로컬디비에서 게임 관련 테이블 죄다 delete
-                                if (response.contains("LEAVE_SUCCESS")) {
+                NetworkSI networkSI = new NetworkSI();
+                networkSI.request(DataSync.Command.LEAVEGAMEROOM, data.toString(), new NetworkSI.AsyncResponse() {
+                    @Override
+                    public void onSuccess(String response) {
+                        //2. 로컬디비에서 게임 관련 테이블 죄다 delete
+                        if (response.contains("LEAVE_SUCCESS")) {
 
-                                    dbsi.query("Delete from GameList; Delete from TwentyQuestions; Delete from AskAnswerList; Delete from RightAnswerList;");
-                                    //단, GameMember는 -1로 되있는걸로 dosync를한다.
-                                    DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                            dbsi.query("Delete from GameList; Delete from TwentyQuestions; Delete from AskAnswerList; Delete from RightAnswerList;");
+                            //단, GameMember는 -1로 되있는걸로 dosync를한다.
+                            DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+                                @Override
+                                public void onFinished(String response) {
+                                    JSONObject params = new JSONObject();
+                                    try {
+                                        params.put("RoomName", edRoomName.getText().toString());
+                                        params.put("Description", edDescription.getText().toString());
+                                        params.put("Question", edQuestion.getText().toString());
+                                        params.put("Password", edPassword.getText().toString());
+                                        params.put("Longitude", GPSTracer.longitude + "");
+                                        params.put("Latitude", GPSTracer.latitude + "");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    NetworkSI network = new NetworkSI();
+                                    network.request(DataSync.Command.SETGAME, params.toString(), new NetworkSI.AsyncResponse() {
                                         @Override
-                                        public void onFinished(String response) {
-                                            JSONObject params = new JSONObject();
-                                            try {
-                                                params.put("RoomName", edRoomName.getText().toString());
-                                                params.put("Description", edDescription.getText().toString());
-                                                params.put("Question", edQuestion.getText().toString());
-                                                params.put("Password", edPassword.getText().toString());
-                                                params.put("Longitude", GPSTracer.longitude + "");
-                                                params.put("Latitude", GPSTracer.latitude + "");
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                            NetworkSI network = new NetworkSI();
-                                            network.request(DataSync.Command.SETGAME, params.toString(), new NetworkSI.AsyncResponse() {
+                                        public void onSuccess(String response) {
+                                            DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                                                 @Override
-                                                public void onSuccess(String response) {
-                                                    DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
-                                                        @Override
-                                                        public void onFinished(String response) {
-                                                            Log.d("GameRoomData", response);
+                                                public void onFinished(String response) {
+                                                    Log.d("GameRoomData", response);
 
-                                                            Intent intent = new Intent(MainView.mContext, GameRoomView.class);
-                                                            MainView.mContext.startActivity(intent);
-                                                            dismiss();
+                                                    Intent intent = new Intent(MainView.mContext, GameRoomView.class);
+                                                    MainView.mContext.startActivity(intent);
+                                                    dismiss();
 
-                                                        }
-
-                                                        @Override
-                                                        public void onPreExcute() {
-
-                                                        }
-                                                    });
                                                 }
 
                                                 @Override
-                                                public void onFailure(String response) {
+                                                public void onPreExcute() {
 
                                                 }
                                             });
-
                                         }
 
                                         @Override
-                                        public void onPreExcute() {
+                                        public void onFailure(String response) {
 
                                         }
                                     });
+
                                 }
-                            }
 
-                            @Override
-                            public void onFailure(String response) {
+                                @Override
+                                public void onPreExcute() {
 
-                            }
-                        });
-
+                                }
+                            });
+                        }
                     }
 
-                };
+                    @Override
+                    public void onFailure(String response) {
+
+                    }
+                });
+
+            }
+
+        };
 
     }
 }

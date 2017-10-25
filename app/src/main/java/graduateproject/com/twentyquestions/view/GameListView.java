@@ -119,7 +119,7 @@ public class GameListView extends Fragment {
             public void onPreExcute() {
 
             }
-        }).execute(BaseActivity.serverAddress + "android/twentyQuestions/include/GetGameList.php");
+        }).execute(BaseActivity.serverAddress + "TQTest/twentyQuestions/include/GetGameList.php");
 
     }
 
@@ -161,7 +161,7 @@ public class GameListView extends Fragment {
             public void onPreExcute() {
 
             }
-        }).execute(BaseActivity.serverAddress + "android/twentyQuestions/include/GetGameList.php");
+        }).execute(BaseActivity.serverAddress + "TQTest/twentyQuestions/include/GetGameList.php");
 
         clickRefresh = new View.OnClickListener() {
             @Override
