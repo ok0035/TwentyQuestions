@@ -27,7 +27,7 @@ public class LetterAdapter extends ArrayAdapter {
     private ArrayList<LetterDataItem> mList;
     private LayoutInflater inf;
 
-    public LetterAdapter(Context context, ArrayList<LetterDataItem> list){
+    public LetterAdapter(Context context, ArrayList<LetterDataItem> list) {
         super(context, R.layout.letter_list_item, list);
         mContext = context;
         mList = list;
@@ -38,18 +38,30 @@ public class LetterAdapter extends ArrayAdapter {
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-        View row =convertView;
+        View row = convertView;
 
         if (row == null) {
             row = inf.inflate(R.layout.letter_list_item, null);
         }
 
-        ImageView profilImage = (ImageView)row.findViewById(R.id.ivLetterProfil);
-        TextView tvLetterItemType = (TextView)row.findViewById(R.id.tvLetterItemType);
-        TextView tvLetterTitle = (TextView)row.findViewById(R.id.tvLetterTitle);
+        ImageView profilImage = (ImageView) row.findViewById(R.id.ivLetterProfil);
+        TextView tvLetterItemType = (TextView) row.findViewById(R.id.tvLetterItemType);
+        TextView tvLetterTitle = (TextView) row.findViewById(R.id.tvLetterTitle);
 
-        tvLetterItemType.setText(mList.get(position).getLetterType() + " / " + mList.get(position).getLetterCreatedDate());
-        tvLetterTitle.setText(mList.get(position).getLetterTitle());
+        final LetterDataItem letterDataItem = mList.get(position);
+
+        switch (letterDataItem.getLetterType()) {
+            case "Friend": {
+                tvLetterItemType.setText("친구신청" + " / " + letterDataItem.getLetterCreatedDate());
+                tvLetterTitle.setText("친구신청을 받아주세요");
+            }
+            break;
+            default: {
+                tvLetterItemType.setText(mList.get(position).getLetterType() + " / " + mList.get(position).getLetterCreatedDate());
+                tvLetterTitle.setText(mList.get(position).getLetterTitle());
+            }
+        }
+
 
         row.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,8 +69,9 @@ public class LetterAdapter extends ArrayAdapter {
 //                Toast.makeText(mContext,mList.get(position).getLetterPKey(),Toast.LENGTH_SHORT ).show();
 
                 Intent intent = new Intent(mContext, LetterDialog.class);
-                intent.putExtra("letterFlag","1");
-                intent.putExtra("letterPKey",mList.get(position).getLetterPKey());
+                ArrayList<LetterDataItem> list = new ArrayList<LetterDataItem>();
+                list.add(letterDataItem);
+                intent.putExtra("LetterData", list);
                 getContext().startActivity(intent);
 
             }

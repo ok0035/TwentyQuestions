@@ -86,9 +86,9 @@ public class MainView extends BaseActivity {
                 Log.d("Click", tag + "");
                 System.out.println("Click ............ " + tag);
 
-                Intent intent = new Intent(getApplicationContext(), LetterDialog.class);
-                intent.putExtra("letterFlag",String.valueOf(tag));
-                startActivity(intent);
+//                Intent intent = new Intent(getApplicationContext(), LetterDialog.class);
+//                intent.putExtra("letterFlag",String.valueOf(tag));
+//                startActivity(intent);
 
             }
         };
