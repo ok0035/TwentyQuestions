@@ -72,6 +72,7 @@ public class DataSync extends Thread {
         SETCOIN,
         SETPOPULARITY,
         SENDREPORT,
+        SENDLETTER,
         LOGINFAILED,
         LOGINSUCCESS,
         ENTERGAMEROOM,
@@ -291,7 +292,7 @@ public class DataSync extends Thread {
                 }
 
 
-            }).execute("http://heronation.net/android/twentyQuestions/Request.php");
+            }).execute("http://heronation.net/TQTest/twentyQuestions/Request.php");
 
         }
 
@@ -368,7 +369,7 @@ public class DataSync extends Thread {
                     delegate.onPreExcute();
                 }
 
-            }).execute("http://heronation.net/android/twentyQuestions/Request.php");
+            }).execute("http://heronation.net/TQTest/twentyQuestions/Request.php");
 
         }
 

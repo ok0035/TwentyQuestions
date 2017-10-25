@@ -34,6 +34,8 @@ public class GameListViewAdapter extends BaseAdapter {
 
     private LinearLayout parentLayout, llRoomValues, llRoomName, llDesc, llRoomTitles, llRoomNameTitle, llDescTitle, llbtnIsPlayingGame;
     private TextView tvRoomNumber, tvRoomName, tvDesc, tvIsPlayingGame, tvRoomNumberTitle, tvRoomNameTitle, tvDescTitle, tvIsPlayingGameTitle;
+    private DBSI dbsi;
+    private String userPKey;
 
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     private ArrayList<GameListViewItem> listViewItemList;
@@ -41,6 +43,8 @@ public class GameListViewAdapter extends BaseAdapter {
     // ListViewAdapter의 생성자
     public GameListViewAdapter() {
         listViewItemList = new ArrayList<GameListViewItem>();
+        dbsi = new DBSI();
+        userPKey = dbsi.selectQuery("select PKey from User where MySelf = 0")[0][0];
     }
 
     // Adapter에 사용되는 데이터의 개수를 리턴. : 필수 구현
@@ -92,7 +96,7 @@ public class GameListViewAdapter extends BaseAdapter {
 
                 try {
                     checkJson.put("ChatRoomPKey", chatRoomPKey);
-                    checkJson.put("UserPKey", dbsi.selectQuery("select PKey from User where MySelf = 0")[0][0]);
+                    checkJson.put("UserPKey", userPKey);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -180,8 +184,8 @@ public class GameListViewAdapter extends BaseAdapter {
                                     // 여기서 서버 DB GameMemeber에 들어가는 방의 GameListPKey를 확인해서 전에 들어갔던 방이면 status를 다시 0으로
                                     // 처음들어가는 방이면 Insert 만 실시
                                     try {
-                                        entergamedata.put("GameMemberPKeyOld", dbsi.selectQuery("SELECT * FROM GameMember where GameListPKey = " + selectGameList[0][0])[0][0]);
-                                        entergamedata.put("ChatMemberPKeyOld", dbsi.selectQuery("SELECT * FROM ChatMember where RoomPKey = " + selectGameList[0][1])[0][0]);
+                                        entergamedata.put("GameMemberPKeyOld", dbsi.selectQuery("SELECT * FROM GameMember where UserPKey = "+userPKey+" AND GameListPKey = " + selectGameList[0][0])[0][0]);
+                                        entergamedata.put("ChatMemberPKeyOld", dbsi.selectQuery("SELECT * FROM ChatMember where UserPKey = "+userPKey+" AND RoomPKey = " + selectGameList[0][1])[0][0]);
                                         entergamedata.put("GameListPKeyNew", listViewItem.getRoomNumber());
                                         entergamedata.put("ChatRoomPKeyNew", listViewItem.getChatRoomPKey());
                                         entergamedata.put("Flag", "2");
