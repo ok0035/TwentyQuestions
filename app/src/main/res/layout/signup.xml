@@ -27,31 +27,41 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.1"
-            android:background="#66000000"
-            android:gravity="center"
-            android:text="지근거리 스무고개"
-            android:textColor="#ffffff"
-            android:textSize="20dp" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.04"></LinearLayout>
+            android:layout_weight="0.1428"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.7"
+                android:background="#66000000"
+                android:gravity="center"
+                android:text="지근거리 스무고개"
+                android:textColor="#ffffff"
+                android:textSize="20dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3"></LinearLayout>
+
+        </LinearLayout>
+
 
         <!--회원가입뷰와 툴바 사이의 공백-->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.7"
+            android:layout_weight="0.66"
             android:background="@null">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -75,8 +85,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="match_parent"
+                android:background="@null"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -88,8 +98,21 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
                     android:layout_weight="0.74"
-                    android:background="@drawable/signup_main"></LinearLayout>
+                    android:background="@null"
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.964"
+                        android:background="@drawable/signup_main"
+                        android:orientation="vertical"></LinearLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -101,174 +124,194 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal"
-                android:weightSum="1">
+                android:background="@null"
+                android:gravity="bottom"
+                android:weightSum="1"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.1" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.8"
-                    android:background="@drawable/signup_main"
-                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="bottom"
+                    android:layout_weight="0.92"
+                    android:gravity="bottom"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:orientation="vertical"
+                        android:layout_gravity="bottom"
+                        android:gravity="bottom"
+                        android:orientation="horizontal"
                         android:weightSum="1">
 
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.25"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:weightSum="1">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_gravity="center"
-                                android:layout_weight="0.4"
-                                android:gravity="center"
-                                android:orientation="horizontal"
-                                android:weightSum="1">
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="0.15"
-                                    android:gravity="center"
-                                    android:text="닉네임 "
-                                    android:textSize="14dp" />
-
-                                <EditText
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.7"
-                                    android:background="@drawable/signup_stroke" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.1" />
 
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.25"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:weightSum="1">
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="bottom"
+                            android:layout_weight="0.8"
+                            android:background="@drawable/signup_main"
+                            android:gravity="bottom"
+                            android:orientation="vertical">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="0dp"
+                                android:layout_height="match_parent"
                                 android:layout_gravity="center"
-                                android:layout_weight="0.4"
                                 android:gravity="center"
-                                android:orientation="horizontal"
+                                android:orientation="vertical"
                                 android:weightSum="1">
-
-                                <TextView
-                                    android:id="@+id/textView"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="0.15"
-                                    android:gravity="center"
-                                    android:text="성별 "
-                                    android:textSize="14dp" />
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.335"
-                                    android:background="@drawable/signup_stroke"
-                                    android:gravity="center"
-                                    android:text="여자"
-                                    android:textSize="14dp" />
 
                                 <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="0.03"></LinearLayout>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.335"
-                                    android:background="@drawable/signup_stroke"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="0.25"
                                     android:gravity="center"
-                                    android:text="남자"
-                                    android:textSize="14dp" />
+                                    android:orientation="vertical"
+                                    android:weightSum="1">
 
-                            </LinearLayout>
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="0.4"
+                                        android:gravity="center"
+                                        android:orientation="horizontal"
+                                        android:weightSum="1">
 
-                        </LinearLayout>
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.15"
+                                            android:gravity="center"
+                                            android:text="닉네임 "
+                                            android:textSize="14dp" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.25"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:weightSum="1">
+                                        <EditText
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="0.7"
+                                            android:background="@drawable/signup_stroke" />
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_gravity="center"
-                                android:layout_weight="0.4"
-                                android:gravity="center"
-                                android:orientation="horizontal"
-                                android:weightSum="1">
+                                    </LinearLayout>
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="0.15"
-                                    android:gravity="center"
-                                    android:text="나이 "
-                                    android:textSize="14dp" />
-
-                                <Spinner
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="0.35"></Spinner>
+                                </LinearLayout>
 
                                 <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="0.35"></LinearLayout>
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="0.25"
+                                    android:gravity="center"
+                                    android:orientation="vertical"
+                                    android:weightSum="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="0.4"
+                                        android:gravity="center"
+                                        android:orientation="horizontal"
+                                        android:weightSum="1">
+
+                                        <TextView
+                                            android:id="@+id/textView"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.15"
+                                            android:gravity="center"
+                                            android:text="성별 "
+                                            android:textSize="14dp" />
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="0.335"
+                                            android:background="@drawable/signup_stroke"
+                                            android:gravity="center"
+                                            android:text="여자"
+                                            android:textSize="14dp" />
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.03"></LinearLayout>
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="0.335"
+                                            android:background="@drawable/signup_stroke"
+                                            android:gravity="center"
+                                            android:text="남자"
+                                            android:textSize="14dp" />
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="0.25"
+                                    android:gravity="center"
+                                    android:orientation="vertical"
+                                    android:weightSum="1">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="0.4"
+                                        android:gravity="center"
+                                        android:orientation="horizontal"
+                                        android:weightSum="1">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.15"
+                                            android:gravity="center"
+                                            android:text="나이 "
+                                            android:textSize="14dp" />
+
+                                        <Spinner
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="0.35"></Spinner>
+
+                                        <LinearLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="0.35"></LinearLayout>
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="0.15"
+                                    android:orientation="vertical"></LinearLayout>
 
                             </LinearLayout>
 
                         </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.15"
-                            android:orientation="vertical"></LinearLayout>
-
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.1" />
 
                     </LinearLayout>
 
                 </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.1" />
 
             </LinearLayout>
 
@@ -277,10 +320,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.2"
-            android:orientation="horizontal"
-            android:gravity="center"
             android:layout_gravity="center"
+            android:layout_weight="0.14"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:weightSum="1">
 
             <LinearLayout
@@ -288,15 +331,25 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.12"></LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="0.75"
-                android:background="@drawable/signup_button"
-                android:gravity="center"
-                android:textColor="#ffffff"
-                android:textStyle="bold"
-                android:text="게임시작"/>
+                android:layout_height="match_parent"
+                android:layout_weight="0.76"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/signup_button"
+                    android:gravity="center"
+                    android:text="게임시작"
+                    android:textColor="@color/TextColor"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
