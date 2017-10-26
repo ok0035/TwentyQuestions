@@ -1,21 +1,13 @@
 package graduateproject.com.twentyquestions.view;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,33 +21,29 @@ import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.NetworkSI;
 
 import static android.view.View.GONE;
-import static graduateproject.com.twentyquestions.util.CalculatePixel.calculatePixelX;
-import static graduateproject.com.twentyquestions.util.CalculatePixel.calculatePixelY;
 
 /**
  * Created by yrs00 on 2017-08-03.
  */
 public class RegisterView extends BaseActivity {
 
-    RelativeLayout parentLayout;
-    TextView NickNameLabel;
-    EditText NickNameTextField;
-    TextView GenderTextView;
-    RadioGroup GenderRadioGroup;
-    RadioButton maleButton;
-    RadioButton femaleButton;
-    TextView AgeTextView;
-    Spinner AgeSpinner;
-    TextView startGameButton;
-    View.OnClickListener startGame;
+    private EditText edSignUpName;
+    private TextView tvSignUpGirl;
+    private TextView tvSignUpMan;
+    private Spinner spSignUpAge;
+    private TextView tvSignUpStart;
+    private int sexFlag = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.signup);
+
+        bindView();
+        setValues();
         setUpEvents();
-        setView();
         setCustomActionBar();
-        setContentView(parentLayout);
+
     }
 
     @Override
@@ -69,15 +57,46 @@ public class RegisterView extends BaseActivity {
     @Override
     public void setUpEvents() {
         super.setUpEvents();
+
         final String[] nickName = new String[1];
         final String[] gender = new String[1];
         final String[] age= new String[1];
-        startGame = new View.OnClickListener() {
+
+        tvSignUpMan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                nickName[0] = NickNameTextField.getText().toString();
-                gender[0] = GenderRadioGroup.getCheckedRadioButtonId()+"";
-                age[0] = AgeSpinner.getSelectedItem().toString();
+                tvSignUpMan.setBackgroundResource(R.drawable.signup_checked);
+                tvSignUpMan.setTextColor(ContextCompat.getColor(mContext, R.color.SignUpCheckedSexText));
+
+                tvSignUpGirl.setBackgroundResource(R.drawable.signup_unchecked);
+                tvSignUpGirl.setTextColor(ContextCompat.getColor(mContext, R.color.SignUpUnCheckedSexText));
+
+                sexFlag = 0;
+            }
+        });
+
+        tvSignUpGirl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                tvSignUpMan.setBackgroundResource(R.drawable.signup_unchecked);
+                tvSignUpMan.setTextColor(ContextCompat.getColor(mContext, R.color.SignUpUnCheckedSexText));
+
+                tvSignUpGirl.setBackgroundResource(R.drawable.signup_checked);
+                tvSignUpGirl.setTextColor(ContextCompat.getColor(mContext, R.color.SignUpCheckedSexText));
+
+                sexFlag = 1;
+
+            }
+        });
+
+        tvSignUpStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                nickName[0] = edSignUpName.getText().toString();
+                gender[0] = sexFlag+"";
+                age[0] = spSignUpAge.getSelectedItem().toString();
 
                 Toast.makeText(RegisterView.this, nickName[0]+"/"+gender[0]+"/"+age[0], Toast.LENGTH_SHORT).show();
 
@@ -128,119 +147,39 @@ public class RegisterView extends BaseActivity {
                     }
                 });
 
-
-
             }
-        };
+        });
     }
 
     @Override
     public void setView() {
         super.setView();
-        parentLayout = new RelativeLayout(mContext);
-        parentLayout.setLayoutParams(new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-        ));
 
-        NickNameLabel = new TextView(mContext);
-        NickNameLabel.setText("닉네임");
-        NickNameLabel.setTextSize(11);
-        NickNameLabel.setWidth((int) calculatePixelX(30));
-        NickNameLabel.setHeight((int) calculatePixelY(15));
-        NickNameLabel.setX(calculatePixelX(10));
-        NickNameLabel.setY(calculatePixelY(40));
-        NickNameLabel.setGravity(Gravity.CENTER);
+    }
 
-        NickNameTextField = new EditText(mContext);
-        NickNameTextField.setHint("중복사용이 가능합니다.");
-        NickNameTextField.setTextSize(11);
-//        NickNameTextField.setWidth((int) calculatePixelX(200));
-//        NickNameTextField.setHeight((int) calculatePixelY(15));
-        NickNameTextField.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        NickNameTextField.setX(calculatePixelX(45));
-        NickNameTextField.setY(calculatePixelY(40));
+    @Override
+    public void bindView() {
+        super.bindView();
 
-        GenderTextView = new TextView(mContext);
-        GenderTextView.setText("성별");
-        GenderTextView.setTextSize(11);
-        GenderTextView.setWidth((int) calculatePixelX(30));
-        GenderTextView.setHeight((int) calculatePixelY(15));
-        GenderTextView.setX(calculatePixelX(10));
-        GenderTextView.setY(calculatePixelY(70));
-        GenderTextView.setGravity(Gravity.CENTER);
+        this.tvSignUpStart = (TextView) findViewById(R.id.tvSignUpStart);
+        this.spSignUpAge = (Spinner) findViewById(R.id.spSignUpAge);
+        this.tvSignUpMan = (TextView) findViewById(R.id.tvSignUpMan);
+        this.tvSignUpGirl = (TextView) findViewById(R.id.tvSignUpGirl);
+        this.edSignUpName = (EditText) findViewById(R.id.edSignUpName);
+    }
 
-        GenderRadioGroup = new RadioGroup(mContext);
-        GenderRadioGroup.setX(calculatePixelX(45));
-        GenderRadioGroup.setY(calculatePixelY(70));
-        GenderRadioGroup.setOrientation(LinearLayout.HORIZONTAL);
-        GenderRadioGroup.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-
-        ));
-
-        maleButton = new RadioButton(mContext);
-        maleButton.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        maleButton.setText("남성");
-        maleButton.setTextSize(11);
-        maleButton.setId(0);
-        femaleButton = new RadioButton(mContext);
-        femaleButton.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        femaleButton.setText("여성");
-        femaleButton.setTextSize(11);
-        femaleButton.setId(1);
-        GenderRadioGroup.addView(maleButton);
-        GenderRadioGroup.addView(femaleButton);
-
-
-        AgeTextView = new TextView(mContext);
-        AgeTextView.setText("나이");
-        AgeTextView.setTextSize(11);
-        AgeTextView.setWidth((int) calculatePixelX(30));
-        AgeTextView.setHeight((int) calculatePixelY(15));
-        AgeTextView.setX(calculatePixelX(10));
-        AgeTextView.setY(calculatePixelY(110));
-        AgeTextView.setGravity(Gravity.CENTER);
-
-        AgeSpinner = new Spinner(mContext);
-        AgeSpinner.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        AgeSpinner.setX(calculatePixelX(45));
-        AgeSpinner.setY(calculatePixelY(110));
+    @Override
+    public void setValues() {
+        super.setValues();
 
         final String[] ageArray = new String[85];
         for (int i = 0; i < ageArray.length; i++) {
             ageArray[i] = (i + 15) + "";
         }
-
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mContext, R.layout.support_simple_spinner_dropdown_item, ageArray);
-
-
-        AgeSpinner.setAdapter(arrayAdapter);
+        spSignUpAge.setAdapter(arrayAdapter);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-
-        startGameButton = new TextView(mContext);
-        startGameButton.setText("게임 시작");
-        startGameButton.setTextSize(14);
-        startGameButton.setTextColor(Color.BLACK);
-        startGameButton.setBackgroundColor(Color.YELLOW);
-        startGameButton.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) calculatePixelY(40)));
-        startGameButton.setY(calculatePixelY(350));
-        startGameButton.setGravity(Gravity.CENTER);
-        startGameButton.setOnClickListener(startGame);
-
-        parentLayout.addView(NickNameLabel);
-        parentLayout.addView(NickNameTextField);
-        parentLayout.addView(GenderTextView);
-        parentLayout.addView(GenderRadioGroup);
-        parentLayout.addView(AgeTextView);
-        parentLayout.addView(AgeSpinner);
-        parentLayout.addView(startGameButton);
     }
 
     @Override

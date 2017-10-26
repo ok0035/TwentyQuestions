@@ -5,5 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="SignUpButtonBackground">#5f70af</color>
     <color name="TextColor">#FFFFFF</color>
+    <color name="SignUpDuplicationText">#f58220</color>
+    <color name="SignUpUnCheckedSexText">#D0D0D0</color>
+    <color name="SignUpCheckedSexText">#ffffff</color>
 
 </resources>

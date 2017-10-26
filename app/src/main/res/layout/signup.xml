@@ -153,16 +153,17 @@
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_gravity="bottom"
                             android:layout_weight="0.8"
-                            android:background="@drawable/signup_main"
                             android:gravity="bottom"
+                            android:layout_gravity="center"
+                            android:background="@drawable/signup_main"
+                            android:weightSum="1"
                             android:orientation="vertical">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
+                                android:layout_height="0dp"
+                                android:layout_weight="0.3"
                                 android:gravity="center"
                                 android:orientation="vertical"
                                 android:weightSum="1">
@@ -170,19 +171,18 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="0dp"
-                                    android:layout_weight="0.25"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="0.36"
                                     android:gravity="center"
                                     android:orientation="vertical"
                                     android:weightSum="1">
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
-                                        android:layout_height="0dp"
-                                        android:layout_gravity="center"
-                                        android:layout_weight="0.4"
-                                        android:gravity="center"
+                                        android:layout_height="match_parent"
+                                        android:weightSum="1"
                                         android:orientation="horizontal"
-                                        android:weightSum="1">
+                                        android:gravity="center">
 
                                         <TextView
                                             android:layout_width="0dp"
@@ -196,6 +196,7 @@
                                             android:layout_width="0dp"
                                             android:layout_height="match_parent"
                                             android:layout_weight="0.7"
+                                            android:id="@+id/edSignUpName"
                                             android:background="@drawable/signup_stroke" />
 
                                     </LinearLayout>
@@ -205,100 +206,122 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="0dp"
-                                    android:layout_weight="0.25"
-                                    android:gravity="center"
-                                    android:orientation="vertical"
-                                    android:weightSum="1">
+                                    android:layout_weight="0.2"
+                                    android:weightSum="1"
+                                    android:orientation="horizontal"
+                                    android:gravity="center">
 
                                     <LinearLayout
-                                        android:layout_width="match_parent"
+                                        android:layout_width="0dp"
                                         android:layout_height="0dp"
-                                        android:layout_gravity="center"
-                                        android:layout_weight="0.4"
-                                        android:gravity="center"
-                                        android:orientation="horizontal"
-                                        android:weightSum="1">
+                                        android:layout_weight="0.15"></LinearLayout>
 
-                                        <TextView
-                                            android:id="@+id/textView"
-                                            android:layout_width="0dp"
-                                            android:layout_height="wrap_content"
-                                            android:layout_weight="0.15"
-                                            android:gravity="center"
-                                            android:text="성별 "
-                                            android:textSize="14dp" />
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="0.7"
+                                        android:text="중복사용이 가능합니다."
+                                        android:textColor="@color/SignUpDuplicationText"
+                                        android:textSize="14dp" />
 
-                                        <TextView
-                                            android:layout_width="0dp"
-                                            android:layout_height="match_parent"
-                                            android:layout_weight="0.335"
-                                            android:background="@drawable/signup_stroke"
-                                            android:gravity="center"
-                                            android:text="여자"
-                                            android:textSize="14dp" />
-
-                                        <LinearLayout
-                                            android:layout_width="0dp"
-                                            android:layout_height="wrap_content"
-                                            android:layout_weight="0.03"></LinearLayout>
-
-                                        <TextView
-                                            android:layout_width="0dp"
-                                            android:layout_height="match_parent"
-                                            android:layout_weight="0.335"
-                                            android:background="@drawable/signup_stroke"
-                                            android:gravity="center"
-                                            android:text="남자"
-                                            android:textSize="14dp" />
-
-                                    </LinearLayout>
 
                                 </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="0.3"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:weightSum="1">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="0dp"
-                                    android:layout_weight="0.25"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="0.36"
                                     android:gravity="center"
-                                    android:orientation="vertical"
+                                    android:orientation="horizontal"
                                     android:weightSum="1">
 
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="0dp"
-                                        android:layout_gravity="center"
-                                        android:layout_weight="0.4"
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="0.15"
                                         android:gravity="center"
-                                        android:orientation="horizontal"
-                                        android:weightSum="1">
+                                        android:text="성별 "
+                                        android:textSize="14dp" />
 
-                                        <TextView
-                                            android:layout_width="0dp"
-                                            android:layout_height="wrap_content"
-                                            android:layout_weight="0.15"
-                                            android:gravity="center"
-                                            android:text="나이 "
-                                            android:textSize="14dp" />
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.335"
+                                        android:id="@+id/tvSignUpGirl"
+                                        android:gravity="center"
+                                        android:text="여자"
+                                        android:background="@drawable/signup_unchecked"
+                                        android:textColor="@color/SignUpUnCheckedSexText"
+                                        android:textSize="14dp" />
 
-                                        <Spinner
-                                            android:layout_width="0dp"
-                                            android:layout_height="match_parent"
-                                            android:layout_weight="0.35"></Spinner>
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="0.03"></LinearLayout>
 
-                                        <LinearLayout
-                                            android:layout_width="0dp"
-                                            android:layout_height="wrap_content"
-                                            android:layout_weight="0.35"></LinearLayout>
-
-                                    </LinearLayout>
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.335"
+                                        android:id="@+id/tvSignUpMan"
+                                        android:gravity="center"
+                                        android:text="남자"
+                                        android:background="@drawable/signup_unchecked"
+                                        android:textColor="@color/SignUpUnCheckedSexText"
+                                        android:textSize="14dp" />
 
                                 </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="0.3"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:weightSum="1">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="0dp"
-                                    android:layout_weight="0.15"
-                                    android:orientation="vertical"></LinearLayout>
+                                    android:layout_gravity="center"
+                                    android:layout_weight="0.4"
+                                    android:gravity="center"
+                                    android:orientation="horizontal"
+                                    android:weightSum="1">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="0.15"
+                                        android:gravity="center"
+                                        android:text="나이 "
+                                        android:textSize="14dp" />
+
+                                    <Spinner
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:id="@+id/spSignUpAge"
+                                        android:layout_weight="0.35"></Spinner>
+
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="0.35"></LinearLayout>
+
+                                </LinearLayout>
 
                             </LinearLayout>
 
@@ -344,6 +367,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="0.5"
                     android:background="@drawable/signup_button"
+                    android:id="@+id/tvSignUpStart"
                     android:gravity="center"
                     android:text="게임시작"
                     android:textColor="@color/TextColor"

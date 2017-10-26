@@ -65,6 +65,10 @@ public class BaseActivity extends AppCompatActivity{
         //TODO  - 변수 초기화
     }
 
+    public void bindView() {
+        //TODO - 레이아웃 매핑
+    }
+
 
     public void setCustomActionBar() {
 
