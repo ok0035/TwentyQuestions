@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.023"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.072"
+        android:weightSum="1"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.025"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.95"
+            android:weightSum="1"
+            android:background="@drawable/game_list_menu_border"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2">
+
+                <TextView
+                    android:id="@+id/btnCreateGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:text="게임 만들기"
+                    android:textSize="10dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/game_list_menu_back"
+                    android:textColor="#ffffff"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2">
+
+                <TextView
+                    android:id="@+id/btnFastGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:text="빠른시작"
+                    android:textSize="10dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/game_list_menu_button"
+                    android:textColor="@color/GameListMenuText"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2">
+
+                <TextView
+                    android:id="@+id/btnLatestOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:text="최근순"
+                    android:textSize="10dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/game_list_menu_button"
+                    android:textColor="@color/GameListMenuText"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2">
+
+                <TextView
+                    android:id="@+id/btnOnlyEmptyRoom"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:text="빈방만"
+                    android:textSize="10dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/game_list_menu_button"
+                    android:textColor="@color/GameListMenuText"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2">
+
+                <TextView
+                    android:id="@+id/btnRefresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:text="새로고침"
+                    android:textSize="10dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/game_list_menu_button_right"
+                    android:textColor="@color/GameListMenuText"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.025"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.043"/>
+
+    <ListView
+        android:id="@+id/lvGame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.86">
+
+    </ListView>
+
+</LinearLayout>

@@ -4,7 +4,7 @@ package graduateproject.com.twentyquestions.item;
  * Created by yrs00 on 2017-08-29.
  */
 
-public class ChatDataItem {
+public class ChatData {
 
     private String userName;
     private String chattingText;

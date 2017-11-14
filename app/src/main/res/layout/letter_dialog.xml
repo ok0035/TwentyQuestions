@@ -18,8 +18,7 @@
                 android:layout_height="match_parent"
                 android:gravity = "center"
                 android:text="Title"
-                android:id="@+id/tvLetterDialogTitle"
-                />
+                android:id="@+id/tvLetterDialogTitle" />
 
         </LinearLayout>
 

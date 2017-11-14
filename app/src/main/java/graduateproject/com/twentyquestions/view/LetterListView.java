@@ -20,11 +20,9 @@ import java.util.ArrayList;
 
 import graduateproject.com.twentyquestions.R;
 import graduateproject.com.twentyquestions.adapter.LetterAdapter;
-import graduateproject.com.twentyquestions.item.LetterDataItem;
+import graduateproject.com.twentyquestions.item.LetterData;
 import graduateproject.com.twentyquestions.network.DBSI;
-import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.HttpNetwork;
-import graduateproject.com.twentyquestions.network.NetworkSI;
 import graduateproject.com.twentyquestions.util.ParseData;
 
 /**
@@ -35,8 +33,8 @@ public class LetterListView extends Fragment {
 
     LinearLayout layout;
     ListView listview;
-    LetterDataItem letterDataItem;
-    ArrayList<LetterDataItem > letterDataItemList;
+    LetterData letterDataItem;
+    ArrayList<LetterData> letterDataItemList;
 
     DBSI dbsi;
 
@@ -54,9 +52,14 @@ public class LetterListView extends Fragment {
         layout = (LinearLayout) inflater.inflate(R.layout.letter_litst_view, container, false);
         listview = (ListView) layout.findViewById(R.id.letterListView);
 
-        updateLetterList();
 
         return layout;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateLetterList();
     }
 
     private void updateLetterList(){
@@ -74,13 +77,14 @@ public class LetterListView extends Fragment {
                     JSONArray letterListArray = parse.parseJsonArray(response);
                     for (int i = 0; i < letterListArray.length(); i++) {
                         JSONObject json = parse.doubleJsonObject(letterListArray.get(i).toString(), "letter");
-                        LetterDataItem letterDataItem = new LetterDataItem();
-                        letterDataItem.setLetterPKey(json.getString("PKey"));
-                        letterDataItem.setLetterType(json.getString("TableName"));
-                        letterDataItem.setLetterTitle(json.getString("Title"));
-                        letterDataItem.setLetterCreatedDate(json.getString("CreatedDate"));
-                        letterDataItem.setLetterContent(json.getString("Content"));
-                        letterDataItemList.add(letterDataItem);
+                        LetterData letterData = new LetterData();
+                        letterData.setLetterPKey(json.getString("PKey"));
+                        letterData.setLetterType(json.getString("TableName"));
+                        letterData.setLetterTablePKey(json.getString("TablePKey"));
+                        letterData.setLetterTitle(json.getString("Title"));
+                        letterData.setLetterCreatedDate(json.getString("CreatedDate"));
+                        letterData.setLetterContent(json.getString("Content"));
+                        letterDataItemList.add(letterData);
                     }
 
                     listview.setAdapter(new LetterAdapter(getContext(), letterDataItemList));

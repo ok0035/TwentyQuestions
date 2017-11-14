@@ -78,7 +78,10 @@ public class DataSync extends Thread {
         ENTERGAMEROOM,
         LEAVEGAMEROOM,
         TEMPUSERDATA,
-        CHECKUSERNUMBER
+        CHECKUSERNUMBER,
+        ACCEPTFRIEND,
+        REFUSEFRIEND,
+        GETFRIENDLIST
 
     }
 

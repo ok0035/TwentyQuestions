@@ -8,7 +8,7 @@ import graduateproject.com.twentyquestions.view.MainView;
  * Created by mapl0 on 2017-08-19.
  */
 
-public class GameListViewItem {
+public class GameListViewData {
 
     private String roomNumber;
     private String roomName;
@@ -16,7 +16,7 @@ public class GameListViewItem {
     private String chatRoomPKey;
     private Button btnGameState;
 
-    public GameListViewItem() {
+    public GameListViewData() {
         btnGameState = new Button(MainView.mContext);
     }
 

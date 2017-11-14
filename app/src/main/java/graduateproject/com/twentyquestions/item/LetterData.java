@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by hero on 2017-10-23.
  */
 
-public class LetterDataItem implements Serializable {
+public class LetterData implements Serializable {
 
 
     private String letterPKey;
@@ -14,6 +14,7 @@ public class LetterDataItem implements Serializable {
     private String letterCreatedDate;
     private String profilImagePath;
     private String letterTitle;
+    private String letterTablePKey;
     private String letterContent;
 
     public String getLetterContent() {
@@ -65,4 +66,11 @@ public class LetterDataItem implements Serializable {
     }
 
 
+    public String getLetterTablePKey() {
+        return letterTablePKey;
+    }
+
+    public void setLetterTablePKey(String letterTablePKey) {
+        this.letterTablePKey = letterTablePKey;
+    }
 }

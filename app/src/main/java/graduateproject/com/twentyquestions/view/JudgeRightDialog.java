@@ -147,6 +147,10 @@ public class JudgeRightDialog extends Dialog implements BasicMethod {
     }
 
     @Override
+    public void bindView() {
+
+    }
+
     public void setView() {
 
 

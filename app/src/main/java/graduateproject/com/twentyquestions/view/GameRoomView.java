@@ -27,7 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import graduateproject.com.twentyquestions.adapter.GameChatListViewAdapter;
-import graduateproject.com.twentyquestions.item.ChatDataItem;
+import graduateproject.com.twentyquestions.item.ChatData;
 import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.NetworkSI;
@@ -77,7 +77,7 @@ public class GameRoomView extends BaseActivity {
     private GuessRightDialog guessRightDialog;
 
 
-    ArrayList<ChatDataItem> chatDataItemlist;
+    ArrayList<ChatData> chatDataItemlist;
 
 
     public GameRoomView() {
@@ -687,7 +687,7 @@ public class GameRoomView extends BaseActivity {
         if (localChatLength != 0) {
             for (int i = 0; i < localChatLength; i++) {
                 Log.d("Flag 내용", " chat");
-                final ChatDataItem chatDataItem = new ChatDataItem();
+                final ChatData chatDataItem = new ChatData();
                 chatDataItem.setUserPKey(localChat[i][1]);
 
                 if (dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + localChat[i][1]) == null) {
@@ -840,7 +840,7 @@ public class GameRoomView extends BaseActivity {
 
         for (int i = 0; i < localSyncChatLength; i++) {
             Log.d("Flag 내용", " chat");
-            final ChatDataItem chatDataItem = new ChatDataItem();
+            final ChatData chatDataItem = new ChatData();
             chatDataItem.setUserPKey(addedChatData[i][1]);
 
             if (dbsi.selectQuery("SELECT NickName,MySelf FROM User WHERE PKey = " + addedChatData[i][1]) == null) {
@@ -960,9 +960,11 @@ public class GameRoomView extends BaseActivity {
 
                                 JSONObject data = new JSONObject();
                                 try {
+
                                     data.put("OtherUserPKey", otherUserPKey);
                                     data.put("letterFlag", "Friend");
                                     data.put("Content",otherUserNickName +"님이 친구 신청하셨습니다.");
+
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -991,6 +993,7 @@ public class GameRoomView extends BaseActivity {
                                 return;
                             }
                         });
+
                 AlertDialog alert = alert_confirm.create();
                 alert.show();
 

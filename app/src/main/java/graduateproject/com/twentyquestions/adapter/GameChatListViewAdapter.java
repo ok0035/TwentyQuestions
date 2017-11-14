@@ -11,14 +11,12 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import graduateproject.com.twentyquestions.item.ChatDataItem;
+import graduateproject.com.twentyquestions.item.ChatData;
 import graduateproject.com.twentyquestions.network.DBSI;
-import graduateproject.com.twentyquestions.util.CalculatePixel;
 
 /**
  * Created by yrs00 on 2017-08-29.
@@ -27,12 +25,12 @@ import graduateproject.com.twentyquestions.util.CalculatePixel;
 public class GameChatListViewAdapter extends ArrayAdapter {
 
     Context mContext;
-    ArrayList<ChatDataItem> mList;
+    ArrayList<ChatData> mList;
     TextView nameView;
     TextView chatView;
     DBSI dbsi;
 
-    public GameChatListViewAdapter(Context context, ArrayList<ChatDataItem> list){
+    public GameChatListViewAdapter(Context context, ArrayList<ChatData> list){
         super(context, -1, list);
         mContext = context;
         mList = list;

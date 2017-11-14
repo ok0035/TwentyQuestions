@@ -8,5 +8,9 @@
     <color name="SignUpDuplicationText">#f58220</color>
     <color name="SignUpUnCheckedSexText">#D0D0D0</color>
     <color name="SignUpCheckedSexText">#ffffff</color>
+    <color name="Transparent">@null</color>
+    <color name="MainMenuColor">#FAFAFC</color>
+    <color name="GameListMenu">#F58220</color>
+    <color name="GameListMenuText">#6D6D6F</color>
 
 </resources>

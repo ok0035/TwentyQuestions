@@ -152,6 +152,11 @@ public class CreateRoomDialog extends Dialog implements BasicMethod {
 
     }
 
+    @Override
+    public void bindView() {
+
+    }
+
     public void setView() {
 
         tvRoomName = new TextView(MainView.mContext);

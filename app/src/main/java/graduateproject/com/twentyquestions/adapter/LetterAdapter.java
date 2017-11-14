@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import graduateproject.com.twentyquestions.R;
-import graduateproject.com.twentyquestions.item.LetterDataItem;
+import graduateproject.com.twentyquestions.item.LetterData;
 import graduateproject.com.twentyquestions.view.LetterDialog;
 
 /**
@@ -24,10 +24,10 @@ import graduateproject.com.twentyquestions.view.LetterDialog;
 public class LetterAdapter extends ArrayAdapter {
 
     private Context mContext;
-    private ArrayList<LetterDataItem> mList;
+    private ArrayList<LetterData> mList;
     private LayoutInflater inf;
 
-    public LetterAdapter(Context context, ArrayList<LetterDataItem> list) {
+    public LetterAdapter(Context context, ArrayList<LetterData> list) {
         super(context, R.layout.letter_list_item, list);
         mContext = context;
         mList = list;
@@ -48,7 +48,7 @@ public class LetterAdapter extends ArrayAdapter {
         TextView tvLetterItemType = (TextView) row.findViewById(R.id.tvLetterItemType);
         TextView tvLetterTitle = (TextView) row.findViewById(R.id.tvLetterTitle);
 
-        final LetterDataItem letterDataItem = mList.get(position);
+        final LetterData letterDataItem = mList.get(position);
 
         switch (letterDataItem.getLetterType()) {
             case "Friend": {
@@ -69,7 +69,7 @@ public class LetterAdapter extends ArrayAdapter {
 //                Toast.makeText(mContext,mList.get(position).getLetterPKey(),Toast.LENGTH_SHORT ).show();
 
                 Intent intent = new Intent(mContext, LetterDialog.class);
-                ArrayList<LetterDataItem> list = new ArrayList<LetterDataItem>();
+                ArrayList<LetterData> list = new ArrayList<LetterData>();
                 list.add(letterDataItem);
                 intent.putExtra("LetterData", list);
                 getContext().startActivity(intent);

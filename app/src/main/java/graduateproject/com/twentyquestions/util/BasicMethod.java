@@ -8,6 +8,6 @@ public interface BasicMethod {
 
     public void setValues();
     public void setUpEvents();
-    public void setView();
+    public void bindView();
 
 }

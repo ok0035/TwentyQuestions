@@ -3,30 +3,27 @@ package graduateproject.com.twentyquestions.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import graduateproject.com.twentyquestions.R;
-import graduateproject.com.twentyquestions.item.LetterDataItem;
-import graduateproject.com.twentyquestions.network.HttpNetwork;
+import graduateproject.com.twentyquestions.network.DataSync;
+import graduateproject.com.twentyquestions.network.NetworkSI;
 import graduateproject.com.twentyquestions.util.BasicMethod;
-import graduateproject.com.twentyquestions.util.CalculatePixel;
 
 /**
  * Created by yrs00 on 2017-10-19.
@@ -51,7 +48,7 @@ public class LetterDialog extends Activity implements BasicMethod {
     // 2. 친구 신청 : REQUESTFRIEND
     // 3. 받은 쪽지 : RECEIVELETTER
     // 4. 쪽지 보내기 : SENDLETTER
-    private LetterDataItem LetterData;
+    private graduateproject.com.twentyquestions.item.LetterData LetterData;
     private RelativeLayout rlParent;
     private TextView tvTitle;
     private TextView tvDateTime;
@@ -111,8 +108,8 @@ public class LetterDialog extends Activity implements BasicMethod {
         Serializable serializable = intent.getSerializableExtra("LetterData");
         //경고 메세지를 없에주는 어노테이션
         @SuppressWarnings("unchecked")
-        ArrayList<LetterDataItem> list = (ArrayList<LetterDataItem>)serializable;
-        LetterData = (LetterDataItem)list.get(0);
+        ArrayList<graduateproject.com.twentyquestions.item.LetterData> list = (ArrayList<graduateproject.com.twentyquestions.item.LetterData>) serializable;
+        LetterData = (graduateproject.com.twentyquestions.item.LetterData) list.get(0);
 
     }
 
@@ -131,7 +128,7 @@ public class LetterDialog extends Activity implements BasicMethod {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), LetterDialog.class);
-                intent.putExtra("letterFlag","3");
+                intent.putExtra("letterFlag", "3");
                 startActivity(intent);
                 finish();
             }
@@ -139,6 +136,10 @@ public class LetterDialog extends Activity implements BasicMethod {
     }
 
     @Override
+    public void bindView() {
+
+    }
+
     public void setView() {
         this.tvLDRightBtn = (TextView) findViewById(R.id.tvLDRightBtn);
         this.tvLDCenterBtn = (TextView) findViewById(R.id.tvLDCenterBtn);
@@ -148,47 +149,101 @@ public class LetterDialog extends Activity implements BasicMethod {
         this.tvLetterDialogTitle = (TextView) findViewById(R.id.tvLetterDialogTitle);
     }
 
-    private void exchangeViewByFlag(){
+    private void exchangeViewByFlag() {
 
-                switch (LetterData.getLetterType()){
-                    case "Notice" :{ // 공지사항
-                        tvLetterDialogTitle.setText("운영자 공지사항");
-                        tvLDLeftBtn.setText("삭제");
-                        tvLDCenterBtn.setVisibility(View.GONE);
-                        tvLDRightBtn.setText("닫기");
+        switch (LetterData.getLetterType()) {
+            case "Notice": { // 공지사항
+                tvLetterDialogTitle.setText("운영자 공지사항");
+                tvLDLeftBtn.setText("삭제");
+                tvLDCenterBtn.setVisibility(View.GONE);
+                tvLDRightBtn.setText("닫기");
 
-                        tvLDRightBtn.setOnClickListener(closeDialog);
-                    }break;
-                    case "Friend" :{ // 친구신청 받음
-                        tvLetterDialogTitle.setText("친구신청");
-                        tvLetterDialogContent.setText(LetterData.getLetterContent());
-                        tvLDLeftBtn.setText("거절");
-                        tvLDCenterBtn.setText("수락");
-                        tvLDRightBtn.setText("차단");
-                    }break;
-                    case "ReceiveLetter" :{ // 받은쪽지
-                        tvLetterDialogTitle.setText("쪽지 (닉네임, 나이, 성별, km) ");
-                        tvLDLeftBtn.setText("삭제");
-                        tvLDCenterBtn.setText("OK");
-                        tvLDRightBtn.setText("답장");
+                tvLDRightBtn.setOnClickListener(closeDialog);
+            }
+            break;
+            case "Friend": { // 친구신청 받음
+                tvLetterDialogTitle.setText("친구신청");
+                tvLetterDialogContent.setText(LetterData.getLetterContent());
+                tvLDLeftBtn.setText("거절");
+                tvLDCenterBtn.setText("수락");
+                tvLDRightBtn.setText("차단");
 
-                        tvLDCenterBtn.setOnClickListener(closeDialog);
-                        tvLDRightBtn.setOnClickListener(openSendLetter);
+                tvLDCenterBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
 
-                    }break;
-                    case "SendLetter" :{ // 쪽지 보내기
-                        tvLetterDialogTitle.setText("쪽지 보내기");
-                        tvLetterDialogContent.setVisibility(View.GONE);
-                        etLetterDialogContent.setVisibility(View.VISIBLE);
-                        tvLDLeftBtn.setText("보내기");
-                        tvLDCenterBtn.setVisibility(View.GONE);
-                        tvLDRightBtn.setText("취소");
+                        JSONObject data = new JSONObject();
+                        try {
 
-                        tvLDRightBtn.setOnClickListener(closeDialog);
+                            data.put("TablePKey", LetterData.getLetterTablePKey());
 
-                    }break;
-                }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
+                        new NetworkSI().request(DataSync.Command.ACCEPTFRIEND, data.toString(), new NetworkSI.AsyncResponse() {
+                            @Override
+                            public void onSuccess(String response) {
+
+                                Log.d("AcceptFriendRes", response);
+
+                                switch(response) {
+                                    case "Success":
+                                        Toast.makeText(LetterDialog.this, "수락하셨습니다.", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                        break;
+
+                                    case "No Record":
+                                        Toast.makeText(LetterDialog.this, "친구 요청이 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                        break;
+
+                                    case "Already Friend":
+                                        Toast.makeText(LetterDialog.this, "이미 친구입니다.", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                        break;
+                                    default:
+                                        Toast.makeText(LetterDialog.this, "오류가 발생했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                        break;
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(String response) {
+                                Log.d("AcceptFriendRes", response);
+                            }
+                        });
+
+                    }
+                });
+            }
+            break;
+            case "ReceiveLetter": { // 받은쪽지
+                tvLetterDialogTitle.setText("쪽지 (닉네임, 나이, 성별, km) ");
+                tvLDLeftBtn.setText("삭제");
+                tvLDCenterBtn.setText("OK");
+                tvLDRightBtn.setText("답장");
+
+                tvLDCenterBtn.setOnClickListener(closeDialog);
+                tvLDRightBtn.setOnClickListener(openSendLetter);
+
+            }
+            break;
+            case "SendLetter": { // 쪽지 보내기
+                tvLetterDialogTitle.setText("쪽지 보내기");
+                tvLetterDialogContent.setVisibility(View.GONE);
+                etLetterDialogContent.setVisibility(View.VISIBLE);
+                tvLDLeftBtn.setText("보내기");
+                tvLDCenterBtn.setVisibility(View.GONE);
+                tvLDRightBtn.setText("취소");
+
+                tvLDRightBtn.setOnClickListener(closeDialog);
+
+            }
+            break;
+        }
 
     }
 }

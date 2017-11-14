@@ -38,11 +38,10 @@ public class RegisterView extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup);
-
+        hideActionBar();
         bindView();
         setValues();
         setUpEvents();
-        setCustomActionBar();
 
     }
 

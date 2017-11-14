@@ -135,6 +135,11 @@ public class GuessRightDialog extends Dialog implements BasicMethod {
     }
 
     @Override
+    public void bindView() {
+
+    }
+
+
     public void setView() {
 
         rlParent = new RelativeLayout(BaseActivity.mContext);

@@ -18,7 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import graduateproject.com.twentyquestions.item.GameListViewItem;
+import graduateproject.com.twentyquestions.item.GameListViewData;
 import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.NetworkSI;
@@ -38,11 +38,11 @@ public class GameListViewAdapter extends BaseAdapter {
     private String userPKey;
 
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
-    private ArrayList<GameListViewItem> listViewItemList;
+    private ArrayList<GameListViewData> listViewItemList;
 
     // ListViewAdapter의 생성자
     public GameListViewAdapter() {
-        listViewItemList = new ArrayList<GameListViewItem>();
+        listViewItemList = new ArrayList<GameListViewData>();
         dbsi = new DBSI();
         userPKey = dbsi.selectQuery("select PKey from User where MySelf = 0")[0][0];
     }
@@ -74,7 +74,7 @@ public class GameListViewAdapter extends BaseAdapter {
 //        TextView descTextView = (TextView) convertView.findViewById(R.id.textView2) ;
 
 //         Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        final GameListViewItem listViewItem = listViewItemList.get(position);
+        final GameListViewData listViewItem = listViewItemList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
         tvRoomNumber.setText(listViewItem.getRoomNumber() + "");
@@ -261,7 +261,7 @@ public class GameListViewAdapter extends BaseAdapter {
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
     public void addItem(String roomNumber, String roomName, String roomDescription, String chatRoomPKey) {
-        GameListViewItem item = new GameListViewItem();
+        GameListViewData item = new GameListViewData();
 
         item.setRoomNumber(roomNumber);
         item.setRoomName(roomName);
