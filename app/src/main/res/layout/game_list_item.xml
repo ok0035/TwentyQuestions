@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation = "horizontal"
+    android:padding="15dp"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="0.1"
+        android:layout_height="match_parent"
+        android:orientation = "vertical"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/tvRoomNumber"
+            android:textColor="@color/GameListTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="1"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="0.7"
+        android:layout_height="match_parent"
+        android:orientation = "vertical"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/tvRoomName"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="방제목"
+            android:textStyle="bold"
+            android:textColor="@color/GameListTitleText"
+            android:textSize="15dp"/>
+
+
+
+        <TextView
+            android:id="@+id/tvRoomDesc"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="설명"
+            android:textColor="@color/GameListDesc"
+            android:textSize="12dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="0.2"
+        android:layout_height="match_parent"
+        android:orientation = "vertical"
+        android:weightSum="1">
+
+
+        <TextView
+            android:id="@+id/tvGameStatus"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="게임중"
+            android:textColor="@color/GameListPlayingStatus"
+            android:textStyle="bold"
+            android:textSize="15dp" />
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

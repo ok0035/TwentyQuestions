@@ -1,11 +1,9 @@
 package graduateproject.com.twentyquestions.view;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -14,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -26,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import graduateproject.com.twentyquestions.R;
 import graduateproject.com.twentyquestions.adapter.GameChatListViewAdapter;
 import graduateproject.com.twentyquestions.item.ChatData;
 import graduateproject.com.twentyquestions.network.DBSI;
@@ -41,19 +41,20 @@ import graduateproject.com.twentyquestions.util.ParseData;
 
 public class GameRoomView extends BaseActivity {
 
-    EditText edChat;
+    EditText edGameChat;
     LinearLayout parentView, llChat, llChatList, llGame, llQuestion, llEditChat, llBtnChat, llQuestionBox, llGuessRight, llPlayingInfo, llLeftQuestion, llPlayigQuestion;
     private LinearLayout divisionLine;
     TextView btnSendMessage, btnQAMode, tvChatTest, tvQuestion, tvQuestionLabel, tvGuessRight, tvQuestionCountLabel, tvRightCountLabel, tvPlayingCountLabel;
-    TextView tvQeustionCount, tvRightCount, tvPlayingCount;
+    TextView tvGameQuestionCount, tvGameRightCount, tvGamePlayingCount;
     TextView endingTextView;
     private String gameListKey;
+    private android.widget.ImageView ivBack;
 
-    public ListView getGameChatListView() {
-        return gameChatListView;
+    public ListView getLvGameChat() {
+        return lvGameChat;
     }
 
-    ListView gameChatListView;
+    ListView lvGameChat;
     GameChatListViewAdapter gameChatListViewAdapter;
     String chat = "";
     DBSI dbsi;
@@ -97,9 +98,13 @@ public class GameRoomView extends BaseActivity {
         setUpEvents();
         setView();
         setCustomActionBar();
-        setContentView(parentView);
+//        setContentView(parentView);
+        setContentView(R.layout.chat);
+
+
 
     }
+
 
     @Override
     public void setUpEvents() {
@@ -108,11 +113,11 @@ public class GameRoomView extends BaseActivity {
         send_chat = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                chat = edChat.getText().toString();
+                chat = edGameChat.getText().toString();
 //                tvChatTest.setText(chat);
 //                System.out.println("StartCli  ckEvent");
 
-                Log.d("getScrollY", gameChatListView.getScrollY() + "//");
+                Log.d("getScrollY", lvGameChat.getScrollY() + "//");
                 final String beforeSendLastChatDate = findLastChatDate();
 
                 if (chat.length() != 0) { // 텍스트 입력안하면 메세지 전송x -> 카톡 따라함
@@ -136,7 +141,7 @@ public class GameRoomView extends BaseActivity {
                                 @Override
                                 public void onFinished(String response) {
                                     testFunc(beforeSendLastChatDate);
-                                    gameChatListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                    lvGameChat.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                 }
 
                                 @Override
@@ -151,7 +156,7 @@ public class GameRoomView extends BaseActivity {
 
                         }
                     });
-                    edChat.setText(null);
+                    edGameChat.setText(null);
 
 
                 }
@@ -185,7 +190,7 @@ public class GameRoomView extends BaseActivity {
 //                        JSONObject data = new JSONObject();
 //                        try {
 //                            data.put("AskAnswerListPKey", findlocalAskAnswerList_Ans[findlocalAskAnswerList_Ans.length - 1][0]);
-//                            data.put("Answer", edChat.getText().toString());
+//                            data.put("Answer", edGameChat.getText().toString());
 //                            data.put("MemberPriority", getMemberPriority());
 //                            data.put("ChatRoomPKey", dbsi.selectQuery("select ChatRoomPKey from GameList")[0][0]);
 //                            data.put("GameListPKey", dbsi.selectQuery("select PKey from GameList")[0][0]);
@@ -203,7 +208,7 @@ public class GameRoomView extends BaseActivity {
 //                                    DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
 //                                        @Override
 //                                        public void onFinished(String response) {
-//                                            edChat.setText(null);
+//                                            edGameChat.setText(null);
 //                                            testFunc(beforeSendLastChatDate);
 //
 //                                        }
@@ -234,7 +239,7 @@ public class GameRoomView extends BaseActivity {
                             JSONObject data = new JSONObject();
                             try {
                                 data.put("AskAnswerListPKey", findlocalAskAnswerList_Ans[findlocalAskAnswerList_Ans.length - 1][0]);
-                                data.put("Answer", edChat.getText().toString());
+                                data.put("Answer", edGameChat.getText().toString());
                                 data.put("MemberPriority", getMemberPriority());
                                 data.put("ChatRoomPKey", dbsi.selectQuery("select ChatRoomPKey from GameList")[0][0]);
                                 data.put("GameListPKey", dbsi.selectQuery("select PKey from GameList")[0][0]);
@@ -255,7 +260,7 @@ public class GameRoomView extends BaseActivity {
                                         DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                                             @Override
                                             public void onFinished(String response) {
-                                                edChat.setText(null);
+                                                edGameChat.setText(null);
                                                 testFunc(beforeSendLastChatDate);
 
                                             }
@@ -292,7 +297,7 @@ public class GameRoomView extends BaseActivity {
                                 JSONObject data = new JSONObject();
                                 try {
                                     data.put("GameListPKey", dbsi.selectQuery("Select PKey from GameList")[0][0]);
-                                    data.put("Guess", edChat.getText().toString());
+                                    data.put("Guess", edGameChat.getText().toString());
                                     data.put("MemberPriority", "1");
                                     data.put("ChatRoomPKey", dbsi.selectQuery("select ChatRoomPKey from GameList")[0][0]);
                                 } catch (JSONException e) {
@@ -308,7 +313,7 @@ public class GameRoomView extends BaseActivity {
                                             DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                                                 @Override
                                                 public void onFinished(String response) {
-                                                    edChat.setText(null);
+                                                    edGameChat.setText(null);
                                                     testFunc(beforeSendLastChatDate);
                                                     exchangeView();
                                                 }
@@ -350,7 +355,7 @@ public class GameRoomView extends BaseActivity {
             public void onClick(View view) {
 
                 if (!QAFlag) { // QAFlag = false -> 질답 모드
-                    edChat.setBackgroundColor(Color.MAGENTA);
+                    edGameChat.setBackgroundColor(Color.MAGENTA);
                     if (getMemberPriority().equals("0")) {
                         btnSendMessage.setText("답변");
                     } else {
@@ -360,7 +365,7 @@ public class GameRoomView extends BaseActivity {
                     btnSendMessage.setOnClickListener(send);
                     QAFlag = true;
                 } else {
-                    edChat.setBackgroundColor(Color.CYAN);
+                    edGameChat.setBackgroundColor(Color.CYAN);
                     btnSendMessage.setText("보내기");
                     send = send_chat;
                     btnSendMessage.setOnClickListener(send);
@@ -424,8 +429,8 @@ public class GameRoomView extends BaseActivity {
         createNewGame = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MyCreateRoomDialog myCreateRoomDialog = new MyCreateRoomDialog(mContext);
-                myCreateRoomDialog.show();
+                Intent intent = new Intent(MainView.mContext, MyCreateRoom.class);
+                startActivity(intent);
             }
         };
 
@@ -437,14 +442,14 @@ public class GameRoomView extends BaseActivity {
 
 //        tvChatTest = new TextView(MainView.mContext);
 //        tvChatTest.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        gameChatListView = new ListView(mContext);
-        gameChatListView.setAdapter(gameChatListViewAdapter);
-        gameChatListView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        lvGameChat = new ListView(mContext);
+        lvGameChat.setAdapter(gameChatListViewAdapter);
+        lvGameChat.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         gameChatListViewAdapter.notifyDataSetChanged();
 
-        edChat = new EditText(MainView.mContext);
-        edChat.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        edChat.setSingleLine(true);
+        edGameChat = new EditText(MainView.mContext);
+        edGameChat.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        edGameChat.setSingleLine(true);
 
         btnSendMessage = new TextView(MainView.mContext);
         btnSendMessage.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f));
@@ -462,7 +467,7 @@ public class GameRoomView extends BaseActivity {
         llEditChat = new LinearLayout(MainView.mContext);
         llEditChat.setOrientation(LinearLayout.HORIZONTAL);
         llEditChat.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 8f));
-        llEditChat.addView(edChat);
+        llEditChat.addView(edGameChat);
 
         llBtnChat = new LinearLayout(MainView.mContext);
         llBtnChat.setOrientation(LinearLayout.HORIZONTAL);
@@ -533,18 +538,18 @@ public class GameRoomView extends BaseActivity {
         tvQuestionCountLabel.setGravity(Gravity.CENTER);
         tvQuestionCountLabel.setText("남은질문수 : ");
 
-        tvQeustionCount = new TextView(MainView.mContext);
-        tvQeustionCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        tvQeustionCount.setText(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]);
+        tvGameQuestionCount = new TextView(MainView.mContext);
+        tvGameQuestionCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        tvGameQuestionCount.setText(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]);
 
         tvRightCountLabel = new TextView(MainView.mContext);
         tvRightCountLabel.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 4f));
         tvRightCountLabel.setGravity(Gravity.CENTER);
         tvRightCountLabel.setText("남은정답수 : ");
 
-        tvRightCount = new TextView(MainView.mContext);
-        tvRightCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        tvRightCount.setText(dbsi.selectQuery("Select MaxGuessable From TwentyQuestions")[0][0]);
+        tvGameRightCount = new TextView(MainView.mContext);
+        tvGameRightCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        tvGameRightCount.setText(dbsi.selectQuery("Select MaxGuessable From TwentyQuestions")[0][0]);
 
         llLeftQuestion = new LinearLayout(MainView.mContext);
         llLeftQuestion.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
@@ -552,29 +557,29 @@ public class GameRoomView extends BaseActivity {
         llLeftQuestion.setWeightSum(10);
         llLeftQuestion.setGravity(Gravity.CENTER);
         llLeftQuestion.addView(tvQuestionCountLabel);
-        llLeftQuestion.addView(tvQeustionCount);
+        llLeftQuestion.addView(tvGameQuestionCount);
         llLeftQuestion.addView(tvRightCountLabel);
-        llLeftQuestion.addView(tvRightCount);
+        llLeftQuestion.addView(tvGameRightCount);
 
         tvPlayingCountLabel = new TextView(MainView.mContext);
         tvPlayingCountLabel.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 4f));
         tvPlayingCountLabel.setGravity(Gravity.CENTER);
         tvPlayingCountLabel.setText("진행상황 : ");
 
-        tvPlayingCount = new TextView(MainView.mContext);
-        tvPlayingCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 6f));
-        tvPlayingCount.setGravity(Gravity.CENTER_VERTICAL);
+        tvGamePlayingCount = new TextView(MainView.mContext);
+        tvGamePlayingCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 6f));
+        tvGamePlayingCount.setGravity(Gravity.CENTER_VERTICAL);
 
         String twentyquestionsPKey = dbsi.selectQuery("Select PKey from TwentyQuestions")[0][0];
 
         if (dbsi.selectQuery("Select Answer from AskAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " Order by PKey desc") == null ||
                 dbsi.selectQuery("Select Answer from AskAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " Order by PKey desc")[0][0].length() != 0) {
             int askNum = 20 - Integer.parseInt(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]) + 1;
-            tvPlayingCount.setText(askNum + " 번 질문 대기중");
+            tvGamePlayingCount.setText(askNum + " 번 질문 대기중");
         } else {
 
             int askNum = 20 - Integer.parseInt(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]);
-            tvPlayingCount.setText(askNum + " 번 질문 완료, 답변 대기중");
+            tvGamePlayingCount.setText(askNum + " 번 질문 완료, 답변 대기중");
 
         }
 
@@ -585,7 +590,7 @@ public class GameRoomView extends BaseActivity {
         llPlayigQuestion.setGravity(Gravity.CENTER);
         llPlayigQuestion.setWeightSum(10);
         llPlayigQuestion.addView(tvPlayingCountLabel);
-        llPlayigQuestion.addView(tvPlayingCount);
+        llPlayigQuestion.addView(tvGamePlayingCount);
 
         llPlayingInfo = new LinearLayout(MainView.mContext);
         llPlayingInfo.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 4f));
@@ -614,7 +619,7 @@ public class GameRoomView extends BaseActivity {
         llChatList.setOrientation(LinearLayout.VERTICAL);
         llChatList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 7.5f));
         llChatList.addView(divisionLine);
-        llChatList.addView(gameChatListView);
+        llChatList.addView(lvGameChat);
 
         llChat = new LinearLayout(MainView.mContext);
         llChat.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.5f));
@@ -771,6 +776,7 @@ public class GameRoomView extends BaseActivity {
 
         Log.d("어레이리스트 길이 ", chatDataItemlist.size() + " / ");
         gameChatListViewAdapter = new GameChatListViewAdapter(mContext, chatDataItemlist);
+
 
         DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
             @Override
@@ -937,7 +943,7 @@ public class GameRoomView extends BaseActivity {
         gameChatListViewAdapter.notifyDataSetChanged();
 
 
-        gameChatListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        lvGameChat.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
     }
 
     @Override
@@ -1032,14 +1038,13 @@ public class GameRoomView extends BaseActivity {
             else
                 tvGuessRight.setText("정답을 기다리는 중...");
 
-
         } else {
             tvGuessRight.setText("정답 맞히기");
         }
 
         // 남은 질문 갯수 textView
-        tvQeustionCount.setText(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]);
-        tvRightCount.setText(dbsi.selectQuery("Select MaxGuessable From TwentyQuestions")[0][0]);
+        tvGameQuestionCount.setText(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]);
+        tvGameRightCount.setText(dbsi.selectQuery("Select MaxGuessable From TwentyQuestions")[0][0]);
 
         // 남은 기회 갯수 textView
         String twentyquestionsPKey = dbsi.selectQuery("Select PKey from TwentyQuestions")[0][0];
@@ -1047,11 +1052,11 @@ public class GameRoomView extends BaseActivity {
         if (dbsi.selectQuery("Select Answer from AskAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " Order by PKey desc") == null ||
                 dbsi.selectQuery("Select Answer from AskAnswerList where TwentyQuestionsPKey = " + twentyquestionsPKey + " Order by PKey desc")[0][0].length() == 0) {
             int askNum = 20 - Integer.parseInt(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]);
-            tvPlayingCount.setText(askNum + " 번 질문 완료, 답변 대기중");
+            tvGamePlayingCount.setText(askNum + " 번 질문 완료, 답변 대기중");
         } else {
             int askNum = 20 - Integer.parseInt(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]) + 1;
 
-            tvPlayingCount.setText(askNum + " 번 질문 대기중");
+            tvGamePlayingCount.setText(askNum + " 번 질문 대기중");
         }
 
 
@@ -1088,14 +1093,22 @@ public class GameRoomView extends BaseActivity {
 
     }
 
+    @Override
+    public void bindView() {
+        this.btnSendMessage = (TextView) findViewById(R.id.btnSendMessage);
+        this.edGameChat = (EditText) findViewById(R.id.edGameChat);
+        this.lvGameChat = (ListView) findViewById(R.id.lvGameChat);
+        this.tvGamePlayingCount = (TextView) findViewById(R.id.tvGamePlayingCount);
+        this.tvGameRightCount = (TextView) findViewById(R.id.tvGameRightCount);
+        this.tvGameQuestionCount = (TextView) findViewById(R.id.tvGameQuestionCount);
+        this.ivBack = (ImageView) findViewById(R.id.ivBack);
+    }
+
 }
 
 
-class MyCreateRoomDialog extends CreateRoomDialog {
+class MyCreateRoom extends CreateRoom {
 
-    public MyCreateRoomDialog(@NonNull Context context) {
-        super(context);
-    }
 
     private String myUserPKey;
     DBSI dbsi;
@@ -1134,10 +1147,10 @@ class MyCreateRoomDialog extends CreateRoomDialog {
                                 public void onFinished(String response) {
                                     JSONObject params = new JSONObject();
                                     try {
-                                        params.put("RoomName", edRoomName.getText().toString());
-                                        params.put("Description", edDescription.getText().toString());
-                                        params.put("Question", edQuestion.getText().toString());
-                                        params.put("Password", edPassword.getText().toString());
+                                        params.put("RoomName", edCreateRoomName.getText().toString());
+                                        params.put("Description", "");
+                                        params.put("Question", edCreateRoomQuestion.getText().toString());
+                                        params.put("Password", edCreateRoomPassword.getText().toString());
                                         params.put("Longitude", GPSTracer.longitude + "");
                                         params.put("Latitude", GPSTracer.latitude + "");
                                     } catch (JSONException e) {
@@ -1155,7 +1168,7 @@ class MyCreateRoomDialog extends CreateRoomDialog {
 
                                                     Intent intent = new Intent(MainView.mContext, GameRoomView.class);
                                                     MainView.mContext.startActivity(intent);
-                                                    dismiss();
+                                                    finish();
 
                                                 }
 

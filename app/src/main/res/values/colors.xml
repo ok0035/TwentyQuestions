@@ -12,5 +12,14 @@
     <color name="MainMenuColor">#FAFAFC</color>
     <color name="GameListMenu">#F58220</color>
     <color name="GameListMenuText">#6D6D6F</color>
-
+    <color name="GameListTitleText">#7B668E</color>
+    <color name="GameListDoPlayStatus">#F68E36</color>
+    <color name="GameListPlayingStatus">#686869</color>
+    <color name="GameListDesc">#C3B5CC</color>
+    <color name="CreateRoomToolbar">#F58220</color>
+    <color name="CreateRoomCancel">#727274</color>
+    <color name="ChatToolbar">#5F5F60</color>
+    <color name="ChatQuestionText">#F48120</color>
+    <color name="GameQuestionInfo">#3F455A</color>
+    <color name="GameChatSend">#0479FB</color>
 </resources>

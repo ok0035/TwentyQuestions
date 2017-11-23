@@ -1,7 +1,6 @@
 package graduateproject.com.twentyquestions.view;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -39,7 +38,7 @@ public class GameListView extends Fragment implements BasicMethod{
     private ListView lvGame;
     private GameListViewAdapter adapter;
 
-    private CreateRoomDialog dialog;
+    private CreateRoom dialog;
 
     private TextView btnCreateGame, btnFastGame, btnOnlyEmptyRoom, btnLatestOrder, btnRefresh;
     private View.OnClickListener clickRefresh, clickCreateRoom;
@@ -147,14 +146,8 @@ public class GameListView extends Fragment implements BasicMethod{
                 DBSI dbsi = new DBSI();
                 String[][] findLocalGameList = dbsi.selectQuery("SELECT * FROM GameList");
                 if (findLocalGameList == null) {
-                    dialog = new CreateRoomDialog(getContext());
-                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialogInterface) {
-
-                        }
-                    });
-                    dialog.show();
+                    Intent intent = new Intent(MainView.mContext, CreateRoom.class);
+                    startActivity(intent);
                 }else{
                     Intent intent = new Intent(MainView.mContext, GameRoomView.class);
                     startActivity(intent);

@@ -23,9 +23,8 @@
         </activity>
 
         <activity android:name=".view.BaseActivity" />
-        <activity android:name=".view.LoginView">
-
-        </activity>
+        <activity android:name=".view.LoginView"/>
+        <activity android:name=".view.CreateRoom"/>
         <activity
             android:name=".view.SplashView"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -38,7 +37,9 @@
 
         <activity android:name=".view.RegisterView" />
         <activity android:name=".view.MainView" />
-        <activity android:name=".view.GameRoomView" />
+        <activity
+            android:name=".view.GameRoomView"
+            android:windowSoftInputMode="adjustPan"/>
 
 
         <!--다이얼로그-->

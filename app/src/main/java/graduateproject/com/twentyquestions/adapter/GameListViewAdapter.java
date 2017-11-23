@@ -3,13 +3,12 @@ package graduateproject.com.twentyquestions.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,10 +17,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import graduateproject.com.twentyquestions.R;
 import graduateproject.com.twentyquestions.item.GameListViewData;
 import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.NetworkSI;
+import graduateproject.com.twentyquestions.util.BasicMethod;
 import graduateproject.com.twentyquestions.view.BaseActivity;
 import graduateproject.com.twentyquestions.view.GameRoomView;
 import graduateproject.com.twentyquestions.view.MainView;
@@ -30,12 +31,13 @@ import graduateproject.com.twentyquestions.view.MainView;
  * Created by mapl0 on 2017-08-19.
  */
 
-public class GameListViewAdapter extends BaseAdapter {
+public class GameListViewAdapter extends BaseAdapter implements BasicMethod, AdapterView.OnItemClickListener{
 
     private LinearLayout parentLayout, llRoomValues, llRoomName, llDesc, llRoomTitles, llRoomNameTitle, llDescTitle, llbtnIsPlayingGame;
-    private TextView tvRoomNumber, tvRoomName, tvDesc, tvIsPlayingGame, tvRoomNumberTitle, tvRoomNameTitle, tvDescTitle, tvIsPlayingGameTitle;
+    private TextView tvRoomNumber, tvRoomName, tvRoomDesc, tvGameStatus, tvRoomNumberTitle, tvRoomNameTitle, tvDescTitle, tvIsPlayingGameTitle;
     private DBSI dbsi;
     private String userPKey;
+    private View view;
 
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     private ArrayList<GameListViewData> listViewItemList;
@@ -53,37 +55,33 @@ public class GameListViewAdapter extends BaseAdapter {
         return listViewItemList.size();
     }
 
+
+
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final int pos = position;
         final Context context = parent.getContext();
+        view = convertView;
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
-        if (convertView == null) {
-//            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (view == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //            setView();
-//            convertView = inflater.inflate((XmlPullParser) parentLayout, parent, false);
+            view = inflater.inflate(R.layout.game_list_item, parent, false);
         }
 
-        setView();
+        bindView();
 
-        // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
-//        ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
-//        TextView titleTextView = (TextView) convertView.findViewById(R.id.textView1) ;
-//        TextView descTextView = (TextView) convertView.findViewById(R.id.textView2) ;
-
-//         Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        final GameListViewData listViewItem = listViewItemList.get(position);
+        final GameListViewData listViewItem = listViewItemList.get(pos);
 
         // 아이템 내 각 위젯에 데이터 반영
         tvRoomNumber.setText(listViewItem.getRoomNumber() + "");
         tvRoomName.setText(listViewItem.getRoomName());
-        tvDesc.setText(listViewItem.getDescription());
-
+        tvRoomDesc.setText(listViewItem.getDescription());
 
         // 방입장 구현 위한 onClickListener
-        parentLayout.setOnClickListener(new View.OnClickListener() {
+        tvGameStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final DBSI dbsi = new DBSI();
@@ -244,7 +242,7 @@ public class GameListViewAdapter extends BaseAdapter {
             }
         });
 
-        return parentLayout;
+        return view;
     }
 
     // 지정한 위치(position)에 있는 데이터와 관계된 아이템(row)의 ID를 리턴. : 필수 구현
@@ -271,78 +269,26 @@ public class GameListViewAdapter extends BaseAdapter {
         listViewItemList.add(item);
     }
 
-    public void setView() {
+    @Override
+    public void setValues() {
 
+    }
 
-        tvRoomNumberTitle = new TextView(MainView.mContext);
-        tvRoomNumberTitle.setGravity(Gravity.CENTER);
-        tvRoomNumberTitle.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1.3f));
-        tvRoomNumberTitle.setText("번호");
+    @Override
+    public void setUpEvents() {
 
-        tvRoomNameTitle = new TextView(MainView.mContext);
-        tvRoomNameTitle.setGravity(Gravity.CENTER);
-        tvRoomNameTitle.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        tvRoomNameTitle.setText("제목");
+    }
 
-        tvDescTitle = new TextView(MainView.mContext);
-        tvDescTitle.setGravity(Gravity.CENTER);
-        tvDescTitle.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        tvDescTitle.setText("설명");
+    @Override
+    public void bindView() {
+        this.tvGameStatus = (TextView) view.findViewById(R.id.tvGameStatus);
+        this.tvRoomDesc = (TextView) view.findViewById(R.id.tvRoomDesc);
+        this.tvRoomName = (TextView) view.findViewById(R.id.tvRoomName);
+        this.tvRoomNumber = (TextView) view.findViewById(R.id.tvRoomNumber);
+    }
 
-        tvIsPlayingGameTitle = new TextView(MainView.mContext);
-        tvIsPlayingGameTitle.setGravity(Gravity.CENTER);
-        tvIsPlayingGameTitle.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        tvIsPlayingGameTitle.setText("상태");
-
-        llRoomTitles = new LinearLayout(MainView.mContext);
-        llRoomTitles.setOrientation(LinearLayout.HORIZONTAL);
-        llRoomTitles.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        llRoomTitles.addView(tvRoomNumberTitle);
-        llRoomTitles.addView(tvRoomNameTitle);
-        llRoomTitles.addView(tvDescTitle);
-        llRoomTitles.addView(tvIsPlayingGameTitle);
-
-
-        tvRoomNumber = new TextView(MainView.mContext);
-        tvRoomNumber.setGravity(Gravity.CENTER);
-        tvRoomNumber.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1.3f));
-
-        tvRoomName = new TextView(MainView.mContext);
-        tvRoomName.setGravity(Gravity.CENTER);
-        tvRoomName.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-
-        tvDesc = new TextView(MainView.mContext);
-        tvDesc.setGravity(Gravity.CENTER);
-        tvDesc.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-
-        tvIsPlayingGame = new TextView(MainView.mContext);
-        tvIsPlayingGame.setGravity(Gravity.CENTER);
-        tvIsPlayingGame.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-
-        llRoomValues = new LinearLayout(MainView.mContext);
-        llRoomValues.setOrientation(LinearLayout.HORIZONTAL);
-        llRoomValues.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        llRoomValues.addView(tvRoomNumber);
-        llRoomValues.addView(tvRoomName);
-        llRoomValues.addView(tvDesc);
-        llRoomValues.addView(tvIsPlayingGame);
-
-//        llRoomName = new LinearLayout(MainView.mContext);
-//        llRoomName.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-//        llRoomName.addView(tvRoomName);
-//
-//        llDesc = new LinearLayout(MainView.mContext);
-//        llDesc.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-//        llDesc.addView(tvDesc);
-
-        parentLayout = new LinearLayout(MainView.mContext);
-        parentLayout.setOrientation(LinearLayout.VERTICAL);
-        parentLayout.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        parentLayout.addView(llRoomTitles);
-        parentLayout.addView(llRoomValues);
-//        parentLayout.addView(llRoomName);
-//        parentLayout.addView(llDesc);
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
     }
 }
