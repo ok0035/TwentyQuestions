@@ -107,7 +107,7 @@ public class GuessRightDialog extends Dialog implements BasicMethod {
                                 DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                                     @Override
                                     public void onFinished(String response) {
-                                        gameRoomView.testFunc(beforeSendLastChatDate[0]);
+                                        gameRoomView.makeChat(beforeSendLastChatDate[0]);
                                         gameRoomView.exchangeView();
                                         dismiss();
                                     }

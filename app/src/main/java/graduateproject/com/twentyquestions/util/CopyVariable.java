@@ -28,7 +28,7 @@ public class CopyVariable extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_list_item);
-        this.llChatItem = (LinearLayout) findViewById(R.id.llChatItem);
+        this.llChatItem = (LinearLayout) findViewById(R.id.flChatItem);
         this.tvChatText = (TextView) findViewById(R.id.tvChatText);
         this.ivProfile = (ImageView) findViewById(R.id.ivProfile);
 

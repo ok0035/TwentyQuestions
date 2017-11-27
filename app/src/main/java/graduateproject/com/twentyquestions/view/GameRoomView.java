@@ -2,14 +2,13 @@ package graduateproject.com.twentyquestions.view;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,7 +30,6 @@ import graduateproject.com.twentyquestions.item.ChatData;
 import graduateproject.com.twentyquestions.network.DBSI;
 import graduateproject.com.twentyquestions.network.DataSync;
 import graduateproject.com.twentyquestions.network.NetworkSI;
-import graduateproject.com.twentyquestions.util.CalculatePixel;
 import graduateproject.com.twentyquestions.util.GPSTracer;
 import graduateproject.com.twentyquestions.util.ParseData;
 
@@ -42,13 +40,14 @@ import graduateproject.com.twentyquestions.util.ParseData;
 public class GameRoomView extends BaseActivity {
 
     EditText edGameChat;
-    LinearLayout parentView, llChat, llChatList, llGame, llQuestion, llEditChat, llBtnChat, llQuestionBox, llGuessRight, llPlayingInfo, llLeftQuestion, llPlayigQuestion;
-    private LinearLayout divisionLine;
-    TextView btnSendMessage, btnQAMode, tvChatTest, tvQuestion, tvQuestionLabel, tvGuessRight, tvQuestionCountLabel, tvRightCountLabel, tvPlayingCountLabel;
-    TextView tvGameQuestionCount, tvGameRightCount, tvGamePlayingCount;
-    TextView endingTextView;
+    private TextView btnSendMessage, btnQAMode, tvQuestion, tvQuestionBtn;
+    private TextView tvGameQuestionCount, tvGameRightCount, tvGamePlayingCount;
+    private TextView endingTextView;
     private String gameListKey;
     private android.widget.ImageView ivBack;
+    private LinearLayout llQuestionBtn;
+    private LinearLayout llQuestionInfo;
+    private TextView tvGuessRightBtn;
 
     public ListView getLvGameChat() {
         return lvGameChat;
@@ -94,14 +93,15 @@ public class GameRoomView extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideActionBar();
+        setContentView(R.layout.chat);
+
+        bindView();
         setValues();
         setUpEvents();
         setView();
-        setCustomActionBar();
+//        setCustomActionBar();
 //        setContentView(parentView);
-        setContentView(R.layout.chat);
-
-
 
     }
 
@@ -109,6 +109,16 @@ public class GameRoomView extends BaseActivity {
     @Override
     public void setUpEvents() {
         super.setUpEvents();
+
+        if (getMemberPriority().equals("0")) {
+            tvGuessRightBtn.setVisibility(View.GONE);
+            tvQuestionBtn.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            tvQuestionBtn.setText("답변하기");
+        } else {
+            tvGuessRightBtn.setVisibility(View.VISIBLE);
+            tvGuessRightBtn.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 0.49f));
+            tvQuestionBtn.setText("질문하기");
+        }
 
         send_chat = new View.OnClickListener() {
             @Override
@@ -140,7 +150,7 @@ public class GameRoomView extends BaseActivity {
                             DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                                 @Override
                                 public void onFinished(String response) {
-                                    testFunc(beforeSendLastChatDate);
+                                    makeChat(beforeSendLastChatDate);
                                     lvGameChat.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                 }
 
@@ -186,48 +196,48 @@ public class GameRoomView extends BaseActivity {
 
                             Toast.makeText(mContext, "아직 질문이 올라오지 않았습니다.", Toast.LENGTH_SHORT).show();
 
+
+//                            JSONObject data = new JSONObject();
+//                            try {
+//                                data.put("AskAnswerListPKey", findlocalAskAnswerList_Ans[findlocalAskAnswerList_Ans.length - 1][0]);
+//                                data.put("Answer", edGameChat.getText().toString());
+//                                data.put("MemberPriority", getMemberPriority());
+//                                data.put("ChatRoomPKey", dbsi.selectQuery("select ChatRoomPKey from GameList")[0][0]);
+//                                data.put("GameListPKey", dbsi.selectQuery("select PKey from GameList")[0][0]);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
 //
-//                        JSONObject data = new JSONObject();
-//                        try {
-//                            data.put("AskAnswerListPKey", findlocalAskAnswerList_Ans[findlocalAskAnswerList_Ans.length - 1][0]);
-//                            data.put("Answer", edGameChat.getText().toString());
-//                            data.put("MemberPriority", getMemberPriority());
-//                            data.put("ChatRoomPKey", dbsi.selectQuery("select ChatRoomPKey from GameList")[0][0]);
-//                            data.put("GameListPKey", dbsi.selectQuery("select PKey from GameList")[0][0]);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        NetworkSI networkSI = new NetworkSI();
-//                        networkSI.request(DataSync.Command.SENDQA, data.toString(), new NetworkSI.AsyncResponse() {
-//                            @Override
-//                            public void onSuccess(String response) {
+//                            NetworkSI networkSI = new NetworkSI();
+//                            networkSI.request(DataSync.Command.SENDQA, data.toString(), new NetworkSI.AsyncResponse() {
+//                                @Override
+//                                public void onSuccess(String response) {
 ////                                Toast.makeText(mContext,response,Toast.LENGTH_SHORT).show();
 //
-//                                if (response.contains("AAList_UPDATE_SUCCESS")) {
-//                                    DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
-//                                        @Override
-//                                        public void onFinished(String response) {
-//                                            edGameChat.setText(null);
-//                                            testFunc(beforeSendLastChatDate);
+//                                    if (response.contains("AAList_UPDATE_SUCCESS")) {
+//                                        DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
+//                                            @Override
+//                                            public void onFinished(String response) {
+//                                                edGameChat.setText(null);
+//                                                makeChat(beforeSendLastChatDate);
 //
-//                                        }
+//                                            }
 //
-//                                        @Override
-//                                        public void onPreExcute() {
+//                                            @Override
+//                                            public void onPreExcute() {
 //
-//                                        }
-//                                    });
+//                                            }
+//                                        });
+//                                    }
+//
+//
 //                                }
 //
+//                                @Override
+//                                public void onFailure(String response) {
 //
-//                            }
-//
-//                            @Override
-//                            public void onFailure(String response) {
-//
-//                            }
-//                        });
+//                                }
+//                            });
 
 
                         } else {
@@ -261,7 +271,7 @@ public class GameRoomView extends BaseActivity {
                                             @Override
                                             public void onFinished(String response) {
                                                 edGameChat.setText(null);
-                                                testFunc(beforeSendLastChatDate);
+                                                makeChat(beforeSendLastChatDate);
 
                                             }
 
@@ -314,7 +324,7 @@ public class GameRoomView extends BaseActivity {
                                                 @Override
                                                 public void onFinished(String response) {
                                                     edGameChat.setText(null);
-                                                    testFunc(beforeSendLastChatDate);
+                                                    makeChat(beforeSendLastChatDate);
                                                     exchangeView();
                                                 }
 
@@ -355,28 +365,40 @@ public class GameRoomView extends BaseActivity {
             public void onClick(View view) {
 
                 if (!QAFlag) { // QAFlag = false -> 질답 모드
-                    edGameChat.setBackgroundColor(Color.MAGENTA);
+
                     if (getMemberPriority().equals("0")) {
-                        btnSendMessage.setText("답변");
+                        tvQuestionBtn.setText("채팅하기");
+                        edGameChat.setHint("답변하기");
                     } else {
-                        btnSendMessage.setText("질문");
+                        tvQuestionBtn.setText("채팅하기");
+                        edGameChat.setHint("질문하기");
                     }
+                    edGameChat.setFocusable(true);
+                    edGameChat.requestFocus();
+                    InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(edGameChat, 0);
                     send = send_QA;
                     btnSendMessage.setOnClickListener(send);
                     QAFlag = true;
+
                 } else {
-                    edGameChat.setBackgroundColor(Color.CYAN);
-                    btnSendMessage.setText("보내기");
+                    if (getMemberPriority().equals("0"))
+                        tvQuestionBtn.setText("답변하기");
+                    else tvQuestionBtn.setText("질문하기");
+                    edGameChat.setHint("");
+                    btnSendMessage.setText("Send");
                     send = send_chat;
                     btnSendMessage.setOnClickListener(send);
                     QAFlag = false;
                 }
-
             }
         };
 
+        tvQuestionBtn.setOnClickListener(QAMode);
+
         // 정답맞추기 클릭
         sendReceiveRA = new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
 
@@ -424,6 +446,8 @@ public class GameRoomView extends BaseActivity {
                     }
                 }
             }
+
+
         };
 
         createNewGame = new View.OnClickListener() {
@@ -434,56 +458,11 @@ public class GameRoomView extends BaseActivity {
             }
         };
 
-    }
-
-    @Override
-    public void setView() {
-        super.setView();
-
-//        tvChatTest = new TextView(MainView.mContext);
-//        tvChatTest.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        lvGameChat = new ListView(mContext);
         lvGameChat.setAdapter(gameChatListViewAdapter);
-        lvGameChat.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         gameChatListViewAdapter.notifyDataSetChanged();
 
-        edGameChat = new EditText(MainView.mContext);
-        edGameChat.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         edGameChat.setSingleLine(true);
-
-        btnSendMessage = new TextView(MainView.mContext);
-        btnSendMessage.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f));
-        btnSendMessage.setText("보내기");
-        btnSendMessage.setGravity(Gravity.CENTER);
         btnSendMessage.setOnClickListener(send);
-
-        btnQAMode = new TextView(MainView.mContext);
-        btnQAMode.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f));
-        btnQAMode.setText("?");
-        btnQAMode.setGravity(Gravity.CENTER);
-        btnQAMode.setBackgroundColor(Color.MAGENTA);
-        btnQAMode.setOnClickListener(QAMode);
-
-        llEditChat = new LinearLayout(MainView.mContext);
-        llEditChat.setOrientation(LinearLayout.HORIZONTAL);
-        llEditChat.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 8f));
-        llEditChat.addView(edGameChat);
-
-        llBtnChat = new LinearLayout(MainView.mContext);
-        llBtnChat.setOrientation(LinearLayout.HORIZONTAL);
-        llBtnChat.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2f));
-        llBtnChat.addView(btnSendMessage);
-        llBtnChat.addView(btnQAMode);
-
-        tvQuestionLabel = new TextView(MainView.mContext);
-        tvQuestionLabel.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 2f));
-        tvQuestionLabel.setGravity(Gravity.CENTER);
-        tvQuestionLabel.setText("문제");
-
-        tvQuestion = new TextView(MainView.mContext);
-        tvQuestion.setLayoutParams(new LinearLayout.LayoutParams((int) CalculatePixel.calculatePixelX(150), 0, 8f));
-        tvQuestion.setBackgroundColor(Color.CYAN);
-        tvQuestion.setGravity(Gravity.CENTER);
 
         if (getMemberPriority().equals("0")) { // 문제 출시자
             String questionObj = dbsi.selectQuery("SELECT Object FROM TwentyQuestions Where GameListPKey = " + gameListKey)[0][0];
@@ -500,75 +479,97 @@ public class GameRoomView extends BaseActivity {
 
         }
 
-        llQuestion = new LinearLayout(MainView.mContext);
-        llQuestion.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 7f));
-        llQuestion.setOrientation(LinearLayout.VERTICAL);
-        llQuestion.setGravity(Gravity.CENTER);
-        llQuestion.setWeightSum(10);
-        llQuestion.addView(tvQuestionLabel);
-        llQuestion.addView(tvQuestion);
-
-        tvGuessRight = new TextView(MainView.mContext);
-        tvGuessRight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        tvGuessRight.setGravity(Gravity.CENTER);
         if (getMemberPriority().equals("0")) {
             if (dbsi.selectQuery("Select Guess from RightAnswerList where Answer == \"\" Order by PKey desc ") != null)
-                tvGuessRight.setText("정답이 올라왔어요");
+                tvGuessRightBtn.setText("답변하기");
             else
-                tvGuessRight.setText("정답을 기다리는 중...");
+                tvGuessRightBtn.setText("대기중...");
         } else {
-            tvGuessRight.setText("정답 맞히기");
+            tvGuessRightBtn.setText("정답 맞히기");
         }
-        tvGuessRight.setOnClickListener(sendReceiveRA);
+        tvGuessRightBtn.setOnClickListener(sendReceiveRA);
 
-        llGuessRight = new LinearLayout(MainView.mContext);
-        llGuessRight.setOrientation(LinearLayout.VERTICAL);
-        llGuessRight.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 3f));
-        llGuessRight.addView(tvGuessRight);
+    }
 
-        llQuestionBox = new LinearLayout(MainView.mContext);
-        llQuestionBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
-        llQuestionBox.setOrientation(LinearLayout.HORIZONTAL);
-        llQuestionBox.setWeightSum(10);
-        llQuestionBox.addView(llQuestion);
-        llQuestionBox.addView(llGuessRight);
+    @Override
+    public void setView() {
+        super.setView();
 
-        tvQuestionCountLabel = new TextView(MainView.mContext);
-        tvQuestionCountLabel.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 4f));
-        tvQuestionCountLabel.setGravity(Gravity.CENTER);
-        tvQuestionCountLabel.setText("남은질문수 : ");
+//        tvChatTest = new TextView(MainView.mContext);
+//        tvChatTest.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        tvGameQuestionCount = new TextView(MainView.mContext);
-        tvGameQuestionCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+//        btnQAMode = new TextView(MainView.mContext);
+//        btnQAMode.setLayoutParams(new TableLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f));
+//        btnQAMode.setText("?");
+//        btnQAMode.setGravity(Gravity.CENTER);
+//        btnQAMode.setBackgroundColor(Color.MAGENTA);
+//        btnQAMode.setOnClickListener(QAMode);
+
+//        llEditChat = new LinearLayout(MainView.mContext);
+//        llEditChat.setOrientation(LinearLayout.HORIZONTAL);
+//        llEditChat.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 8f));
+//        llEditChat.addView(edGameChat);
+//
+//        llBtnChat = new LinearLayout(MainView.mContext);
+//        llBtnChat.setOrientation(LinearLayout.HORIZONTAL);
+//        llBtnChat.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2f));
+//        llBtnChat.addView(btnSendMessage);
+//        llBtnChat.addView(btnQAMode);
+//
+//        tvQuestionLabel = new TextView(MainView.mContext);
+//        tvQuestionLabel.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 2f));
+//        tvQuestionLabel.setGravity(Gravity.CENTER);
+//        tvQuestionLabel.setText("문제");
+//
+//        tvQuestion = new TextView(MainView.mContext);
+//        tvQuestion.setLayoutParams(new LinearLayout.LayoutParams((int) CalculatePixel.calculatePixelX(150), 0, 8f));
+//        tvQuestion.setBackgroundColor(Color.CYAN);
+//        tvQuestion.setGravity(Gravity.CENTER);
+
+
+
+//        llGuessRight = new LinearLayout(MainView.mContext);
+//        llGuessRight.setOrientation(LinearLayout.VERTICAL);
+//        llGuessRight.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 3f));
+//        llGuessRight.addView(tvGuessRightBtn);
+
+//        llQuestionBox = new LinearLayout(MainView.mContext);
+//        llQuestionBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
+//        llQuestionBox.setOrientation(LinearLayout.HORIZONTAL);
+//        llQuestionBox.setWeightSum(10);
+//        llQuestionBox.addView(llQuestion);
+//        llQuestionBox.addView(llGuessRight);
+
+//        tvQuestionCountLabel = new TextView(MainView.mContext);
+//        tvQuestionCountLabel.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 4f));
+//        tvQuestionCountLabel.setGravity(Gravity.CENTER);
+//        tvQuestionCountLabel.setText("남은질문수 : ");
+
+//        tvGameQuestionCount = new TextView(MainView.mContext);
+//        tvGameQuestionCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         tvGameQuestionCount.setText(dbsi.selectQuery("Select MaxAskable From TwentyQuestions")[0][0]);
 
-        tvRightCountLabel = new TextView(MainView.mContext);
-        tvRightCountLabel.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 4f));
-        tvRightCountLabel.setGravity(Gravity.CENTER);
-        tvRightCountLabel.setText("남은정답수 : ");
-
-        tvGameRightCount = new TextView(MainView.mContext);
-        tvGameRightCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         tvGameRightCount.setText(dbsi.selectQuery("Select MaxGuessable From TwentyQuestions")[0][0]);
 
-        llLeftQuestion = new LinearLayout(MainView.mContext);
-        llLeftQuestion.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
-        llLeftQuestion.setOrientation(LinearLayout.HORIZONTAL);
-        llLeftQuestion.setWeightSum(10);
-        llLeftQuestion.setGravity(Gravity.CENTER);
-        llLeftQuestion.addView(tvQuestionCountLabel);
-        llLeftQuestion.addView(tvGameQuestionCount);
-        llLeftQuestion.addView(tvRightCountLabel);
-        llLeftQuestion.addView(tvGameRightCount);
+//        llLeftQuestion = new LinearLayout(MainView.mContext);
+//        llLeftQuestion.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+//        llLeftQuestion.setOrientation(LinearLayout.HORIZONTAL);
+//        llLeftQuestion.setWeightSum(10);
+//        llLeftQuestion.setGravity(Gravity.CENTER);
+//        llLeftQuestion.addView(tvQuestionCountLabel);
+//        llLeftQuestion.addView(tvGameQuestionCount);
+//        llLeftQuestion.addView(tvRightCountLabel);
+//        llLeftQuestion.addView(tvGameRightCount);
 
-        tvPlayingCountLabel = new TextView(MainView.mContext);
-        tvPlayingCountLabel.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 4f));
-        tvPlayingCountLabel.setGravity(Gravity.CENTER);
-        tvPlayingCountLabel.setText("진행상황 : ");
+//        tvPlayingCountLabel = new TextView(MainView.mContext);
+//        tvPlayingCountLabel.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 4f));
+//        tvPlayingCountLabel.setGravity(Gravity.CENTER);
+//        tvPlayingCountLabel.setText("진행상황 : ");
 
-        tvGamePlayingCount = new TextView(MainView.mContext);
-        tvGamePlayingCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 6f));
-        tvGamePlayingCount.setGravity(Gravity.CENTER_VERTICAL);
+//        tvGamePlayingCount = new TextView(MainView.mContext);
+//        tvGamePlayingCount.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 6f));
+//        tvGamePlayingCount.setGravity(Gravity.CENTER_VERTICAL);
 
         String twentyquestionsPKey = dbsi.selectQuery("Select PKey from TwentyQuestions")[0][0];
 
@@ -584,81 +585,83 @@ public class GameRoomView extends BaseActivity {
         }
 
 
-        llPlayigQuestion = new LinearLayout(MainView.mContext);
-        llPlayigQuestion.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
-        llPlayigQuestion.setOrientation(LinearLayout.HORIZONTAL);
-        llPlayigQuestion.setGravity(Gravity.CENTER);
-        llPlayigQuestion.setWeightSum(10);
-        llPlayigQuestion.addView(tvPlayingCountLabel);
-        llPlayigQuestion.addView(tvGamePlayingCount);
+//        llPlayigQuestion = new LinearLayout(MainView.mContext);
+//        llPlayigQuestion.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+//        llPlayigQuestion.setOrientation(LinearLayout.HORIZONTAL);
+//        llPlayigQuestion.setGravity(Gravity.CENTER);
+//        llPlayigQuestion.setWeightSum(10);
+//        llPlayigQuestion.addView(tvPlayingCountLabel);
+//        llPlayigQuestion.addView(tvGamePlayingCount);
 
-        llPlayingInfo = new LinearLayout(MainView.mContext);
-        llPlayingInfo.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 4f));
-        llPlayingInfo.setOrientation(LinearLayout.VERTICAL);
-        llPlayingInfo.setGravity(Gravity.CENTER);
-        llPlayingInfo.addView(llLeftQuestion);
-        llPlayingInfo.addView(llPlayigQuestion);
+//        llPlayingInfo = new LinearLayout(MainView.mContext);
+//        llPlayingInfo.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 4f));
+//        llPlayingInfo.setOrientation(LinearLayout.VERTICAL);
+//        llPlayingInfo.setGravity(Gravity.CENTER);
+//        llPlayingInfo.addView(llLeftQuestion);
+//        llPlayingInfo.addView(llPlayigQuestion);
 
-        divisionLine = new LinearLayout(MainView.mContext);
-        divisionLine.setBackgroundColor(Color.BLACK);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 5);
-        layoutParams.setMargins(0, 0, 0, 0);
-        divisionLine.setLayoutParams(layoutParams);
+//        divisionLine = new LinearLayout(MainView.mContext);
+//        divisionLine.setBackgroundColor(Color.BLACK);
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 5);
+//        layoutParams.setMargins(0, 0, 0, 0);
+//        divisionLine.setLayoutParams(layoutParams);
 
-        llGame = new LinearLayout(MainView.mContext);
-        llGame.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams llGameParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 2f);
-        llGameParams.setMargins(0, (int) CalculatePixel.calculatePixelY(10), 0, (int) CalculatePixel.calculatePixelY(10));
-        llGame.setLayoutParams(llGameParams);
-        llGame.setWeightSum(10);
-        llGame.setGravity(Gravity.CENTER);
-        llGame.addView(llQuestionBox);
-        llGame.addView(llPlayingInfo);
+//        llGame = new LinearLayout(MainView.mContext);
+//        llGame.setOrientation(LinearLayout.VERTICAL);
+//        LinearLayout.LayoutParams llGameParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 2f);
+//        llGameParams.setMargins(0, (int) CalculatePixel.calculatePixelY(10), 0, (int) CalculatePixel.calculatePixelY(10));
+//        llGame.setLayoutParams(llGameParams);
+//        llGame.setWeightSum(10);
+//        llGame.setGravity(Gravity.CENTER);
+//        llGame.addView(llQuestionBox);
+//        llGame.addView(llPlayingInfo);
 
-        llChatList = new LinearLayout(MainView.mContext);
-        llChatList.setOrientation(LinearLayout.VERTICAL);
-        llChatList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 7.5f));
-        llChatList.addView(divisionLine);
-        llChatList.addView(lvGameChat);
+//        llChatList = new LinearLayout(MainView.mContext);
+//        llChatList.setOrientation(LinearLayout.VERTICAL);
+//        llChatList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 7.5f));
+//        llChatList.addView(divisionLine);
+//        llChatList.addView(lvGameChat);
 
-        llChat = new LinearLayout(MainView.mContext);
-        llChat.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.5f));
-        llChat.setOrientation(LinearLayout.HORIZONTAL);
-        llChat.setWeightSum(10);
-        llChat.setGravity(Gravity.CENTER_VERTICAL);
-        llChat.setBackgroundColor(Color.CYAN);
-        llChat.addView(llEditChat);
-        llChat.addView(llBtnChat);
+//        llChat = new LinearLayout(MainView.mContext);
+//        llChat.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.5f));
+//        llChat.setOrientation(LinearLayout.HORIZONTAL);
+//        llChat.setWeightSum(10);
+//        llChat.setGravity(Gravity.CENTER_VERTICAL);
+//        llChat.setBackgroundColor(Color.CYAN);
+//        llChat.addView(llEditChat);
+//        llChat.addView(llBtnChat);
 
-        endingTextView = new TextView(MainView.mContext);
-        endingTextView.setWidth((int) CalculatePixel.calculatePixelX(320));
-        endingTextView.setHeight((int) CalculatePixel.calculatePixelY(40));
-//        endingTextView.setX(0);
-//        endingTextView.setY(400);
-        endingTextView.setBackgroundColor(Color.WHITE);
-        String endingMent = "게임이 종료되었습니다. \n 새로운 게임을 시작하려면 클릭해주세요";
-        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = " + myUserPKey + " and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
-            endingMent = "패배\n" + endingMent;
-        } else {
-            endingMent = "승리\n" + endingMent;
-        }
-        endingTextView.setText(endingMent);
-        endingTextView.setGravity(Gravity.CENTER);
-        if (dbsi.selectQuery("select GameStatus from GameList")[0][0].equals("2")) {
-            endingTextView.setVisibility(View.VISIBLE);
-        } else {
-            endingTextView.setVisibility(View.GONE);
-        }
+//        endingTextView = new TextView(MainView.mContext);
+//        endingTextView.setWidth((int) CalculatePixel.calculatePixelX(320));
+//        endingTextView.setHeight((int) CalculatePixel.calculatePixelY(40));
+////        endingTextView.setX(0);
+////        endingTextView.setY(400);
+//        endingTextView.setBackgroundColor(Color.WHITE);
+
+//        String endingMent = "게임이 종료되었습니다. \n 새로운 게임을 시작하려면 클릭해주세요";
+//        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = " + myUserPKey + " and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
+//            endingMent = "패배\n" + endingMent;
+//        } else {
+//            endingMent = "승리\n" + endingMent;
+//        }
+//        tvQuestion.setText(endingMent);
+
+//        endingTextView.setGravity(Gravity.CENTER);
+//        if (dbsi.selectQuery("select GameStatus from GameList")[0][0].equals("2")) {
+//            endingTextView.setVisibility(View.VISIBLE);
+//        } else {
+//            endingTextView.setVisibility(View.GONE);
+//        }
 //        endingTextView.setOnClickListener(createNewGame);
 
-        parentView = new LinearLayout(MainView.mContext);
-        parentView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        parentView.setOrientation(LinearLayout.VERTICAL);
-        parentView.setWeightSum(10);
-        parentView.addView(llGame);
-        parentView.addView(llChatList);
-        parentView.addView(llChat);
-        parentView.addView(endingTextView);
+//        parentView = new LinearLayout(MainView.mContext);
+//        parentView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//        parentView.setOrientation(LinearLayout.VERTICAL);
+//        parentView.setWeightSum(10);
+//        parentView.addView(llGame);
+//        parentView.addView(llChatList);
+//        parentView.addView(llChat);
+//        parentView.addView(endingTextView);
     }
 
     @Override
@@ -791,7 +794,7 @@ public class GameRoomView extends BaseActivity {
                         Log.d("chatDataItemlist.size()", chatDataItemlist.size() + "");
                         if (chatDataItemlist.size() > 0) {
 
-                            testFunc(beforeChatPKey);
+                            makeChat(beforeChatPKey);
                             System.out.println("TestFuncLoadFinish");
                         }
 
@@ -831,9 +834,9 @@ public class GameRoomView extends BaseActivity {
                 "from RightAnswerList as R where R.TwentyQuestionsPKey = (Select PKey from TwentyQuestions where GameListPKey = " + GameListPKey + ") and R.Answer != \"\")As U \n";
     }
 
-    public void testFunc(String lastChatDate) {
+    public void makeChat(String lastChatDate) {
 
-        Log.d("Start ", "testFunc");
+        Log.d("Start ", "makeChat");
         String[][] localGameList = dbsi.selectQuery("SELECT * FROM GameList");
 //        String[][] addedChatData = dbsi.selectQuery("select * from Chat where ChatRoomPKey = " + localGameList[0][1] + " and PKey > " + lastChatDate);
 
@@ -1034,12 +1037,12 @@ public class GameRoomView extends BaseActivity {
         if (getMemberPriority().equals("0")) {
             // 정답맞히기 textView
             if (dbsi.selectQuery("Select Guess from RightAnswerList where Answer == \"\" Order by PKey desc ") != null)
-                tvGuessRight.setText("정답이 올라왔어요");
+                tvGuessRightBtn.setText("정답이 올라왔어요");
             else
-                tvGuessRight.setText("정답을 기다리는 중...");
+                tvGuessRightBtn.setText("정답을 기다리는 중...");
 
         } else {
-            tvGuessRight.setText("정답 맞히기");
+            tvGuessRightBtn.setText("정답 맞히기");
         }
 
         // 남은 질문 갯수 textView
@@ -1075,22 +1078,21 @@ public class GameRoomView extends BaseActivity {
 
         }
 
-        // ending멘트 뷰
+//         ending멘트 뷰
         if (dbsi.selectQuery("select GameStatus from GameList")[0][0].equals("2")) {
-            endingTextView.setVisibility(View.VISIBLE);
-        } else {
-            endingTextView.setVisibility(View.GONE);
+
+            String endingMent = "게임이 종료되었습니다. \n 새로운 게임을 시작하려면 클릭해주세요";
+            if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = " + myUserPKey + " and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
+//                endingMent = "패배\n" + endingMent;
+                endingMent = "패배";
+            } else {
+//                endingMent = "승리\n" + endingMent;
+                endingMent = "승리";
+            }
+
+            tvQuestion.setText(endingMent);
+
         }
-
-        String endingMent = "게임이 종료되었습니다. \n 새로운 게임을 시작하려면 클릭해주세요";
-        if (dbsi.selectQuery("Select isWinner From GameMember Where UserPKey = " + myUserPKey + " and GameListPKey = (Select PKey From GameList)")[0][0].equals("0")) {
-            endingMent = "패배\n" + endingMent;
-        } else {
-            endingMent = "승리\n" + endingMent;
-        }
-
-        endingTextView.setText(endingMent);
-
     }
 
     @Override
@@ -1098,9 +1100,14 @@ public class GameRoomView extends BaseActivity {
         this.btnSendMessage = (TextView) findViewById(R.id.btnSendMessage);
         this.edGameChat = (EditText) findViewById(R.id.edGameChat);
         this.lvGameChat = (ListView) findViewById(R.id.lvGameChat);
+        this.llQuestionInfo = (LinearLayout) findViewById(R.id.llQuestionInfo);
         this.tvGamePlayingCount = (TextView) findViewById(R.id.tvGamePlayingCount);
         this.tvGameRightCount = (TextView) findViewById(R.id.tvGameRightCount);
         this.tvGameQuestionCount = (TextView) findViewById(R.id.tvGameQuestionCount);
+        this.llQuestionBtn = (LinearLayout) findViewById(R.id.llQuestionBtn);
+        this.tvQuestionBtn = (TextView) findViewById(R.id.tvQuestionBtn);
+        this.tvGuessRightBtn = (TextView) findViewById(R.id.tvGuessRightBtn);
+        this.tvQuestion = (TextView) findViewById(R.id.tvQuestion);
         this.ivBack = (ImageView) findViewById(R.id.ivBack);
     }
 

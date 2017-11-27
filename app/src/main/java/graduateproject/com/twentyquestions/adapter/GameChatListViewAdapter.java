@@ -9,8 +9,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,11 +32,13 @@ public class GameChatListViewAdapter extends ArrayAdapter implements BasicMethod
     ArrayList<ChatData> mList;
     private android.widget.ImageView ivProfile;
     private android.widget.TextView tvChatText;
-    private android.widget.LinearLayout llChatItem;
+    private android.widget.FrameLayout flChatItem;
+    private LinearLayout llProfile;
     DBSI dbsi;
     View view;
     LayoutInflater inflater;
     private ChatData chatData;
+    private LinearLayout llChatText;
 
     public GameChatListViewAdapter(Context context, ArrayList<ChatData> list){
         super(context, -1, list);
@@ -51,7 +53,7 @@ public class GameChatListViewAdapter extends ArrayAdapter implements BasicMethod
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 //        return super.getView(position, convertView, parent);
-        View row = setView(position);
+//        View row = setView(position);
 
         view = convertView;
 
@@ -60,24 +62,23 @@ public class GameChatListViewAdapter extends ArrayAdapter implements BasicMethod
             view = inflater.inflate(R.layout.chat_list_item, parent, false);
 
         }
+        chatData = mList.get(position);
 
         bindView();
         setUpEvents();
 
         tvChatText.setText(mList.get(position).getChattingText());
-        chatData = mList.get(position);
-
         return view;
     }
 
 
-    private View setView(int position){
+//    private View setView(int position){
 
-        LinearLayout linearLayout = new LinearLayout(mContext);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//        LinearLayout linearLayout = new LinearLayout(mContext);
+//        linearLayout.setOrientation(LinearLayout.VERTICAL);
+//        linearLayout.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        tvChatText = new TextView(mContext);
+//        tvChatText = new TextView(mContext);
 
 //
 //        String localUserPKey = dbsi.getUserInfo().split("/")[0];
@@ -86,8 +87,8 @@ public class GameChatListViewAdapter extends ArrayAdapter implements BasicMethod
 //        Log.d("dbUserPKey", localUserPKey);
 
 
-        return linearLayout;
-    }
+//        return linearLayout;
+//    }
 
     @Override
     public void setValues() {
@@ -103,26 +104,32 @@ public class GameChatListViewAdapter extends ArrayAdapter implements BasicMethod
 
             System.out.println("My ID");
 
-            ivProfile.setForegroundGravity(Gravity.RIGHT);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.RIGHT;
+            llProfile.setLayoutParams(params);
+            llChatText.setLayoutParams(params);
             tvChatText.setBackgroundResource(R.drawable.outbox);
-            tvChatText.setGravity(Gravity.RIGHT);
+            tvChatText.setTextColor(Color.WHITE);
 
 
-        }else{
+        } else {
+
             System.out.println("Other ID");
-            ivProfile.setForegroundGravity(Gravity.LEFT);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.LEFT;
+            llProfile.setLayoutParams(params);
+            llChatText.setLayoutParams(params);
             tvChatText.setBackgroundResource(R.drawable.inbox);
-            tvChatText.setGravity(Gravity.LEFT);
-
+            tvChatText.setTextColor(Color.BLACK);
 
         }
 
         if(chatData.getChatFlag().contains("askans")){
-            llChatItem.setBackgroundColor(Color.LTGRAY);
+            flChatItem.setBackgroundColor(Color.LTGRAY);
         }else if(chatData.getChatFlag().contains("right")){
-            llChatItem.setBackgroundColor(Color.YELLOW);
+            flChatItem.setBackgroundColor(Color.YELLOW);
         } else {
-            llChatItem.setBackgroundColor(Color.WHITE);
+            flChatItem.setBackgroundColor(Color.WHITE);
         }
 
     }
@@ -131,6 +138,8 @@ public class GameChatListViewAdapter extends ArrayAdapter implements BasicMethod
     public void bindView() {
         this.tvChatText = (TextView) view.findViewById(R.id.tvChatText);
         this.ivProfile = (ImageView) view.findViewById(R.id.ivProfile);
-        this.llChatItem = (LinearLayout) view.findViewById(R.id.llChatItem);
+        this.flChatItem = (FrameLayout) view.findViewById(R.id.flChatItem);
+        this.llProfile = (LinearLayout) view.findViewById(R.id.llProfile);
+        this.llChatText = (LinearLayout) view.findViewById(R.id.llChatText);
     }
 }

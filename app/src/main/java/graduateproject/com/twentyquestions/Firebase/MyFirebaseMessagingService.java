@@ -99,7 +99,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             DataSync.getInstance().doSync(new DataSync.AsyncResponse() {
                 @Override
                 public void onFinished(String response) {
-                    gameRoomView.testFunc(lastChatDate);
+                    gameRoomView.makeChat(lastChatDate);
                     gameRoomView.getLvGameChat().setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                     gameRoomView.exchangeView();
                     Toast.makeText(getApplicationContext(), "Push 알람 도착 + Dosync 완료", Toast.LENGTH_SHORT).show();

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -100,29 +99,6 @@
                     android:layout_weight="0.446"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/llQuestionBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:weightSum="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.43"
-                            android:gravity="center"
-                            android:background="@drawable/chat_apply_question_button"
-                            android:text="문제내기"
-                            android:textSize="20dp"
-                            android:textStyle="bold"
-                            android:textColor="#ffffff"/>
-
-                    </LinearLayout>
-                    
-
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -131,72 +107,136 @@
                         android:orientation="vertical">
 
                         <LinearLayout
+                            android:id="@+id/llQuestionBtn"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_weight="0.5">
+                            android:layout_weight="0.5"
+                            android:weightSum="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:textSize="12dp"
-                                android:textColor="@color/GameQuestionInfo"
-                                android:text="남은질문수 : "/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="0.83"
+                                android:weightSum="1"
+                                android:gravity="center"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/tvGameQuestionCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:textSize="12dp"
-                                android:textColor="@color/GameQuestionInfo"
-                                android:text="-1개"/>
+                                <TextView
+                                    android:id="@+id/tvQuestionBtn"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.49"
+                                    android:layout_gravity="left"
+                                    android:gravity="center"
+                                    android:background="@drawable/chat_apply_question_button"
+                                    android:text="질문하기"
+                                    android:textSize="20dp"
+                                    android:textStyle="bold"
+                                    android:textColor="#ffffff"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="30dp"
-                                android:textSize="12dp"
-                                android:textColor="@color/GameQuestionInfo"
-                                android:text="남은정답수 : "/>
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_weight="0.02"
+                                    android:layout_height="match_parent"/>
 
-                            <TextView
-                                android:id="@+id/tvGameRightCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:textSize="12dp"
-                                android:textColor="@color/GameQuestionInfo"
-                                android:text="-1개"/>
+                                <TextView
+                                    android:id="@+id/tvGuessRightBtn"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.49"
+                                    android:layout_gravity="right"
+                                    android:gravity="center"
+                                    android:background="@drawable/chat_right_question_button"
+                                    android:text="정답 맞히기"
+                                    android:textSize="20dp"
+                                    android:textStyle="bold"
+                                    android:textColor="#ffffff"/>
 
+                            </LinearLayout>
 
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_weight="0.5">
+                            android:layout_weight="0.5"
+                            android:weightSum="1"
+                            android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="top"
-                                android:textSize="12dp"
-                                android:textColor="@color/GameQuestionInfo"
-                                android:text="진행상황 : "/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="0.5"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/tvGamePlayingCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="top"
-                                android:textSize="12dp"
-                                android:textColor="@color/GameQuestionInfo"
-                                android:text="0번 질문 대기중, 답변 대기중"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/GameQuestionInfo"
+                                    android:text="남은질문수 : "/>
 
+                                <TextView
+                                    android:id="@+id/tvGameQuestionCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/GameQuestionInfo"
+                                    android:text="-1개"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="30dp"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/GameQuestionInfo"
+                                    android:text="남은정답수 : "/>
+
+                                <TextView
+                                    android:id="@+id/tvGameRightCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/GameQuestionInfo"
+                                    android:text="-1개"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="0.5"
+                                android:orientation="horizontal">
+
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="top"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/GameQuestionInfo"
+                                    android:text="진행상황 : "/>
+
+                                <TextView
+                                    android:id="@+id/tvGamePlayingCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="top"
+                                    android:textSize="12dp"
+                                    android:textColor="@color/GameQuestionInfo"
+                                    android:text="0번 질문 대기중, 답변 대기중"/>
+
+                            </LinearLayout>
 
                         </LinearLayout>
+
+
 
                     </LinearLayout>
 
@@ -223,6 +263,7 @@
 
             <ListView
                 android:id="@+id/lvGameChat"
+                android:divider="@null"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -256,6 +297,7 @@
                     android:id="@+id/edGameChat"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:paddingLeft="10dp"
                     android:background="@null"/>
 
             </LinearLayout>
@@ -278,4 +320,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</FrameLayout>

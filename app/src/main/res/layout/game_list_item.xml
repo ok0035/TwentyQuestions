@@ -45,7 +45,6 @@
             android:textSize="15dp"/>
 
 
-
         <TextView
             android:id="@+id/tvRoomDesc"
             android:layout_width="match_parent"
@@ -65,22 +64,17 @@
         android:orientation = "vertical"
         android:weightSum="1">
 
-
         <TextView
             android:id="@+id/tvGameStatus"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5"
             android:gravity="center"
-            android:text="게임중"
-            android:textColor="@color/GameListPlayingStatus"
+            android:text="게임하기"
+            android:textColor="@color/GameListDoPlayStatus"
             android:textStyle="bold"
             android:textSize="15dp" />
 
-
     </LinearLayout>
-
-
-
 
 </LinearLayout>
